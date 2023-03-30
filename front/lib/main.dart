@@ -26,13 +26,13 @@ class StudentMainMenu extends StatelessWidget {
       children: [
         Scaffold(
           appBar: PreferredSize(
-            preferredSize:
-            Size.fromHeight(MediaQuery.of(context).size.height * 0.3),
+            preferredSize: Size.fromHeight(150),
             child: Stack(
               children: [
                 AppBar(
                   backgroundColor: const Color.fromRGBO(17, 32, 51, 1),
                   elevation: 0,
+                  automaticallyImplyLeading: false,
                   actions: [
                     GestureDetector(
                       onTap: () {
@@ -46,23 +46,28 @@ class StudentMainMenu extends StatelessWidget {
                             child: const Icon(Icons.notifications)),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        // Handle menu icon tap
-                        print('menu');
+                    Builder(
+                      builder: (BuildContext innerContext) {
+                        return GestureDetector(
+                          onTap: () {
+                            // Handle menu icon tap
+                            print('menu');
+                            Scaffold.of(innerContext).openDrawer();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: const Icon(Icons.menu)),
+                          ),
+                        );
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: const Icon(Icons.menu)),
-                      ),
                     ),
                   ],
                 ),
                 Positioned(
                   left: 20,
-                  bottom: 40,
+                  bottom: 0,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
@@ -86,71 +91,80 @@ class StudentMainMenu extends StatelessWidget {
               ],
             ),
           ),
-          body: Container(
-            margin: const EdgeInsets.only(top: 30),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    customButton(
-                      context,
-                      text: 'Check into Class/Event',
-                      borderColor: const Color.fromRGBO(61, 185, 228, 1),
-                      onPressed: () {
-                        // Handle "Check into Class/Event" button press
-                        print('Check into Class/Event');
-                      },
-                    ),
-                    customButton(
-                      context,
-                      text: 'Day Pass',
-                      borderColor: const Color(0xFF79D557),
-                      onPressed: () {
-                        // Handle "Day Pass" button press
-                        print('Day Pass');
-                      },
-                    ),
-                  ],
+          drawer: _buildDrawer(context),
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.only(top: 40),
+                  margin: const EdgeInsets.only(top: 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      customButton(
+                        context,
+                        text: 'Check into Class/Event',
+                        borderColor: const Color.fromRGBO(61, 185, 228, 1),
+                        onPressed: () {
+                          // Handle "Check into Class/Event" button press
+                          print('Check into Class/Event');
+                        },
+                      ),
+                      customButton(
+                        context,
+                        text: 'Day Pass',
+                        borderColor: const Color(0xFF79D557),
+                        onPressed: () {
+                          // Handle "Day Pass" button press
+                          print('Day Pass');
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.3 - 28,//10 46
-          left: MediaQuery.of(context).size.width * 0.1,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            margin: const EdgeInsets.all(10),
-            child: gradientRoundBorderButton(
-              context,
-              text: "I WANT TO GO SOMEWHERE",
-              startColor: Color(0xff4196fd),
-              endColor: Color(0xff3bb6e4),
-              onPressed: () {
-                // Handle "I WANT TO GO SOMEWHERE" button press
-                print('I WANT TO GO SOMEWHERE');
-              },
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 0,
-          left: MediaQuery.of(context).size.width * 0.1,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            margin: const EdgeInsets.all(10),
-            child: gradientRoundBorderButton(
-              context,
-              text: "EMERGENCY RESPONSE",
-              startColor: Color(0xffe60527),
-              endColor: Color(0xfff24c5d),
-              onPressed: () {
-                // Handle "I WANT TO GO SOMEWHERE" button press
-                print('EMERGENCY RESPONSE');
-              },
-            ),
+              ),
+              Container(
+                width: double.infinity,
+                height: 30,
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(17, 32, 51, 1),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  margin: const EdgeInsets.all(10),
+                  child: gradientRoundBorderButton(
+                    context,
+                    text: "I WANT TO GO SOMEWHERE",
+                    startColor: Color(0xff4196fd),
+                    endColor: Color(0xff3bb6e4),
+                    onPressed: () {
+                      // Handle "I WANT TO GO SOMEWHERE" button press
+                      print('I WANT TO GO SOMEWHERE');
+                    },
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  margin: const EdgeInsets.all(10),
+                  child: gradientRoundBorderButton(
+                    context,
+                    text: "EMERGENCY RESPONSE",
+                    startColor: Color(0xffe60527),
+                    endColor: Color(0xfff24c5d),
+                    onPressed: () {
+                      // Handle "I WANT TO GO SOMEWHERE" button press
+                      print('EMERGENCY RESPONSE');
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -190,7 +204,8 @@ class StudentMainMenu extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-        ));
+        )
+    );
   }
 
   Widget customButton(
@@ -243,6 +258,76 @@ class StudentMainMenu extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: Stack(
+        children: [
+          Container(
+            color: const Color(0xFF0e1b2a), // Set background color here
+            child: ListView(
+              padding: EdgeInsets.only(top: 100), // Add padding to ListView
+              children: [
+                // Remove DrawerHeader from here
+                _buildDrawerItem(context, Icons.dashboard, "DASHBOARD"),
+                _buildDrawerItem(context, Icons.directions_walk, "OFF CAMPUS REQUESTS"),
+                _buildDrawerItem(context, Icons.schedule, "DAILY SCHEDULE"),
+                _buildDrawerItem(context, Icons.class_, "CLASSES"),
+                _buildDrawerItem(context, Icons.notifications, "NOTIFICATIONS"),
+                _buildDrawerItem(context, Icons.admin_panel_settings, "DUTY ADMINISTRATOR"),
+                _buildDrawerItem(context, Icons.find_in_page, "LOST AND FOUND"),
+                _buildDrawerItem(context, Icons.fastfood, "FOOD MENU"),
+                _buildDrawerItem(context, Icons.warning, "EMERGENCIES", textColor: const Color(0xFFe45765)),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.only(left: 10, right: 20),
+              height: 100,
+              color: const Color(0xFF0e1b2a),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  Row(
+                    children: const [
+                      Text(
+                        "SEAN PARK",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.account_circle, color: Colors.white, size: 32),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(BuildContext context, IconData icon, String title,
+      {Color textColor = Colors.white}) {
+    return ListTile(
+      leading: Icon(icon, color: textColor),
+      title: Text(title, style: TextStyle(color: textColor)),
+      onTap: () {
+        print("$title tapped");
+        Navigator.pop(context);
+      },
     );
   }
 }
