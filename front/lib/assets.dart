@@ -10,7 +10,8 @@ import 'notifications.dart';
 import 'off_campus_requests.dart';
 
 class Assets extends StatelessWidget {
-  const Assets({Key? key}) : super(key: key);
+  final Widget? currentPage;
+  const Assets({Key? key, this.currentPage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +28,27 @@ class Assets extends StatelessWidget {
               padding: EdgeInsets.only(top: 100), // Add padding to ListView
               children: [
                 // Remove DrawerHeader from here
-                _buildDrawerItem(context, Icons.dashboard, "DASHBOARD"),
+                _buildDrawerItem(context, Icons.dashboard, "DASHBOARD",
+                    currentPage: currentPage),
                 _buildDrawerItem(
-                    context, Icons.directions_walk, "OFF CAMPUS REQUESTS"),
-                _buildDrawerItem(context, Icons.schedule, "DAILY SCHEDULE"),
-                _buildDrawerItem(context, Icons.class_, "CLASSES"),
-                _buildDrawerItem(context, Icons.notifications, "NOTIFICATIONS"),
+                    context, Icons.directions_walk, "OFF CAMPUS REQUESTS",
+                    currentPage: currentPage),
+                _buildDrawerItem(context, Icons.schedule, "DAILY SCHEDULE",
+                    currentPage: currentPage),
+                _buildDrawerItem(context, Icons.class_, "CLASSES",
+                    currentPage: currentPage),
+                _buildDrawerItem(context, Icons.notifications, "NOTIFICATIONS",
+                    currentPage: currentPage),
                 _buildDrawerItem(
-                    context, Icons.admin_panel_settings, "DUTY ADMINISTRATOR"),
-                _buildDrawerItem(context, Icons.find_in_page, "LOST AND FOUND"),
-                _buildDrawerItem(context, Icons.fastfood, "FOOD MENU"),
+                    context, Icons.admin_panel_settings, "DUTY ADMINISTRATOR",
+                    currentPage: currentPage),
+                _buildDrawerItem(context, Icons.find_in_page, "LOST AND FOUND",
+                    currentPage: currentPage),
+                _buildDrawerItem(context, Icons.fastfood, "FOOD MENU",
+                    currentPage: currentPage),
                 _buildDrawerItem(context, Icons.warning, "EMERGENCIES",
-                    textColor: const Color(0xFFe45765)),
+                    textColor: const Color(0xFFe45765),
+                    currentPage: currentPage),
               ],
             ),
           ),
@@ -79,26 +89,17 @@ class Assets extends StatelessWidget {
   }
 
   Widget _buildDrawerItem(BuildContext context, IconData icon, String title,
-      {Color textColor = Colors.white}) {
+      {Color textColor = Colors.white, Widget? currentPage}) {
     return ListTile(
       leading: Icon(icon, color: textColor),
       title: Text(title, style: TextStyle(color: textColor)),
       onTap: () {
-        print("$title tapped");
         Navigator.pop(context);
-        // // Remove DrawerHeader from here
-        // _buildDrawerItem(context, Icons.dashboard, "DASHBOARD"),
-        // _buildDrawerItem(
-        //     context, Icons.directions_walk, "OFF CAMPUS REQUESTS"),
-        // _buildDrawerItem(context, Icons.schedule, "DAILY SCHEDULE"),
-        // _buildDrawerItem(context, Icons.class_, "CLASSES"),
-        // _buildDrawerItem(context, Icons.notifications, "NOTIFICATIONS"),
-        // _buildDrawerItem(
-        //     context, Icons.admin_panel_settings, "DUTY ADMINISTRATOR"),
-        // _buildDrawerItem(context, Icons.find_in_page, "LOST AND FOUND"),
-        // _buildDrawerItem(context, Icons.fastfood, "FOOD MENU"),
-        // _buildDrawerItem(context, Icons.warning, "EMERGENCIES",
-        //     textColor: const Color(0xFFe45765)),
+        if (currentPage != null &&
+            currentPage.runtimeType == _getPageType(title)) {
+          // Do nothing if the user is already on the same page
+          return;
+        }
         if (title == 'DASHBOARD') {
           Navigator.push(
             context,
@@ -149,6 +150,31 @@ class Assets extends StatelessWidget {
         }
       },
     );
+  }
+
+  Type _getPageType(String title) {
+    switch (title) {
+      case 'DASHBOARD':
+        return StudentMainMenu;
+      case 'OFF CAMPUS REQUESTS':
+        return OffcampusRequestPage;
+      case 'DAILY SCHEDULE':
+        return DailySchedulePage;
+      case 'CLASSES':
+        return DutyAdministratorPage;
+      case 'NOTIFICATIONS':
+        return NotificationsPage;
+      case 'DUTY ADMINISTRATOR':
+        return ClassesPage;
+      case 'LOST AND FOUND':
+        return LostAndFoundPage;
+      case 'FOOD MENU':
+        return FoodMenuPage;
+      case 'EMERGENCIES':
+        return EmergenciesPage;
+      default:
+        return Null;
+    }
   }
 
   Widget gradientRoundBorderButton(

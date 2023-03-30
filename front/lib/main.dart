@@ -92,7 +92,9 @@ class StudentMainMenu extends StatelessWidget {
               ],
             ),
           ),
-          drawer: const Assets().build(context),
+          drawer: const Assets(
+            currentPage: StudentMainMenu(),
+          ).build(context),
           body: Stack(
             children: [
               SingleChildScrollView(
@@ -102,7 +104,9 @@ class StudentMainMenu extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Assets().customButton(
+                      const Assets(
+                        currentPage: StudentMainMenu(),
+                      ).customButton(
                         context,
                         text: 'Check into Class/Event',
                         borderColor: const Color.fromRGBO(61, 185, 228, 1),
@@ -111,7 +115,9 @@ class StudentMainMenu extends StatelessWidget {
                           print('Check into Class/Event');
                         },
                       ),
-                      Assets().customButton(
+                      const Assets(
+                        currentPage: StudentMainMenu(),
+                      ).customButton(
                         context,
                         text: 'Day Pass',
                         borderColor: const Color(0xFF79D557),
@@ -136,7 +142,9 @@ class StudentMainMenu extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   margin: const EdgeInsets.all(10),
-                  child: Assets().gradientRoundBorderButton(
+                  child: const Assets(
+                    currentPage: StudentMainMenu(),
+                  ).gradientRoundBorderButton(
                     context,
                     text: "I WANT TO GO SOMEWHERE",
                     isRed: false,
@@ -152,7 +160,9 @@ class StudentMainMenu extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   margin: const EdgeInsets.all(10),
-                  child: Assets().gradientRoundBorderButton(
+                  child: const Assets(
+                    currentPage: StudentMainMenu(),
+                  ).gradientRoundBorderButton(
                     context,
                     text: "EMERGENCY RESPONSE",
                     isRed: true,
