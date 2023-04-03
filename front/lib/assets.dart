@@ -53,11 +53,11 @@ class Assets extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 20,
+            top: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.only(left: 10, right: 20),
+              padding: EdgeInsets.only(left: 10, right: 20, top: 20),
               height: 100,
               color: const Color(0xFF0e1b2a),
               child: Row(
@@ -85,6 +85,26 @@ class Assets extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget menuBarButton(
+    BuildContext context,
+  ) {
+    return Builder(
+      builder: (BuildContext innerContext) {
+        return GestureDetector(
+          onTap: () {
+            Scaffold.of(innerContext).openDrawer();
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: const Icon(Icons.menu)),
+          ),
+        );
+      },
     );
   }
 
@@ -172,6 +192,8 @@ class Assets extends StatelessWidget {
         return FoodMenuPage;
       case 'EMERGENCIES':
         return EmergenciesPage;
+      case 'MESSAGE PAGE':
+        return MessagePage;
       default:
         return Null;
     }
@@ -220,12 +242,28 @@ class Assets extends StatelessWidget {
         ));
   }
 
-  Widget customButton(
+  Widget boxButton(
     BuildContext context, {
-    required String text,
+    required String title,
     required Color borderColor,
-    required VoidCallback onPressed,
+    required VoidCallback onTap,
+    int alertPriority = 0,
+    String date = '',
   }) {
+    switch (alertPriority) {
+      case 1:
+        borderColor = const Color(0xFF51CF7C);
+        break;
+      case 2:
+        borderColor = const Color(0xFFFBD03A);
+        break;
+      case 3:
+        borderColor = const Color(0xFFF26678);
+        break;
+      default:
+        borderColor = borderColor;
+    }
+
     return Container(
       margin: const EdgeInsets.only(left: 10, top: 20),
       padding: const EdgeInsets.all(0),
@@ -236,7 +274,7 @@ class Assets extends StatelessWidget {
         ),
       ),
       child: GestureDetector(
-        onTap: onPressed,
+        onTap: onTap,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Container(
@@ -244,29 +282,87 @@ class Assets extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  height: 35,
+                  child: alertPriority == 0
+                      ? Container(
+                          margin: EdgeInsets.only(top: 8),
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  title,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              date,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xffa1a8b5),
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: Colors.grey,
-                    size: 14,
-                  ),
-                ),
+                alertPriority == 0
+                    ? const Icon(
+                        Icons.arrow_circle_right_outlined,
+                        color: Colors.grey,
+                        size: 30,
+                      )
+                    : Row(
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: borderColor,
+                            size: 30,
+                          ),
+                          const Icon(
+                            Icons.arrow_circle_right_outlined,
+                            color: Colors.grey,
+                            size: 30,
+                          ),
+                        ],
+                      ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget textButton(
+    BuildContext context, {
+    required String text,
+    required VoidCallback onTap,
+    required Color color,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.all(12),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Text(
+            text,
+            style: TextStyle(color: color, fontSize: 12),
           ),
         ),
       ),

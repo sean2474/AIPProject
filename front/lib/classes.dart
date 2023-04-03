@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ClassesPage extends StatelessWidget {
+class ClassesPage extends StatefulWidget {
   const ClassesPage({Key? key}) : super(key: key);
 
   @override
+  ClassesPageState createState() => ClassesPageState();
+}
+
+class ClassesPageState extends State<ClassesPage> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
-      body: const Center(
-        child: Text('Dashboard Page Content'),
-      ),
-    );
+    return Scaffold();
   }
 }

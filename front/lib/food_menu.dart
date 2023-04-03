@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
-class FoodMenuPage extends StatelessWidget {
+class FoodMenuPage extends StatefulWidget {
   const FoodMenuPage({Key? key}) : super(key: key);
 
   @override
+  FoodMenuPageState createState() => FoodMenuPageState();
+}
+
+class FoodMenuPageState extends State<FoodMenuPage> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
-      body: const Center(
-        child: Text('Dashboard Page Content'),
-      ),
-    );
+    return Scaffold();
   }
 }
