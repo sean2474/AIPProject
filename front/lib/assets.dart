@@ -242,7 +242,7 @@ class Assets extends StatelessWidget {
         ));
   }
 
-  Widget customButton(
+  Widget boxButton(
     BuildContext context, {
     required String title,
     required Color borderColor,

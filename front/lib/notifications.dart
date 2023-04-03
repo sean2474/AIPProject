@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'assets.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({Key? key}) : super(key: key);
@@ -49,7 +52,8 @@ class NotificationsPageState extends State<NotificationsPage>
       'date': '2023-03-31 08:00:00',
       'sender': 'Sender 1',
       'alert_priority': 1,
-      'message': 'This is a test message 1',
+      'message':
+          '1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qweras www.naver.com dfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv1234qwerasdfzxcv',
       'isRead': false,
     },
     {
@@ -69,6 +73,73 @@ class NotificationsPageState extends State<NotificationsPage>
       'isRead': false,
     },
   ];
+
+  Future<void> _markAllAsRead() async {
+    bool? confirm = await _showConfirmationDialog();
+
+    if (confirm == true) {
+      setState(() {
+        for (var i = 0; i < messages.length; i++) {
+          messages[i]['isRead'] = true;
+        }
+      });
+    }
+  }
+
+  Future<bool?> _showConfirmationDialog() async {
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      return await showCupertinoDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text('Confirm',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+            content: Text(
+                'Are you sure you want to mark all notifications as read?'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      return await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirm'),
+            content:
+                Text('Are you sure you want to mark all messages as read?'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   List<Map<String, dynamic>> get unreadMessages =>
       messages.where((message) => !(message['isRead'] ?? false)).toList();
@@ -98,9 +169,9 @@ class NotificationsPageState extends State<NotificationsPage>
             Container(
                 padding: EdgeInsets.only(top: 50, left: 20),
                 margin: EdgeInsets.only(bottom: 50, right: 30),
-                child: Assets().textButton(context, text: "mark all as read",
+                child: Assets().textButton(context, text: "Mark All as Read",
                     onTap: () {
-                  // mark all messages as read
+                  _markAllAsRead();
                 }, color: Colors.white)),
             Positioned(
                 bottom: 5,
@@ -173,7 +244,7 @@ class NotificationsPageState extends State<NotificationsPage>
             Map<String, dynamic> message = _selectedTabIndex == 0
                 ? unreadMessages[index]
                 : messages[index];
-            return Assets(currentPage: NotificationsPage()).customButton(
+            return Assets(currentPage: NotificationsPage()).boxButton(
               context,
               title: message['title'],
               onTap: () {
@@ -252,7 +323,7 @@ class MessagePage extends StatelessWidget {
                   ),
                   Flexible(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
                           child: SingleChildScrollView(
@@ -310,19 +381,33 @@ class MessagePage extends StatelessWidget {
               color: Color.fromRGBO(17, 32, 51, 1),
             ),
           ),
+          // message box
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Container(
               margin: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
               width: MediaQuery.of(context).size.width * 0.9,
+              height: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
               ),
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
-                child: Text(messageData['message']),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: 1000),
+                  child: Linkify(
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        throw 'Could not launch $link';
+                      }
+                    },
+                    text: messageData['message'],
+                  ),
+                ),
               ),
             ),
           ),
