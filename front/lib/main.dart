@@ -98,7 +98,7 @@ class StudentMainMenu extends StatelessWidget {
                 children: [
                   const Assets(
                     currentPage: StudentMainMenu(),
-                  ).customButton(
+                  ).boxButton(
                     context,
                     title: 'Check into Class/Event',
                     borderColor: const Color.fromRGBO(61, 185, 228, 1),
@@ -109,7 +109,7 @@ class StudentMainMenu extends StatelessWidget {
                   ),
                   const Assets(
                     currentPage: StudentMainMenu(),
-                  ).customButton(
+                  ).boxButton(
                     context,
                     title: 'Day Pass',
                     borderColor: const Color(0xFF79D557),

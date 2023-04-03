@@ -242,7 +242,7 @@ class Assets extends StatelessWidget {
         ));
   }
 
-  Widget customButton(
+  Widget boxButton(
     BuildContext context, {
     required String title,
     required Color borderColor,
@@ -333,8 +333,7 @@ class Assets extends StatelessWidget {
                             color: borderColor,
                             size: 30,
                           ),
-                          SizedBox(width: 10),
-                          Icon(
+                          const Icon(
                             Icons.arrow_circle_right_outlined,
                             color: Colors.grey,
                             size: 30,
