@@ -1,5 +1,7 @@
+/// notifications.dart
+
 import 'package:flutter/material.dart';
-import 'assets.dart';
+import '../widgets/assets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';

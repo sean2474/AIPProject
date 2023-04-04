@@ -1,13 +1,16 @@
+/// assets.dart
+/// This file contains the assets used in the app.
+
 import 'package:flutter/material.dart';
-import 'classes.dart';
-import 'daily_schedule.dart';
-import 'duty_administrator.dart';
-import 'emergencies.dart';
-import 'food_menu.dart';
-import 'lost_and_found.dart';
-import 'main.dart';
-import 'notifications.dart';
-import 'off_campus_requests.dart';
+import 'package:front/student/main_menu.dart';
+import '../student/classes.dart';
+import '../common_pages/daily_schedule.dart';
+import '../common_pages/duty_administrator.dart';
+import '../common_pages/emergencies.dart';
+import '../common_pages/food_menu.dart';
+import '../common_pages/lost_and_found.dart';
+import '../common_pages/notifications.dart';
+import '../student/off_campus_requests.dart';
 
 class Assets extends StatelessWidget {
   final Widget? currentPage;
