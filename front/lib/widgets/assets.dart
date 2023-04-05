@@ -3,14 +3,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:front/student/main_menu.dart';
-import '../student/classes.dart';
 import '../common_pages/daily_schedule.dart';
 import '../common_pages/duty_administrator.dart';
-import '../common_pages/emergencies.dart';
 import '../common_pages/food_menu.dart';
 import '../common_pages/lost_and_found.dart';
 import '../common_pages/notifications.dart';
-import '../student/off_campus_requests.dart';
 
 class Assets extends StatelessWidget {
   final Widget? currentPage;
@@ -128,22 +125,10 @@ class Assets extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => const StudentMainMenu()),
           );
-        } else if (title == 'OFF CAMPUS REQUESTS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const OffcampusRequestPage()),
-          );
         } else if (title == 'DAILY SCHEDULE') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const DailySchedulePage()),
-          );
-        } else if (title == 'CLASSES') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const DutyAdministratorPage()),
           );
         } else if (title == 'NOTIFICATIONS') {
           Navigator.push(
@@ -153,7 +138,8 @@ class Assets extends StatelessWidget {
         } else if (title == 'DUTY ADMINISTRATOR') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ClassesPage()),
+            MaterialPageRoute(
+                builder: (context) => const DutyAdministratorPage()),
           );
         } else if (title == 'LOST AND FOUND') {
           Navigator.push(
@@ -165,11 +151,6 @@ class Assets extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => const FoodMenuPage()),
           );
-        } else if (title == 'EMERGENCIES') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const EmergenciesPage()),
-          );
         }
       },
     );
@@ -179,22 +160,16 @@ class Assets extends StatelessWidget {
     switch (title) {
       case 'DASHBOARD':
         return StudentMainMenu;
-      case 'OFF CAMPUS REQUESTS':
-        return OffcampusRequestPage;
       case 'DAILY SCHEDULE':
         return DailySchedulePage;
-      case 'CLASSES':
-        return DutyAdministratorPage;
       case 'NOTIFICATIONS':
         return NotificationsPage;
       case 'DUTY ADMINISTRATOR':
-        return ClassesPage;
+        return DutyAdministratorPage;
       case 'LOST AND FOUND':
         return LostAndFoundPage;
       case 'FOOD MENU':
         return FoodMenuPage;
-      case 'EMERGENCIES':
-        return EmergenciesPage;
       case 'MESSAGE PAGE':
         return MessagePage;
       default:
