@@ -1,5 +1,7 @@
 /// notifications.dart
 
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import '../widgets/assets.dart';
 import 'package:intl/intl.dart';
@@ -49,6 +51,7 @@ class NotificationsPageState extends State<NotificationsPage>
 
   List<Map<String, dynamic>> messages = [
     {
+      'id': '2qijodsalkv',
       'title':
           'Some long message Some long message Some long message Some long message Some long message something something something. something something something something something somethslaidfalsdkj laksjdaksjldfkasj kasdf asdfas afsd asd fadsf  adsf adsf adsdf ',
       'date': '2023-03-31 08:00:00',
@@ -59,6 +62,7 @@ class NotificationsPageState extends State<NotificationsPage>
       'isRead': false,
     },
     {
+      'id': 'alsdjfioawe',
       'title': 'Test Message 2',
       'date': '2023-03-31 09:00:00',
       'sender': 'Sender 2',
@@ -67,6 +71,7 @@ class NotificationsPageState extends State<NotificationsPage>
       'isRead': false,
     },
     {
+      'id': '2039ejialals',
       'title': 'Test Message 3',
       'date': '2023-03-31 10:00:00',
       'sender': 'Sender 3',

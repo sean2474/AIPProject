@@ -2,12 +2,15 @@
 /// This file contains the assets used in the app.
 
 import 'package:flutter/material.dart';
+import 'package:front/common_pages/school_store.dart';
 import 'package:front/student/main_menu.dart';
 import '../common_pages/daily_schedule.dart';
 import '../common_pages/duty_administrator.dart';
 import '../common_pages/food_menu.dart';
 import '../common_pages/lost_and_found.dart';
 import '../common_pages/notifications.dart';
+import '../common_pages/school_store.dart';
+import '../common_pages/sports.dart';
 
 class Assets extends StatelessWidget {
   final Widget? currentPage;
@@ -25,32 +28,29 @@ class Assets extends StatelessWidget {
           Container(
             color: const Color(0xFF0e1b2a), // Set background color here
             child: ListView(
-              padding: EdgeInsets.only(top: 100), // Add padding to ListView
-              children: [
-                // Remove DrawerHeader from here
-                _buildDrawerItem(context, Icons.dashboard, "DASHBOARD",
-                    currentPage: currentPage),
-                _buildDrawerItem(
-                    context, Icons.directions_walk, "OFF CAMPUS REQUESTS",
-                    currentPage: currentPage),
-                _buildDrawerItem(context, Icons.schedule, "DAILY SCHEDULE",
-                    currentPage: currentPage),
-                _buildDrawerItem(context, Icons.class_, "CLASSES",
-                    currentPage: currentPage),
-                _buildDrawerItem(context, Icons.notifications, "NOTIFICATIONS",
-                    currentPage: currentPage),
-                _buildDrawerItem(
-                    context, Icons.admin_panel_settings, "DUTY ADMINISTRATOR",
-                    currentPage: currentPage),
-                _buildDrawerItem(context, Icons.find_in_page, "LOST AND FOUND",
-                    currentPage: currentPage),
-                _buildDrawerItem(context, Icons.fastfood, "FOOD MENU",
-                    currentPage: currentPage),
-                _buildDrawerItem(context, Icons.warning, "EMERGENCIES",
-                    textColor: const Color(0xFFe45765),
-                    currentPage: currentPage),
-              ],
-            ),
+                padding: EdgeInsets.only(top: 100), // Add padding to ListView
+                children: [
+                  // Remove DrawerHeader from here
+                  _buildDrawerItem(context, Icons.dashboard, "DASHBOARD",
+                      currentPage: currentPage),
+                  _buildDrawerItem(context, Icons.schedule, "DAILY SCHEDULE",
+                      currentPage: currentPage),
+                  _buildDrawerItem(
+                      context, Icons.notifications, "NOTIFICATIONS",
+                      currentPage: currentPage),
+                  _buildDrawerItem(
+                      context, Icons.admin_panel_settings, "DUTY ADMINISTRATOR",
+                      currentPage: currentPage),
+                  _buildDrawerItem(
+                      context, Icons.find_in_page, "LOST AND FOUND",
+                      currentPage: currentPage),
+                  _buildDrawerItem(context, Icons.fastfood, "FOOD MENU",
+                      currentPage: currentPage),
+                  _buildDrawerItem(context, Icons.store, "HAWKS NEST",
+                      currentPage: currentPage),
+                  _buildDrawerItem(context, Icons.sports, "SPORTS",
+                      currentPage: currentPage),
+                ]),
           ),
           Positioned(
             top: 0,
@@ -151,6 +151,16 @@ class Assets extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => const FoodMenuPage()),
           );
+        } else if (title == 'HAWKS NEST') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SchoolStorePage()),
+          );
+        } else if (title == 'SPORTS') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SportsPage()),
+          );
         }
       },
     );
@@ -170,6 +180,10 @@ class Assets extends StatelessWidget {
         return LostAndFoundPage;
       case 'FOOD MENU':
         return FoodMenuPage;
+      case 'HAWKS NEST':
+        return SchoolStorePage;
+      case 'SPORTS':
+        return SportsPage;
       case 'MESSAGE PAGE':
         return MessagePage;
       default:
