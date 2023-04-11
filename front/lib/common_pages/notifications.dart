@@ -1,13 +1,17 @@
 /// notifications.dart
-
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import '../widgets/assets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+List<Color> alertColors = [
+  Colors.black,
+  const Color(0xFF51CF7C),
+  const Color(0xFFFBD03A),
+  const Color(0xFFF26678),
+];
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({Key? key}) : super(key: key);
@@ -99,19 +103,19 @@ class NotificationsPageState extends State<NotificationsPage>
         context: context,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
-            title: Text('Confirm',
+            title: const Text('Confirm',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-            content: Text(
+            content: const Text(
                 'Are you sure you want to mark all notifications as read?'),
             actions: <Widget>[
               CupertinoDialogAction(
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               CupertinoDialogAction(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
@@ -125,18 +129,18 @@ class NotificationsPageState extends State<NotificationsPage>
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirm'),
-            content:
-                Text('Are you sure you want to mark all messages as read?'),
+            title: const Text('Confirm'),
+            content: const Text(
+                'Are you sure you want to mark all messages as read?'),
             actions: <Widget>[
               TextButton(
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
@@ -160,24 +164,25 @@ class NotificationsPageState extends State<NotificationsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F6FB),
+      backgroundColor: const Color(0xFFF7F6FB),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
+        preferredSize: const Size.fromHeight(100),
         child: Stack(
           children: [
             AppBar(
-              backgroundColor: Color(0xFF0E1B2A),
+              backgroundColor: const Color(0xFF0E1B2A),
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
-                Assets(currentPage: NotificationsPage()).menuBarButton(context),
+                const Assets(currentPage: NotificationsPage())
+                    .menuBarButton(context),
               ],
             ),
             Container(
-                padding: EdgeInsets.only(top: 50, left: 20),
-                margin: EdgeInsets.only(bottom: 50, right: 30),
-                child: Assets().textButton(context, text: "Mark All as Read",
-                    onTap: () {
+                padding: const EdgeInsets.only(top: 50, left: 20),
+                margin: const EdgeInsets.only(bottom: 50, right: 30),
+                child: const Assets()
+                    .textButton(context, text: "Mark All as Read", onTap: () {
                   _markAllAsRead();
                 }, color: Colors.white)),
             Positioned(
@@ -188,13 +193,13 @@ class NotificationsPageState extends State<NotificationsPage>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Assets().textButton(context,
+                      child: const Assets().textButton(context,
                           text: "UNREAD",
                           onTap: () => _selectTab(0),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: Assets().textButton(context,
+                      child: const Assets().textButton(context,
                           text: "ALL",
                           onTap: () => _selectTab(1),
                           color: Colors.white),
@@ -212,7 +217,7 @@ class NotificationsPageState extends State<NotificationsPage>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Color(0xFF3eb9e4),
+                        color: const Color(0xFF3eb9e4),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -227,7 +232,7 @@ class NotificationsPageState extends State<NotificationsPage>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Color(0xFF3eb9e4),
+                        color: const Color(0xFF3eb9e4),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -242,7 +247,7 @@ class NotificationsPageState extends State<NotificationsPage>
         currentPage: NotificationsPage(),
       ).build(context),
       body: AnimatedSwitcher(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         child: ListView.builder(
           key: ValueKey<int>(_selectedTabIndex),
           itemCount:
@@ -251,7 +256,7 @@ class NotificationsPageState extends State<NotificationsPage>
             Map<String, dynamic> message = _selectedTabIndex == 0
                 ? unreadMessages[index]
                 : messages[index];
-            return Assets(currentPage: NotificationsPage()).boxButton(
+            return const Assets(currentPage: NotificationsPage()).boxButton(
               context,
               title: message['title'],
               onTap: () {
@@ -265,9 +270,10 @@ class NotificationsPageState extends State<NotificationsPage>
                   ),
                 );
               },
-              date: message['date'],
+              text: message['date'],
               borderColor: Colors.white,
-              alertPriority: message['alert_priority'],
+              iconNextToArrow: Icon(Icons.error_outline,
+                  color: alertColors[message['alert_priority']], size: 30),
             );
           },
         ),
@@ -294,13 +300,13 @@ class MessagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F6FB),
+      backgroundColor: const Color(0xFFF7F6FB),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(350),
+        preferredSize: const Size.fromHeight(350),
         child: Stack(
           children: [
             AppBar(
-              backgroundColor: Color(0xFF0E1B2A),
+              backgroundColor: const Color(0xFF0E1B2A),
               elevation: 0,
               automaticallyImplyLeading: false,
             ),
@@ -309,15 +315,15 @@ class MessagePage extends StatelessWidget {
               top: 65,
               child: GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: MouseRegion(
+                child: const MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: Icon(Icons.arrow_back, color: Colors.white)),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 40),
-              padding:
-                  EdgeInsets.only(left: 20, right: 20, top: 60, bottom: 20),
+              margin: const EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(
+                  left: 20, right: 20, top: 60, bottom: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -325,7 +331,7 @@ class MessagePage extends StatelessWidget {
                   Flexible(
                     child: Text(
                       formatDate(messageData['date']),
-                      style: TextStyle(fontSize: 14, color: Colors.white),
+                      style: const TextStyle(fontSize: 14, color: Colors.white),
                     ),
                   ),
                   Flexible(
@@ -337,19 +343,15 @@ class MessagePage extends StatelessWidget {
                             scrollDirection: Axis.vertical,
                             child: Text(
                               messageData['title'],
-                              style:
-                                  TextStyle(fontSize: 24, color: Colors.white),
+                              style: const TextStyle(
+                                  fontSize: 24, color: Colors.white),
                             ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 16, right: 16),
                           child: Icon(Icons.error_outline,
-                              color: messageData['alert_priority'] == 1
-                                  ? Color(0xFF51CF7C)
-                                  : messageData['alert_priority'] == 2
-                                      ? Color(0xFFFBD03A)
-                                      : Color(0xFFF26678),
+                              color: alertColors[messageData['alert_priority']],
                               size: 40),
                         ),
                       ],
@@ -357,13 +359,14 @@ class MessagePage extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Icon(Icons.access_time,
+                      const Icon(Icons.access_time,
                           size: 14, color: Color(0xff9fa5b5)),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Flexible(
                         child: Text(
                           '${formatTime(messageData['date'])} - ${messageData['sender']}',
-                          style: TextStyle(fontSize: 14, color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.white),
                         ),
                       ),
                     ],
@@ -403,7 +406,7 @@ class MessagePage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 1000),
+                  constraints: const BoxConstraints(minHeight: 1000),
                   child: Linkify(
                     onOpen: (link) async {
                       if (await canLaunch(link.url)) {

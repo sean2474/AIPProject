@@ -1,6 +1,5 @@
 /// school_store.dart
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../widgets/assets.dart';
 
 enum ItemCategory { food, drink, goods, other }
@@ -49,83 +48,6 @@ class SchoolStorePageState extends State<SchoolStorePage>
     {
       'ID': '109fm0qwikf',
       'name': 'pizza',
-      'category': ItemCategory.food,
-      'price': 100,
-      'stock': 10,
-      'description': 'some description',
-      'image_url':
-          'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
-      'date_added': '2023-03-31 09:00:00',
-    },
-    {
-      'ID': '109fm0qwikf',
-      'name': 'hamburger',
-      'category': ItemCategory.food,
-      'price': 100,
-      'stock': 10,
-      'description': 'some description',
-      'image_url':
-          'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
-      'date_added': '2023-03-31 09:00:00',
-    },
-    {
-      'ID': '109fm0qwikf',
-      'name': 'sandwitch',
-      'category': ItemCategory.food,
-      'price': 100,
-      'stock': 10,
-      'description': 'some description',
-      'image_url':
-          'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
-      'date_added': '2023-03-31 09:00:00',
-    },
-    {
-      'ID': '109fm0qwikf',
-      'name': 'cup noodle',
-      'category': ItemCategory.food,
-      'price': 100,
-      'stock': 10,
-      'description': 'some description',
-      'image_url':
-          'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
-      'date_added': '2023-03-31 09:00:00',
-    },
-    {
-      'ID': '109fm0qwikf',
-      'name': 'jersey mikes',
-      'category': ItemCategory.food,
-      'price': 100,
-      'stock': 10,
-      'description': 'some description',
-      'image_url':
-          'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
-      'date_added': '2023-03-31 09:00:00',
-    },
-    {
-      'ID': '109fm0qwikf',
-      'name': 'english muffin',
-      'category': ItemCategory.food,
-      'price': 100,
-      'stock': 10,
-      'description': 'some description',
-      'image_url':
-          'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
-      'date_added': '2023-03-31 09:00:00',
-    },
-    {
-      'ID': '109fm0qwikf',
-      'name': 'pizza1',
-      'category': ItemCategory.food,
-      'price': 100,
-      'stock': 10,
-      'description': 'some description',
-      'image_url':
-          'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
-      'date_added': '2023-03-31 09:00:00',
-    },
-    {
-      'ID': '109fm0qwikf',
-      'name': 'pizza2',
       'category': ItemCategory.food,
       'price': 100,
       'stock': 10,
@@ -191,7 +113,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width *
                     0.8, // Adjust the width of the modal
                 height: MediaQuery.of(context).size.height *
@@ -208,7 +130,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
           borderRadius: BorderRadius.circular(15),
         ),
         child: Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -221,15 +143,15 @@ class SchoolStorePageState extends State<SchoolStorePage>
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 data['name'],
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -260,9 +182,9 @@ class SchoolStorePageState extends State<SchoolStorePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F6FB),
+      backgroundColor: const Color(0xFFF7F6FB),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
+        preferredSize: const Size.fromHeight(100),
         child: Stack(
           children: [
             AppBar(
@@ -273,6 +195,20 @@ class SchoolStorePageState extends State<SchoolStorePage>
                 Assets(currentPage: SchoolStorePage()).menuBarButton(context),
               ],
             ),
+            Container(
+              margin: EdgeInsets.all(30),
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Hawks Nest",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
             Positioned(
                 bottom: 5,
                 left: MediaQuery.of(context).size.width / 20,
@@ -281,25 +217,25 @@ class SchoolStorePageState extends State<SchoolStorePage>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Assets().textButton(context,
+                      child: const Assets().textButton(context,
                           text: "FOOD",
                           onTap: () => _selectTab(0),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: Assets().textButton(context,
+                      child: const Assets().textButton(context,
                           text: "DRINK",
                           onTap: () => _selectTab(1),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: Assets().textButton(context,
+                      child: const Assets().textButton(context,
                           text: "GOODS",
                           onTap: () => _selectTab(2),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: Assets().textButton(context,
+                      child: const Assets().textButton(context,
                           text: "OTHER",
                           onTap: () => _selectTab(3),
                           color: Colors.white),
@@ -317,7 +253,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Color(0xFF3eb9e4),
+                        color: const Color(0xFF3eb9e4),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -332,7 +268,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Color(0xFF3eb9e4),
+                        color: const Color(0xFF3eb9e4),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -347,7 +283,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Color(0xFF3eb9e4),
+                        color: const Color(0xFF3eb9e4),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -362,7 +298,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Color(0xFF3eb9e4),
+                        color: const Color(0xFF3eb9e4),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -380,14 +316,14 @@ class SchoolStorePageState extends State<SchoolStorePage>
         duration: Duration(milliseconds: 300),
         child: GridView.builder(
           key: ValueKey<int>(_selectedTabIndex),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 2 /
                 2.5, // You can adjust this to change the width and height ratio of the item boxes
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
           ),
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           itemCount: () {
             if (_selectedTabIndex == 0) {
               return itemCounter(ItemCategory.food);
@@ -420,17 +356,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
 class ItemPage extends StatelessWidget {
   final Map<String, dynamic> itemData;
 
-  ItemPage({Key? key, required this.itemData}) : super(key: key);
-
-  String formatDate(String dateString) {
-    DateTime date = DateTime.parse(dateString);
-    return DateFormat('E, MMMM d').format(date);
-  }
-
-  String formatTime(String timeString) {
-    DateTime time = DateTime.parse(timeString);
-    return DateFormat('h:mm').format(time);
-  }
+  const ItemPage({Key? key, required this.itemData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -442,7 +368,7 @@ class ItemPage extends StatelessWidget {
             color: Colors.white,
           ),
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -455,13 +381,13 @@ class ItemPage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       itemData['name'],
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -469,7 +395,7 @@ class ItemPage extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           '\$${itemData['price']}',
                           style: TextStyle(
@@ -489,7 +415,7 @@ class ItemPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   itemData['description'], // Add the description text
                   style: TextStyle(

@@ -4,13 +4,12 @@
 import 'package:flutter/material.dart';
 import 'package:front/common_pages/school_store.dart';
 import 'package:front/student/main_menu.dart';
-import '../common_pages/daily_schedule.dart';
-import '../common_pages/duty_administrator.dart';
-import '../common_pages/food_menu.dart';
-import '../common_pages/lost_and_found.dart';
-import '../common_pages/notifications.dart';
-import '../common_pages/school_store.dart';
-import '../common_pages/sports.dart';
+import 'package:front/common_pages/daily_schedule.dart';
+import 'package:front/common_pages/duty_administrator.dart';
+import 'package:front/common_pages/food_menu.dart';
+import 'package:front/common_pages/lost_and_found.dart';
+import 'package:front/common_pages/notifications.dart';
+import 'package:front/common_pages/sports.dart';
 
 class Assets extends StatelessWidget {
   final Widget? currentPage;
@@ -239,105 +238,86 @@ class Assets extends StatelessWidget {
     required String title,
     required Color borderColor,
     required VoidCallback onTap,
-    int alertPriority = 0,
-    String date = '',
+    Icon? iconNextToArrow,
+    String? text,
   }) {
-    switch (alertPriority) {
-      case 1:
-        borderColor = const Color(0xFF51CF7C);
-        break;
-      case 2:
-        borderColor = const Color(0xFFFBD03A);
-        break;
-      case 3:
-        borderColor = const Color(0xFFF26678);
-        break;
-      default:
-        borderColor = borderColor;
-    }
-
     return Container(
-      margin: const EdgeInsets.only(left: 10, top: 20),
-      padding: const EdgeInsets.all(0),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        border: Border(
-          left: BorderSide(width: 4, color: borderColor),
+        margin: const EdgeInsets.only(left: 10, top: 20),
+        padding: const EdgeInsets.all(0),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFFFFF),
+          border: Border(
+            left: BorderSide(width: 4, color: borderColor),
+          ),
         ),
-      ),
-      child: GestureDetector(
-        onTap: onTap,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  height: 35,
-                  child: alertPriority == 0
-                      ? Container(
-                          margin: EdgeInsets.only(top: 8),
-                          child: Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: SingleChildScrollView(
-                                child: Text(
-                                  title,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
+        child: GestureDetector(
+            onTap: onTap,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      height: 35,
+                      child: text == null
+                          ? Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
                                 ),
                               ),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: SingleChildScrollView(
+                                    child: Text(
+                                      title,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  text,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xffa1a8b5),
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              date,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Color(0xffa1a8b5),
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-                alertPriority == 0
-                    ? const Icon(
-                        Icons.arrow_circle_right_outlined,
-                        color: Colors.grey,
-                        size: 30,
-                      )
-                    : Row(
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: borderColor,
-                            size: 30,
-                          ),
-                          const Icon(
+                    ),
+                    iconNextToArrow == null
+                        ? const Icon(
                             Icons.arrow_circle_right_outlined,
                             color: Colors.grey,
                             size: 30,
+                          )
+                        : Row(
+                            children: [
+                              iconNextToArrow,
+                              const Icon(
+                                Icons.arrow_circle_right_outlined,
+                                color: Colors.grey,
+                                size: 30,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                  ],
+                ),
+              ),
+            )));
   }
 
   Widget textButton(
@@ -349,12 +329,14 @@ class Assets extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Text(
             text,
-            style: TextStyle(color: color, fontSize: 12),
+            // bold font
+            style: TextStyle(
+                color: color, fontSize: 14, fontWeight: FontWeight.bold),
           ),
         ),
       ),
