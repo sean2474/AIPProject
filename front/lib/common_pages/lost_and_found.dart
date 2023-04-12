@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../storage/local_storage.dart';
 
 class LostAndFoundPage extends StatefulWidget {
-  const LostAndFoundPage({Key? key}) : super(key: key);
+  final Data? localData;
+  const LostAndFoundPage({Key? key, this.localData}) : super(key: key);
 
   @override
   LostAndFoundPageState createState() => LostAndFoundPageState();

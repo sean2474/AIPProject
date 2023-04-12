@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../storage/local_storage.dart';
 
 class FoodMenuPage extends StatefulWidget {
-  const FoodMenuPage({Key? key}) : super(key: key);
+  final Data? localData;
+  const FoodMenuPage({Key? key, this.localData}) : super(key: key);
 
   @override
   FoodMenuPageState createState() => FoodMenuPageState();

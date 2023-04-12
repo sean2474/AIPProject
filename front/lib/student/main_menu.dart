@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import '../storage/local_storage.dart';
 import '../widgets/assets.dart';
 import '../common_pages/notifications.dart';
 
 class StudentMainMenu extends StatelessWidget {
-  const StudentMainMenu({Key? key}) : super(key: key);
-
+  final Data? localData;
+  const StudentMainMenu({Key? key, this.localData}) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
+    Assets assets = Assets(currentPage: const StudentMainMenu(), localData: localData,);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(150),
@@ -25,14 +28,14 @@ class StudentMainMenu extends StatelessWidget {
                           builder: (context) => const NotificationsPage()),
                     );
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
+                  child: const Padding(
+                    padding: EdgeInsets.all(12),
                     child: MouseRegion(
                         cursor: SystemMouseCursors.click,
-                        child: const Icon(Icons.notifications)),
+                        child: Icon(Icons.notifications)),
                   ),
                 ),
-                Assets(currentPage: StudentMainMenu()).menuBarButton(context),
+                assets.menuBarButton(context),
               ],
             ),
             Positioned(
@@ -67,9 +70,7 @@ class StudentMainMenu extends StatelessWidget {
           ],
         ),
       ),
-      drawer: const Assets(
-        currentPage: StudentMainMenu(),
-      ).build(context),
+      drawer:  assets.build(context),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -79,9 +80,7 @@ class StudentMainMenu extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Assets(
-                    currentPage: StudentMainMenu(),
-                  ).boxButton(
+                  assets.boxButton(
                     context,
                     title: 'Check into Class/Event',
                     borderColor: const Color.fromRGBO(61, 185, 228, 1),
@@ -90,9 +89,7 @@ class StudentMainMenu extends StatelessWidget {
                       print('Check into Class/Event');
                     },
                   ),
-                  const Assets(
-                    currentPage: StudentMainMenu(),
-                  ).boxButton(
+                  assets.boxButton(
                     context,
                     title: 'Day Pass',
                     borderColor: const Color(0xFF79D557),
@@ -117,9 +114,7 @@ class StudentMainMenu extends StatelessWidget {
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
               margin: const EdgeInsets.all(10),
-              child: const Assets(
-                currentPage: StudentMainMenu(),
-              ).gradientRoundBorderButton(
+              child: assets.gradientRoundBorderButton(
                 context,
                 text: "I WANT TO GO SOMEWHERE",
                 isRed: false,
@@ -135,9 +130,7 @@ class StudentMainMenu extends StatelessWidget {
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
               margin: const EdgeInsets.all(10),
-              child: const Assets(
-                currentPage: StudentMainMenu(),
-              ).gradientRoundBorderButton(
+              child: assets.gradientRoundBorderButton(
                 context,
                 text: "EMERGENCY RESPONSE",
                 isRed: true,

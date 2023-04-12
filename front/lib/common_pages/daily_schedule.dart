@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../storage/local_storage.dart';
 
 class DailySchedulePage extends StatefulWidget {
-  const DailySchedulePage({Key? key}) : super(key: key);
+  final Data? localData;
+  const DailySchedulePage({Key? key, this.localData}) : super(key: key);
 
   @override
   DailySchedulePageState createState() => DailySchedulePageState();

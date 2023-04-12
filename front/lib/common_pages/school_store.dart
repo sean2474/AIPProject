@@ -1,11 +1,13 @@
 /// school_store.dart
 import 'package:flutter/material.dart';
+import '../storage/local_storage.dart';
 import '../widgets/assets.dart';
 
 enum ItemCategory { food, drink, goods, other }
 
 class SchoolStorePage extends StatefulWidget {
-  const SchoolStorePage({Key? key}) : super(key: key);
+  final Data? localData;
+  const SchoolStorePage({Key? key, this.localData}) : super(key: key);
 
   @override
   SchoolStorePageState createState() => SchoolStorePageState();
@@ -313,7 +315,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
         currentPage: SchoolStorePage(),
       ).build(context),
       body: AnimatedSwitcher(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         child: GridView.builder(
           key: ValueKey<int>(_selectedTabIndex),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

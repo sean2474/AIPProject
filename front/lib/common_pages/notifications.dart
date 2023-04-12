@@ -1,5 +1,6 @@
 /// notifications.dart
 import 'package:flutter/material.dart';
+import '../storage/local_storage.dart';
 import '../widgets/assets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,8 @@ List<Color> alertColors = [
 ];
 
 class NotificationsPage extends StatefulWidget {
-  const NotificationsPage({Key? key}) : super(key: key);
+  final Data? localData;
+  const NotificationsPage({Key? key, this.localData}) : super(key: key);
 
   @override
   NotificationsPageState createState() => NotificationsPageState();

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../storage/local_storage.dart';
 
 class DutyAdministratorPage extends StatefulWidget {
-  const DutyAdministratorPage({Key? key}) : super(key: key);
+  final Data? localData;
+  const DutyAdministratorPage({Key? key, this.localData}) : super(key: key);
 
   @override
   DutyAdministratorPageState createState() => DutyAdministratorPageState();

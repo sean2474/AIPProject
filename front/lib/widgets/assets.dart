@@ -10,10 +10,13 @@ import 'package:front/common_pages/food_menu.dart';
 import 'package:front/common_pages/lost_and_found.dart';
 import 'package:front/common_pages/notifications.dart';
 import 'package:front/common_pages/sports.dart';
+import '../storage/local_storage.dart';
 
 class Assets extends StatelessWidget {
   final Widget? currentPage;
-  const Assets({Key? key, this.currentPage}) : super(key: key);
+  final Data? localData;
+
+  const Assets({Key? key, this.currentPage, this.localData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +59,7 @@ class Assets extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.only(left: 10, right: 20, top: 20),
+              padding: const EdgeInsets.only(left: 10, right: 20, top: 20),
               height: 100,
               color: const Color(0xFF0e1b2a),
               child: Row(
@@ -96,11 +99,11 @@ class Assets extends StatelessWidget {
           onTap: () {
             Scaffold.of(innerContext).openDrawer();
           },
-          child: Padding(
-            padding: const EdgeInsets.all(12),
+          child: const Padding(
+            padding: EdgeInsets.all(12),
             child: MouseRegion(
                 cursor: SystemMouseCursors.click,
-                child: const Icon(Icons.menu)),
+                child: Icon(Icons.menu)),
           ),
         );
       },
@@ -122,43 +125,43 @@ class Assets extends StatelessWidget {
         if (title == 'DASHBOARD') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const StudentMainMenu()),
+            MaterialPageRoute(builder: (context) => StudentMainMenu(localData: localData)),
           );
         } else if (title == 'DAILY SCHEDULE') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const DailySchedulePage()),
+            MaterialPageRoute(builder: (context) => DailySchedulePage(localData: localData)),
           );
         } else if (title == 'NOTIFICATIONS') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const NotificationsPage()),
+            MaterialPageRoute(builder: (context) => NotificationsPage(localData: localData)),
           );
         } else if (title == 'DUTY ADMINISTRATOR') {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const DutyAdministratorPage()),
+                builder: (context) => DutyAdministratorPage(localData: localData)),
           );
         } else if (title == 'LOST AND FOUND') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const LostAndFoundPage()),
+            MaterialPageRoute(builder: (context) => LostAndFoundPage(localData: localData)),
           );
         } else if (title == 'FOOD MENU') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const FoodMenuPage()),
+            MaterialPageRoute(builder: (context) => FoodMenuPage(localData: localData)),
           );
         } else if (title == 'HAWKS NEST') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SchoolStorePage()),
+            MaterialPageRoute(builder: (context) => SchoolStorePage(localData: localData)),
           );
         } else if (title == 'SPORTS') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SportsPage()),
+            MaterialPageRoute(builder: (context) => SportsPage(localData: localData)),
           );
         }
       },
@@ -240,9 +243,10 @@ class Assets extends StatelessWidget {
     required VoidCallback onTap,
     Icon? iconNextToArrow,
     String? text,
+    EdgeInsets? margin = const EdgeInsets.only(left: 10, top: 20),
   }) {
     return Container(
-        margin: const EdgeInsets.only(left: 10, top: 20),
+        margin: margin,
         padding: const EdgeInsets.all(0),
         decoration: BoxDecoration(
           color: const Color(0xFFFFFFFF),
