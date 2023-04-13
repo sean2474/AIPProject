@@ -70,7 +70,14 @@ class GameInfo {
   String gameDate;
   String coachComment;
 
+  @override
+  String toString() {
+    return 'GameInfo(sportsName: $sportsName, teamCategory: $teamCategory, gameLocation: $gameLocation, opponent: $opponent, isHomeGame: $isHomeGame, matchResult: $matchResult, gameDate: $gameDate, coachComment: $coachComment)';
+  }
+
   GameInfo({required this.sportsName, required this.teamCategory, required this.gameLocation, required this.opponent, required this.isHomeGame, required this.matchResult, required this.gameDate, required this.coachComment});
+
+  copyWith({required String coachComment, required String matchResult}) {}
 }
 
 enum ItemType { food, drink, goods, other }

@@ -167,89 +167,67 @@ void main() async {
   localData.gameInfo.add(GameInfo(
     sportsName: 'Basketball',
     teamCategory: TeamCategory.varsity,
-    gameLocation: 'Home Stadium',
-    opponent: 'Rival School',
+    gameLocation: 'Sailsbury',
+    opponent: 'Sailsbury',
     isHomeGame: true,
-    matchResult: 'Win',
-    gameDate: '2023-04-10',
+    matchResult: '65-40',
+    gameDate: '2023-04-10T16:00',
     coachComment: 'Great job, team!',
   ));
 
   localData.gameInfo.add(GameInfo(
-    sportsName: 'Soccer',
+    sportsName: 'Basketball',
     teamCategory: TeamCategory.jv,
-    gameLocation: 'Away Stadium',
-    opponent: 'Another School',
-    isHomeGame: false,
-    matchResult: 'Loss',
-    gameDate: '2023-04-15',
-    coachComment: 'We need to practice more.',
+    gameLocation: 'Home',
+    opponent: 'Suffield',
+    isHomeGame: true,
+    matchResult: '74-16',
+    gameDate: '2023-04-11T16:00',
+    coachComment: 'Great job, team!',
   ));
 
 localData.gameInfo.add(GameInfo(
     sportsName: 'Basketball',
     teamCategory: TeamCategory.varsity,
-    gameLocation: 'Home Stadium',
-    opponent: 'Rival School',
+    gameLocation: 'Home',
+    opponent: 'Dual',
     isHomeGame: true,
     matchResult: 'Win',
-    gameDate: '2023-04-10',
+    gameDate: '2023-04-12T16:00',
     coachComment: 'Great job, team!',
   ));
 
   localData.gameInfo.add(GameInfo(
-    sportsName: 'Soccer',
+    sportsName: 'Basketball',
     teamCategory: TeamCategory.jv,
-    gameLocation: 'Away Stadium',
-    opponent: 'Another School',
+    gameLocation: 'Pomfret',
+    opponent: 'Pomfret',
     isHomeGame: false,
     matchResult: 'Loss',
-    gameDate: '2023-04-15',
-    coachComment: 'We need to practice more.',
+    gameDate: '2024-04-15T16:00',
+    coachComment: 'Great job, team!',
   ));
 
 localData.gameInfo.add(GameInfo(
     sportsName: 'Basketball',
     teamCategory: TeamCategory.varsity,
-    gameLocation: 'Home Stadium',
-    opponent: 'Rival School',
-    isHomeGame: true,
-    matchResult: 'Win',
-    gameDate: '2023-04-10',
-    coachComment: 'Great job, team!',
-  ));
-
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Soccer',
-    teamCategory: TeamCategory.jv,
-    gameLocation: 'Away Stadium',
-    opponent: 'Another School',
+    gameLocation: 'Blair',
+    opponent: 'Blair',
     isHomeGame: false,
-    matchResult: 'Loss',
-    gameDate: '2023-04-15',
-    coachComment: 'We need to practice more.',
+    matchResult: 'Win',
+    gameDate: '2024-04-10T16:00',
+    coachComment: 'Great job, team!',
   ));
 
   localData.gameInfo.add(GameInfo(
     sportsName: 'Basketball',
-    teamCategory: TeamCategory.varsity,
-    gameLocation: 'Home Stadium',
-    opponent: 'Rival School',
-    isHomeGame: true,
-    matchResult: 'Win',
-    gameDate: '2023-04-10',
-    coachComment: 'Great job, team!',
-  ));
-
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Soccer',
     teamCategory: TeamCategory.jv,
-    gameLocation: 'Away Stadium',
-    opponent: 'Another School',
+    gameLocation: 'Home',
+    opponent: 'Sailsbury',
     isHomeGame: false,
     matchResult: 'Loss',
-    gameDate: '2023-04-15',
-    coachComment: 'We need to practice more.',
+    gameDate: '2024-04-15T16:00',
+    coachComment: 'Great job, team!',
   ));
 
   // sort the games by date
@@ -265,22 +243,44 @@ localData.gameInfo.add(GameInfo(
   runApp(StudentManagementApp(localData: localData));
 }
 
-class StudentManagementApp extends StatelessWidget {
-  final Data? localData;
-  const StudentManagementApp({Key? key, this.localData}) : super(key: key);
+class StudentManagementApp extends StatefulWidget {
+  final Data localData;
+  const StudentManagementApp({Key? key, required this.localData}) : super(key: key);
+
+  @override
+  StudentManagementAppState createState() => StudentManagementAppState();
+}
+
+class StudentManagementAppState extends State<StudentManagementApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    print('App started');
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    print('app disposed');
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      saveRecentGamesToShow(widget.localData.settings.recentGamesToShow);
+      saveUpcomingGamesToShow(widget.localData.settings.upcomingGamesToShow);
+      saveStarredSports(widget.localData.settings.starredSports.split(' '));
+      print('Saved settings');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: StudentMainMenu(localData: localData),
+      home: StudentMainMenu(localData: widget.localData),
     );
-  }
-
-  @override
-  void dispose() {
-    saveRecentGamesToShow(localData!.settings.recentGamesToShow);
-    saveUpcomingGamesToShow(localData!.settings.upcomingGamesToShow);
-    saveStarredSports(localData!.settings.starredSports.split(' '));
   }
 }

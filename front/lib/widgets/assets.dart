@@ -14,9 +14,9 @@ import '../storage/local_storage.dart';
 
 class Assets extends StatelessWidget {
   final Widget? currentPage;
-  final Data? localData;
+  final Data localData;
 
-  const Assets({Key? key, this.currentPage, this.localData}) : super(key: key);
+  const Assets({Key? key, this.currentPage, required this.localData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

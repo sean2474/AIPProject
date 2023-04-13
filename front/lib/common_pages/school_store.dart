@@ -6,8 +6,8 @@ import '../widgets/assets.dart';
 enum ItemCategory { food, drink, goods, other }
 
 class SchoolStorePage extends StatefulWidget {
-  final Data? localData;
-  const SchoolStorePage({Key? key, this.localData}) : super(key: key);
+  final Data localData;
+  const SchoolStorePage({Key? key, required this.localData}) : super(key: key);
 
   @override
   SchoolStorePageState createState() => SchoolStorePageState();
@@ -183,6 +183,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
 
   @override
   Widget build(BuildContext context) {
+    Assets assets = Assets(currentPage: SchoolStorePage(localData: widget.localData), localData: widget.localData,);
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB),
       appBar: PreferredSize(
@@ -194,11 +195,11 @@ class SchoolStorePageState extends State<SchoolStorePage>
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
-                Assets(currentPage: SchoolStorePage()).menuBarButton(context),
+                assets.menuBarButton(context),
               ],
             ),
             Container(
-              margin: EdgeInsets.all(30),
+              margin: const EdgeInsets.all(30),
               child: const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -219,25 +220,25 @@ class SchoolStorePageState extends State<SchoolStorePage>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: const Assets().textButton(context,
+                      child: assets.textButton(context,
                           text: "FOOD",
                           onTap: () => _selectTab(0),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: const Assets().textButton(context,
+                      child: assets.textButton(context,
                           text: "DRINK",
                           onTap: () => _selectTab(1),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: const Assets().textButton(context,
+                      child: assets.textButton(context,
                           text: "GOODS",
                           onTap: () => _selectTab(2),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: const Assets().textButton(context,
+                      child: assets.textButton(context,
                           text: "OTHER",
                           onTap: () => _selectTab(3),
                           color: Colors.white),
@@ -311,9 +312,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
           ],
         ),
       ),
-      drawer: const Assets(
-        currentPage: SchoolStorePage(),
-      ).build(context),
+      drawer: assets.build(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: GridView.builder(

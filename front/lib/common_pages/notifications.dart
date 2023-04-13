@@ -15,8 +15,8 @@ List<Color> alertColors = [
 ];
 
 class NotificationsPage extends StatefulWidget {
-  final Data? localData;
-  const NotificationsPage({Key? key, this.localData}) : super(key: key);
+  final Data localData;
+  const NotificationsPage({Key? key, required this.localData}) : super(key: key);
 
   @override
   NotificationsPageState createState() => NotificationsPageState();
@@ -165,6 +165,7 @@ class NotificationsPageState extends State<NotificationsPage>
 
   @override
   Widget build(BuildContext context) {
+    Assets assets = Assets(currentPage: NotificationsPage(localData: widget.localData), localData: widget.localData,);
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB),
       appBar: PreferredSize(
@@ -176,17 +177,20 @@ class NotificationsPageState extends State<NotificationsPage>
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
-                const Assets(currentPage: NotificationsPage())
-                    .menuBarButton(context),
+                assets.menuBarButton(context),
               ],
             ),
             Container(
-                padding: const EdgeInsets.only(top: 50, left: 20),
-                margin: const EdgeInsets.only(bottom: 50, right: 30),
-                child: const Assets()
-                    .textButton(context, text: "Mark All as Read", onTap: () {
+              padding: const EdgeInsets.only(top: 50, left: 20),
+              margin: const EdgeInsets.only(bottom: 50, right: 30),
+              child: assets.textButton(
+                context, 
+                text: "Mark All as Read", 
+                onTap: () {
                   _markAllAsRead();
-                }, color: Colors.white)),
+                }, color: Colors.white
+              )
+            ),
             Positioned(
                 bottom: 5,
                 left: MediaQuery.of(context).size.width / 5,
@@ -195,13 +199,13 @@ class NotificationsPageState extends State<NotificationsPage>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: const Assets().textButton(context,
+                      child: assets.textButton(context,
                           text: "UNREAD",
                           onTap: () => _selectTab(0),
                           color: Colors.white),
                     ),
                     Expanded(
-                      child: const Assets().textButton(context,
+                      child: assets.textButton(context,
                           text: "ALL",
                           onTap: () => _selectTab(1),
                           color: Colors.white),
@@ -245,9 +249,7 @@ class NotificationsPageState extends State<NotificationsPage>
           ],
         ),
       ),
-      drawer: const Assets(
-        currentPage: NotificationsPage(),
-      ).build(context),
+      drawer: assets.build(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: ListView.builder(
@@ -258,7 +260,7 @@ class NotificationsPageState extends State<NotificationsPage>
             Map<String, dynamic> message = _selectedTabIndex == 0
                 ? unreadMessages[index]
                 : messages[index];
-            return const Assets(currentPage: NotificationsPage()).boxButton(
+            return assets.boxButton(
               context,
               title: message['title'],
               onTap: () {
@@ -267,7 +269,7 @@ class NotificationsPageState extends State<NotificationsPage>
                   context,
                   MaterialPageRoute(
                     builder: (context) => MessagePage(
-                      messageData: message,
+                      messageData: message, localData: widget.localData,
                     ),
                   ),
                 );
@@ -286,8 +288,9 @@ class NotificationsPageState extends State<NotificationsPage>
 
 class MessagePage extends StatelessWidget {
   final Map<String, dynamic> messageData;
+  final Data localData;
 
-  MessagePage({Key? key, required this.messageData}) : super(key: key);
+  const MessagePage({Key? key, required this.messageData,required this.localData}) : super(key: key);
 
   String formatDate(String dateString) {
     DateTime date = DateTime.parse(dateString);
@@ -301,6 +304,7 @@ class MessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Assets assets = Assets(currentPage: MessagePage(messageData: const {}, localData: localData), localData: localData);
     return Scaffold(
       backgroundColor: const Color(0xFFF7F6FB),
       appBar: PreferredSize(
@@ -379,11 +383,7 @@ class MessagePage extends StatelessWidget {
           ],
         ),
       ),
-      drawer: Assets(
-        currentPage: MessagePage(
-          messageData: const {},
-        ),
-      ).build(context),
+      drawer: assets.build(context),
       body: Stack(
         children: [
           Container(

@@ -4,12 +4,12 @@ import '../widgets/assets.dart';
 import '../common_pages/notifications.dart';
 
 class StudentMainMenu extends StatelessWidget {
-  final Data? localData;
-  const StudentMainMenu({Key? key, this.localData}) : super(key: key);
+  final Data localData;
+  const StudentMainMenu({Key? key, required this.localData}) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
-    Assets assets = Assets(currentPage: const StudentMainMenu(), localData: localData,);
+    Assets assets = Assets(currentPage: StudentMainMenu(localData: localData), localData: localData,);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(150),
@@ -25,7 +25,7 @@ class StudentMainMenu extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const NotificationsPage()),
+                          builder: (context) => NotificationsPage(localData: localData,)),
                     );
                   },
                   child: const Padding(
