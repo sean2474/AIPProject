@@ -69,7 +69,7 @@ void main() async {
     coachContacts: ['michael@example.com', 'sarah@example.com'],
     roster: ['Player A', 'Player B', 'Player C'],
   ));
-    localData.sportsInfo.add(SportsInfo(
+  localData.sportsInfo.add(SportsInfo(
     sportsName: 'Track and Field',
     teamCategory: TeamCategory.varsity,
     season: Season.winter,
@@ -86,7 +86,7 @@ void main() async {
     coachContacts: ['michael@example.com', 'sarah@example.com'],
     roster: ['Player A', 'Player B', 'Player C'],
   ));
-    localData.sportsInfo.add(SportsInfo(
+  localData.sportsInfo.add(SportsInfo(
     sportsName: 'Golf',
     teamCategory: TeamCategory.varsity,
     season: Season.winter,
@@ -103,9 +103,26 @@ void main() async {
     coachContacts: ['michael@example.com', 'sarah@example.com'],
     roster: ['Player A', 'Player B', 'Player C'],
   ));
-    localData.sportsInfo.add(SportsInfo(
+  localData.sportsInfo.add(SportsInfo(
     sportsName: 'Basketball',
     teamCategory: TeamCategory.varsity,
+    season: Season.winter,
+    coachNames: ['Coach John', 'Coach Jane'],
+    coachContacts: ['john@example.com', 'jane@example.com'],
+    roster: ['Player 1', 'Player 2', 'Player 3'],
+  ));
+
+  localData.sportsInfo.add(SportsInfo(
+    sportsName: 'Basketball',
+    teamCategory: TeamCategory.jv,
+    season: Season.winter,
+    coachNames: ['Coach John', 'Coach Jane'],
+    coachContacts: ['john@example.com', 'jane@example.com'],
+    roster: ['Player 1', 'Player 2', 'Player 3'],
+  ));
+  localData.sportsInfo.add(SportsInfo(
+    sportsName: 'Basketball',
+    teamCategory: TeamCategory.thirds,
     season: Season.winter,
     coachNames: ['Coach John', 'Coach Jane'],
     coachContacts: ['john@example.com', 'jane@example.com'],
@@ -120,7 +137,7 @@ void main() async {
     coachContacts: ['michael@example.com', 'sarah@example.com'],
     roster: ['Player A', 'Player B', 'Player C'],
   ));
-    localData.sportsInfo.add(SportsInfo(
+  localData.sportsInfo.add(SportsInfo(
     sportsName: 'Squash',
     teamCategory: TeamCategory.varsity,
     season: Season.winter,
@@ -137,7 +154,7 @@ void main() async {
     coachContacts: ['michael@example.com', 'sarah@example.com'],
     roster: ['Player A', 'Player B', 'Player C'],
   ));
-    localData.sportsInfo.add(SportsInfo(
+  localData.sportsInfo.add(SportsInfo(
     sportsName: 'Football',
     teamCategory: TeamCategory.varsity,
     season: Season.winter,
@@ -145,7 +162,14 @@ void main() async {
     coachContacts: ['john@example.com', 'jane@example.com'],
     roster: ['Player 1', 'Player 2', 'Player 3'],
   ));
-
+  localData.sportsInfo.add(SportsInfo(
+    sportsName: 'Soccer',
+    teamCategory: TeamCategory.varsity,
+    season: Season.fall,
+    coachNames: ['Coach Michael', 'Coach Sarah'],
+    coachContacts: ['michael@example.com', 'sarah@example.com'],
+    roster: ['Player A', 'Player B', 'Player C'],
+  ));
   localData.sportsInfo.add(SportsInfo(
     sportsName: 'Soccer',
     teamCategory: TeamCategory.jv,
@@ -154,7 +178,31 @@ void main() async {
     coachContacts: ['michael@example.com', 'sarah@example.com'],
     roster: ['Player A', 'Player B', 'Player C'],
   ));
-    localData.sportsInfo.add(SportsInfo(
+  localData.sportsInfo.add(SportsInfo(
+    sportsName: 'Soccer',
+    teamCategory: TeamCategory.thirds,
+    season: Season.fall,
+    coachNames: ['Coach Michael', 'Coach Sarah'],
+    coachContacts: ['michael@example.com', 'sarah@example.com'],
+    roster: ['Player A', 'Player B', 'Player C'],
+  ));
+  localData.sportsInfo.add(SportsInfo(
+    sportsName: 'Soccer',
+    teamCategory: TeamCategory.fourth,
+    season: Season.fall,
+    coachNames: ['Coach Michael', 'Coach Sarah'],
+    coachContacts: ['michael@example.com', 'sarah@example.com'],
+    roster: ['Player A', 'Player B', 'Player C'],
+  ));
+  localData.sportsInfo.add(SportsInfo(
+    sportsName: 'Soccer',
+    teamCategory: TeamCategory.fifth,
+    season: Season.fall,
+    coachNames: ['Coach Michael', 'Coach Sarah'],
+    coachContacts: ['michael@example.com', 'sarah@example.com'],
+    roster: ['Player A', 'Player B', 'Player C'],
+  ));
+  localData.sportsInfo.add(SportsInfo(
     sportsName: 'Cross Country',
     teamCategory: TeamCategory.varsity,
     season: Season.winter,
@@ -186,7 +234,7 @@ void main() async {
     coachComment: 'Great job, team!',
   ));
 
-localData.gameInfo.add(GameInfo(
+  localData.gameInfo.add(GameInfo(
     sportsName: 'Basketball',
     teamCategory: TeamCategory.varsity,
     gameLocation: 'Home',
@@ -208,7 +256,7 @@ localData.gameInfo.add(GameInfo(
     coachComment: 'Great job, team!',
   ));
 
-localData.gameInfo.add(GameInfo(
+  localData.gameInfo.add(GameInfo(
     sportsName: 'Basketball',
     teamCategory: TeamCategory.varsity,
     gameLocation: 'Blair',

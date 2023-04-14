@@ -7,54 +7,77 @@ import '../widgets/assets.dart';
 import 'package:intl/intl.dart';
 
 getSportsIcon(String sportsName, Color iconColor, double size) {
-    Widget icon;
-    switch (sportsName) {
-      case "football":
-        icon = Icon(Icons.sports_football, color: iconColor, size: size);
-        break;
-      case "soccer":
-        icon = Icon(Icons.sports_soccer, color: iconColor, size: size);
-        break;
-      case "cross_country":
-        icon = Icon(Icons.directions_run, color: iconColor, size: size);
-        break;
-      case "hockey":
-        icon = Icon(Icons.sports_hockey, color: iconColor, size: size);
-        break;
-      case "basketball":
-        icon = Icon(Icons.sports_basketball, color: iconColor, size: size);
-        break;
-      case "squash":
-        icon = ImageIcon(AssetImage('assets/sports_icons/squash.png'), color: iconColor, size: size);
-        break;
-      case "wrestling":
-        icon = ImageIcon(AssetImage('assets/sports_icons/wrestling.png'), color: iconColor, size: size);
-        break;
-      case "swimming":
-        icon = ImageIcon(AssetImage('assets/sports_icons/swimming.png'), color: iconColor, size: size);
-        break;
-      case "baseball":
-        icon = Icon(Icons.sports_baseball, color: iconColor, size: size);
-        break;
-      case "lacrosse":
-        icon = ImageIcon(AssetImage('assets/sports_icons/lacrosse.png'), color: iconColor, size: size);
-        break;
-      case "golf":
-        icon = Icon(Icons.sports_golf, color: iconColor, size: size);
-        break;
-      case "track_and_field":
-        icon = ImageIcon(AssetImage('assets/sports_icons/track_and_field.png'), color: iconColor, size: size);
-        break;
-      case "tennis":
-        icon = Icon(Icons.sports_tennis, color: iconColor, size: size);
-        break;
-      default:
-        icon = Icon(Icons.sports, color: iconColor, size: size);
-        break;
-    }
-    return icon;
+  Widget icon;
+  switch (sportsName) {
+    case "football":
+      icon = Icon(Icons.sports_football, color: iconColor, size: size);
+      break;
+    case "soccer":
+      icon = Icon(Icons.sports_soccer, color: iconColor, size: size);
+      break;
+    case "cross_country":
+      icon = Icon(Icons.directions_run, color: iconColor, size: size);
+      break;
+    case "hockey":
+      icon = Icon(Icons.sports_hockey, color: iconColor, size: size);
+      break;
+    case "basketball":
+      icon = Icon(Icons.sports_basketball, color: iconColor, size: size);
+      break;
+    case "squash":
+      icon = ImageIcon(AssetImage('assets/sports_icons/squash.png'), color: iconColor, size: size);
+      break;
+    case "wrestling":
+      icon = ImageIcon(AssetImage('assets/sports_icons/wrestling.png'), color: iconColor, size: size);
+      break;
+    case "swimming":
+      icon = ImageIcon(AssetImage('assets/sports_icons/swimming.png'), color: iconColor, size: size);
+      break;
+    case "baseball":
+      icon = Icon(Icons.sports_baseball, color: iconColor, size: size);
+      break;
+    case "lacrosse":
+      icon = ImageIcon(AssetImage('assets/sports_icons/lacrosse.png'), color: iconColor, size: size);
+      break;
+    case "golf":
+      icon = Icon(Icons.sports_golf, color: iconColor, size: size);
+      break;
+    case "track_and_field":
+      icon = ImageIcon(AssetImage('assets/sports_icons/track_and_field.png'), color: iconColor, size: size);
+      break;
+    case "tennis":
+      icon = Icon(Icons.sports_tennis, color: iconColor, size: size);
+      break;
+    default:
+      icon = Icon(Icons.sports, color: iconColor, size: size);
+      break;
   }
+  return icon;
+}
 
+String getCategoryToString(TeamCategory category) {
+  // enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
+  switch (category) {
+    case TeamCategory.fifth:
+      return 'Fifth';
+    case TeamCategory.fourth:
+      return 'Fourth';
+    case TeamCategory.thirds:
+      return 'Thirds';
+    case TeamCategory.thirdsBlue:
+      return 'Thirds Blue';
+    case TeamCategory.thirdsRed:
+      return 'Thirds Red';
+    case TeamCategory.jv:
+      return 'JV';
+    case TeamCategory.vb:
+      return 'Varsity B';
+    case TeamCategory.varsity:
+      return 'Varsity';
+    default:
+      return 'N/A';
+  }
+}
 class SportsPage extends StatefulWidget {
   final Data localData;
   const SportsPage({Key? key, required this.localData}) : super(key: key);
@@ -62,7 +85,7 @@ class SportsPage extends StatefulWidget {
   SportsPageState createState() => SportsPageState();
 }
 
-class SportsPageState extends State<SportsPage> with TickerProviderStateMixin {
+class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMixin {
   int _selectedTabIndex = 0;
   late final AnimationController _animationController;
   late final Animation<double> _animation;
@@ -177,30 +200,6 @@ class SportsPageState extends State<SportsPage> with TickerProviderStateMixin {
     ]);
   }
 
-  String getCategoryToString(TeamCategory category) {
-    // enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
-    switch (category) {
-      case TeamCategory.fifth:
-        return 'Fifth';
-      case TeamCategory.fourth:
-        return 'Fourth';
-      case TeamCategory.thirds:
-        return 'Thirds';
-      case TeamCategory.thirdsBlue:
-        return 'Thirds Blue';
-      case TeamCategory.thirdsRed:
-        return 'Thirds Red';
-      case TeamCategory.jv:
-        return 'JV';
-      case TeamCategory.vb:
-        return 'Varsity B';
-      case TeamCategory.varsity:
-        return 'Varsity';
-      default:
-        return 'N/A';
-    }
-  }
-
   ListView buildGamesList(List<GameInfo> gamesList, Assets assets) {
     return ListView.builder(
       key: ValueKey<int>(_selectedTabIndex),
@@ -274,6 +273,13 @@ class SportsPageState extends State<SportsPage> with TickerProviderStateMixin {
     int upcomingGametoDisplay = localData.settings.upcomingGamesToShow;
     List<SportsInfo> sportsInfo = localData.sportsInfo;
     List<GameInfo> gameInfo = localData.gameInfo;
+    Map<String, bool> sportsListMap = {};
+
+    for(SportsInfo sports in sportsInfo) {
+      sportsListMap[sports.sportsName] = true;
+    }
+
+    List<String> sportsList = sportsListMap.keys.toList();
 
     List<GameInfo> games = getGames(
       gameData: gameInfo, 
@@ -313,7 +319,7 @@ class SportsPageState extends State<SportsPage> with TickerProviderStateMixin {
                             width: MediaQuery.of(context).size.width * 0.8,
                             height: MediaQuery.of(context).size.height * 0.8, 
                             child: SettingPage(
-                              sportsData: sportsInfo,
+                              sportsList: sportsList,
                               localData: localData,
                               onDialogClosed: () {
                                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -472,24 +478,35 @@ class SportsPageState extends State<SportsPage> with TickerProviderStateMixin {
                           mainAxisSpacing: 8,
                           crossAxisSpacing: 8,
                         ), 
-                        itemCount: sportsInfo.length,
+                        itemCount: sportsList.length,
                         itemBuilder: (context, index) {
-                          final String sportsName = sportsInfo[index].sportsName.toLowerCase().replaceAll(' ', '_');
+                          final String sportsName = sportsList[index].toLowerCase().replaceAll(' ', '_');
                           const Color iconColor = Colors.black;
                           const double size = 80;
+                          List<SportsInfo> sportsCategoryList = [];
+                          sportsCategoryList = sportsInfo.where((element) => element.sportsName == sportsList[index]).toList();
                     
                           return sportsInfoBox(
-                            sports: sportsInfo[index],
+                            sports: sportsCategoryList[0],
                             child: getSportsIcon(sportsName, iconColor, size),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SportsInfoPage(
-                                    sportsData: sportsInfo[index],
-                                    gameData: gameInfo,
-                                  ),
-                                ),
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: MediaQuery.of(context).size.height,
+                                      child: SportsInfoPage(
+                                        sportsData: sportsCategoryList,
+                                        gameData: gameInfo,
+                                      ),
+                                    ),
+                                  );
+                                },
                               );
                             },
                           );
@@ -509,11 +526,11 @@ class SportsPageState extends State<SportsPage> with TickerProviderStateMixin {
 
 // 설정
 class SettingPage extends StatefulWidget {
-  final List<SportsInfo> sportsData;
+  final List<String> sportsList;
   final Data localData;
   final VoidCallback? onDialogClosed;
 
-  const SettingPage({Key? key, required this.sportsData, required this.localData, this.onDialogClosed }) : super(key: key);
+  const SettingPage({Key? key, required this.sportsList, required this.localData, this.onDialogClosed }) : super(key: key);
 
   @override
   SettingPageState createState() => SettingPageState();
@@ -521,15 +538,6 @@ class SettingPage extends StatefulWidget {
 
 class SettingPageState extends State<SettingPage> {
   Map<String, bool> selectedCards = {};
-
-  @override
-  void initState() {
-    super.initState();
-    // from localData, get starred sports
-    for (String sportsName in widget.localData.settings.starredSports.split(' ')) {
-      selectedCards[sportsName] = true;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -550,9 +558,9 @@ class SettingPageState extends State<SettingPage> {
                 mainAxisSpacing: 2,
                 crossAxisSpacing: 2,
               ),
-              itemCount: widget.sportsData.length,
+              itemCount: widget.sportsList.length,
               itemBuilder: (context, index) {
-                final String sportsName = widget.sportsData[index].sportsName.toLowerCase().replaceAll(' ', '_');
+                final String sportsName = widget.sportsList[index].toLowerCase().replaceAll(' ', '_');
                 const double size = 50;
                 bool selected = selectedCards[sportsName] ?? false;
   
@@ -580,7 +588,7 @@ class SettingPageState extends State<SettingPage> {
                         children: [
                           getSportsIcon(sportsName, selected ? Colors.yellow : Colors.black, size),
                           Text(
-                            widget.sportsData[index].sportsName,
+                            widget.sportsList[index],
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 9,
@@ -645,75 +653,198 @@ class GameInfoPage extends StatelessWidget {
   }
 }
 
-class SportsInfoPage extends StatelessWidget {
-  final SportsInfo sportsData;
+class SportsInfoPage extends StatefulWidget {
+  final List<SportsInfo> sportsData;
   final List<GameInfo> gameData;
 
   const SportsInfoPage({Key? key, required this.sportsData, required this.gameData}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    List<String> informations = ['match', 'coach', 'roster'];
+  SportsInfoPageState createState() => SportsInfoPageState();
+}
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F6FB),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Stack(
-          children: [
-            AppBar(
-              backgroundColor: const Color(0xFF0E1B2A),
-              elevation: 0,
+class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProviderStateMixin {
+  int _expandedIndex = -1;
+  int _selectedCategoryIndex = 0;
+
+  late final AnimationController _animationController;
+  late final Animation<double> _animation;
+
+   @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0, end: 1).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+    _animationController.forward();
+  }
+
+  void _selectTab(int index) {
+    setState(() {
+      _selectedCategoryIndex = index;
+    });
+    _animationController.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> informations = ['Matches', 'Coaches', 'Roster'];
+    List<String> teamCategories = widget.sportsData.map((e) => getCategoryToString(e.teamCategory)).toList();
+  
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF7F6FB),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(100),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: AppBar(
+              elevation: 5,
+              backgroundColor: Color(0xFF0E1B2A),
               automaticallyImplyLeading: false,
-            ),
-            Positioned(
-              left: 20,
-              top: 65,
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: const MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Icon(Icons.arrow_back, color: Colors.white)),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 60),
-              child: Align(
-                alignment: Alignment.topCenter,
+              centerTitle: false,
+              actions: [
+                Container(
+                  margin: EdgeInsets.only(right: 10, top: 10),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                )
+              ],
+              title: Container(
+                margin: EdgeInsets.only(top: 20, bottom: 10, left: 10),
                 child: Text(
-                  textAlign: TextAlign.center,
-                  sportsData.sportsName,
+                  widget.sportsData[0].sportsName,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
+                    fontSize: 25,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(40),
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 10, top: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: teamCategories.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      String category = entry.value;
+                      return GestureDetector(
+                        onTap: () => _selectTab(index),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                category,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Opacity(
+                                opacity: _selectedCategoryIndex == index
+                                  ? _animation.value
+                                  : 0,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF3eb9e4),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ),
+                            ]
+                          )
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
             ),
-          ],
+          ),
         ),
-      ),
-      body: ListView.builder(
-        itemCount: informations.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ExpansionTile(
-            title: Text(
-              informations[index], // Assuming title is a property of GameInfo class
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Text(
-                  gameData[index].coachComment, // Assuming description is a property of GameInfo class
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ],
-          );
-        },
+        body: Container(
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: informations.asMap().entries.map<Widget>((entry) {
+              int index = entry.key;
+              String information = entry.value;
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_expandedIndex == index) {
+                          _expandedIndex = -1;
+                        } else {
+                          _expandedIndex = index;
+                        }
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.all(16.0),
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[10],
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey,
+                            width: 0.5,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        information,
+                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  AnimatedCrossFade(
+                    crossFadeState:
+                        _expandedIndex == index ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                    duration: const Duration(milliseconds: 300),
+                    firstChild: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Text(
+                        widget.gameData[index].coachComment, // Assuming description is a property of GameInfo class
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    secondChild: const SizedBox(height: 0),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
 }
+
