@@ -340,7 +340,8 @@ class Assets extends StatelessWidget {
             text,
             // bold font
             style: TextStyle(
-                color: color, fontSize: 14, fontWeight: FontWeight.bold),
+                color: color, fontSize: 14, fontWeight: FontWeight.bold
+              ),
           ),
         ),
       ),
