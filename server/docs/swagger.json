@@ -1,0 +1,78 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Simple swagger implementation in Go HTTP",
+        "title": "Go Rest API with Swagger for school system",
+        "contact": {
+            "name": "Senya"
+        },
+        "version": "1.0"
+    },
+    "host": "172.16.130.25",
+    "basePath": "/api/",
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Auth Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Auth Login",
+                "operationId": "auth-login",
+                "parameters": [
+                    {
+                        "description": "Auth Login Input",
+                        "name": "authLogin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.AuthParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.AuthResp"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "restTypes.AuthParam": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "restTypes.AuthResp": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

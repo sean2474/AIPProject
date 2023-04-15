@@ -1,0 +1,51 @@
+basePath: /api/
+definitions:
+  restTypes.AuthParam:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  restTypes.AuthResp:
+    properties:
+      token:
+        type: string
+    type: object
+host: 172.16.130.25
+info:
+  contact:
+    name: Senya
+  description: Simple swagger implementation in Go HTTP
+  title: Go Rest API with Swagger for school system
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Auth Login
+      operationId: auth-login
+      parameters:
+      - description: Auth Login Input
+        in: body
+        name: authLogin
+        required: true
+        schema:
+          $ref: '#/definitions/restTypes.AuthParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.AuthResp'
+      summary: Auth Login
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
