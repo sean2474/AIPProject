@@ -65,7 +65,7 @@ class DailySchedulePageState extends State<DailySchedulePage> {
       body: Column(
         children: [
           Expanded(
-            child: SizedBox(
+            child: Container(
               height: 1674,
               child: PageView.builder(
                 controller: _controller,

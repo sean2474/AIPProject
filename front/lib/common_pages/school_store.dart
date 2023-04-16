@@ -191,7 +191,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
         child: Stack(
           children: [
             AppBar(
-              backgroundColor: Color(0xFF0E1B2A),
+              backgroundColor: const Color(0xFF0E1B2A),
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
