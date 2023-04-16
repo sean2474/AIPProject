@@ -58,6 +58,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/sports_icons/
+    - assets/daily_schedule/
     - assets/
 
   # The following line ensures that the Material Icons font is

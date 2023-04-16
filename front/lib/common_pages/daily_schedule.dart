@@ -13,12 +13,12 @@ class DailySchedulePage extends StatefulWidget {
 class DailySchedulePageState extends State<DailySchedulePage> {
   int _currentIndex = 0;
 
-  PageController _controller = PageController(initialPage: 0);
+  final PageController _controller = PageController(initialPage: 0);
 
   void _scrollToIndex(int index) {
     _controller.animateToPage(
       index,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       curve: Curves.ease,
     );
     setState(() {
@@ -29,32 +29,37 @@ class DailySchedulePageState extends State<DailySchedulePage> {
   @override
   Widget build(BuildContext context) {
     Data localData = widget.localData;
-    // get dailyschedul photo
-    // localData.dailySchedules[index].imagePath;
-    // localData.dailySchedules[index].date;
     Assets assets = Assets(localData: localData);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(17, 32, 51, 1),
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text('flutt Schedule'),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              // Handle notification icon tap
-              print('notification');
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(12),
-              child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: Icon(Icons.notifications)),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(75),
+        child: Stack(
+          children: [
+            AppBar(
+              backgroundColor: const Color(0xFF0E1B2A),
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              actions: [
+                assets.menuBarButton(context),
+              ],
             ),
-          ),
-          assets.menuBarButton(context),
-        ],
+            Container(
+              margin: const EdgeInsets.only(bottom: 15, left: 30),
+              child: const Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  "Daily Schedule",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       drawer: assets.build(context),
       body: Column(
@@ -72,9 +77,9 @@ class DailySchedulePageState extends State<DailySchedulePage> {
                 },
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child:
-                        Image.asset(localData.dailySchedules[index].imagePath),
+                      Image.asset(localData.dailySchedules[index].imagePath),
                   );
                 },
               ),

@@ -278,6 +278,15 @@ void main() async {
     coachComment: 'Great job, team!',
   ));
 
+  for (int i = 1; i <= 5; i++) {
+    localData.dailySchedules.add(
+      DailySchedule(
+        id: i,
+        date: '2023-04-0$i',
+        imagePath: 'assets/daily_schedule/IMG_0992.jpeg',
+      ),
+    );
+  }
   // sort the games by date
   localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
   // sort the sports by name
