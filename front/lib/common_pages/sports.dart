@@ -226,7 +226,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
                       width: MediaQuery.of(context).size.width *
                           0.8, // Adjust the width of the modal
                       height: MediaQuery.of(context).size.height *
-                          0.5, // Adjust the height of the modal
+                          0.6, // Adjust the height of the modal
                       child: GameInfoPage(gameData: gamesList[index]),
                     ),
                   );
@@ -319,7 +319,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
                           ),
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.8, 
+                            height: MediaQuery.of(context).size.height * 0.6, 
                             child: SettingPage(
                               sportsList: sportsList,
                               localData: localData,
@@ -501,7 +501,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
                                     ),
                                     child: SizedBox(
                                       width: MediaQuery.of(context).size.width,
-                                      height: MediaQuery.of(context).size.height,
+                                      height: MediaQuery.of(context).size.height * 0.6,
                                       child: SportsInfoPage(
                                         sportsData: sportsCategoryList,
                                         gameData: gameInfo,
@@ -543,123 +543,151 @@ class SettingPageState extends State<SettingPage> {
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
-      ),
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      gameCountButton('Recent Games To Display', context, widget.localData),
-                      gameCountButton('Upcoming Games To Display', context, widget.localData),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 1,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.grey,
-                        width: 0.5,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: Scaffold(
+        backgroundColor: Color(0xFFF7F6FB),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: AppBar(
+                  elevation: 5,
+                  centerTitle: false,
+                  title: Container(
+                    margin: EdgeInsets.only(left: 15, top: 4),
+                    child: const Text(
+                      'Settings',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
+                  automaticallyImplyLeading: false,
+                  backgroundColor: const Color(0xFF0E1B2A),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    'Select the sports that you want to mark.\nReceive the game information only what you want!',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
+              ),
+              Positioned(
+                top: 16,
+                right: 15,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(
+                    Icons.close,
+                    size: 30, // You can adjust the icon size here
+                    color: Colors.white,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 2,
-                      crossAxisSpacing: 2,
+              ),
+            ],
+          )
+        ),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        gameCountButton('Recent Games To Display', context, widget.localData),
+                        gameCountButton('Upcoming Games To Display', context, widget.localData),
+                      ],
                     ),
-                    itemCount: widget.sportsList.length,
-                    itemBuilder: (context, index) {
-                      final String sportsName = widget.sportsList[index].toLowerCase().replaceAll(' ', '_');
-                      bool selected = selectedCards[sportsName] ?? false;
-
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedCards[sportsName] = !selected;
-                          });
-                        },
-                        child: Card(
-                          elevation: selected ? 5 : 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            side: BorderSide(
-                              color: selected ? Colors.yellow : Colors.transparent,
-                              width: 1.0,
-                            ),
-                          ),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                getSportsIcon(sportsName, selected ? Colors.yellow : Colors.black, 70),
-                                Text(
-                                  widget.sportsList[index],
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    height: 1,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5,
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 10,
-            right: 10,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.close,
-                size: 24, // You can adjust the icon size here
+                  Container(
+                    margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Select the sports that you want to mark.\nReceive the game information only what you want!',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 2,
+                        crossAxisSpacing: 2,
+                      ),
+                      itemCount: widget.sportsList.length,
+                      itemBuilder: (context, index) {
+                        final String sportsName = widget.sportsList[index].toLowerCase().replaceAll(' ', '_');
+                        bool selected = selectedCards[sportsName] ?? false;
+      
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedCards[sportsName] = !selected;
+                            });
+                          },
+                          child: Card(
+                            elevation: selected ? 5 : 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              side: BorderSide(
+                                color: selected ? Colors.yellow : Colors.transparent,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  getSportsIcon(sportsName, selected ? Colors.yellow : Colors.black, 70),
+                                  Text(
+                                    widget.sportsList[index],
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -790,8 +818,9 @@ class GameInfoPage extends StatelessWidget {
               ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: 10),
                   Text(
-                    '  ${gameData.sportsName}}',
+                    '  ${gameData.sportsName} - ${getCategoryToString(gameData.teamCategory)}',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ), 
                   SizedBox(height: 10),
@@ -805,6 +834,7 @@ class GameInfoPage extends StatelessWidget {
               : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: 10),
                   Text(
                     '  ${gameData.sportsName} - ${getCategoryToString(gameData.teamCategory)}',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -1012,8 +1042,6 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
           return const SizedBox.shrink();
       }
     }
-
-
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
