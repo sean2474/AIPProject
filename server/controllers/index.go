@@ -3,100 +3,111 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"server/authService"
+	_ "server/authService"
+	"server/databaseControllers"
+	"server/databaseTypes"
 	"server/restTypes"
-	"strings"
+	_ "strings"
 )
 
-// writeJSON provides function to format output response in JSON
-func writeJSON(w http.ResponseWriter, code int, payload interface{}) {
-	resp, err := json.Marshal(payload)
+func writeJson(w http.ResponseWriter, resp interface{}) {
+	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		log.Println("Error Parsing JSON")
-	}
-
-	w.Header().Set("Content-type", "application/json")
-	w.WriteHeader(code)
-	w.Write(resp)
-}
-
-func decodePost(r *http.Request, structure interface{}) {
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(structure)
-	if err != nil {
-		log.Println("Error parsing post data")
-	}
-}
-
-// basicAuthMW is middleware function to check whether user is authenticated or not
-// actually you could write better code for this function
-func basicAuthMW(w http.ResponseWriter, r *http.Request) map[string]string {
-	errorAuth := restTypes.ErrorResp{
-		Error: "Unauthorized access",
-	}
-
-	header := r.Header.Get("Authorization")
-	if header == "" {
-		writeJSON(w, 401, errorAuth)
-		return map[string]string{}
-	}
-
-	apiKey := strings.Split(header, " ")
-
-	if len(apiKey) != 2 {
-		writeJSON(w, 401, errorAuth)
-		return map[string]string{}
-	}
-
-	if apiKey[0] != "Basic" {
-		writeJSON(w, 401, errorAuth)
-		return map[string]string{}
-	}
-
-	users := map[string]map[string]string{
-		"28b662d883b6d76fd96e4ddc5e9ba780": map[string]string{
-			"username": "linggar",
-			"fullname": "Linggar Primahastoko",
-		},
-	}
-
-	if _, ok := users[apiKey[1]]; !ok {
-		writeJSON(w, 401, errorAuth)
-		return map[string]string{}
-	}
-
-	return users[apiKey[1]]
-}
-
-// AuthLogin godoc
-// @Summary Auth Login
-// @Description Auth Login
-// @Tags auth
-// @ID auth-login
-// @Accept  json
-// @Produce  json
-// @Param authLogin body restTypes.AuthParam true "Auth Login Input"
-// @Success 200 {object} restTypes.AuthResp
-// @Router /auth/login [post]
-func AuthLogin(w http.ResponseWriter, r *http.Request) {
-	var param restTypes.AuthParam
-	decodePost(r, &param)
-	token, err := authService.Login(param.Username, param.Password)
-	if err != nil {
-		failResp := restTypes.ErrorResp{
-			Error: "Wrong username/password",
-		}
-		writeJSON(w, 401, failResp)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	respAuth := restTypes.AuthResp{
-		Token: token,
-	}
-	writeJSON(w, 200, respAuth)
+
+	// Send response
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResp)
 }
 
-func SayHello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Привет!")
+// LoginHandler handles user authentication and generates an authentication token.
+//
+// @Summary Authenticate user
+// @Description Login to the system and receive an authentication token.
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param login body restTypes.LoginRequest true "User login information"
+// @Success 200 {object} restTypes.LoginResponse
+// @Failure 401 {object} restTypes.ErrorResponse
+// @Router /auth/login [post]
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	// Check request method
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse request body
+	var req restTypes.LoginRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+
+	// Validate credentials
+	user, e := databaseControllers.GetUserByEmail(req.Username)
+	if e.Code != 0 {
+		writeJson(w, e)
+		return
+	}
+	s, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 4)
+	fmt.Println(string(s))
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	if err != nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// Generate JWT token
+	token, err := databaseControllers.GenerateToken(user.ID)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// Build response
+	resp := restTypes.LoginResponse{
+		Status:  "success",
+		Message: "Login successful",
+		Token:   token,
+		UserData: &databaseTypes.User{
+			ID:        user.ID,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Email:     user.Email,
+			UserType:  user.UserType,
+		},
+	}
+	writeJson(w, resp)
+
+}
+
+// TestToken greets the user with "Hello, {userName}!" if he's authorized
+// @Summary Greet the user if he's authorized
+// @Description Greets the user with "Hello, {userName}!" if he's authorized
+// @Tags Authentication
+// @Accept  json
+// @Produce  json
+// @Security Bearer
+// @Success 200 {string} string "Hello, {userName}!"
+// @Failure 401 {object} restTypes.ErrorResponse "Unauthorized"
+// @Failure 500 {object} restTypes.ErrorResponse "Internal Server Error"
+// @Router /auth/testToken [get]
+// @Router /auth/testToken [post]
+func TestToken(w http.ResponseWriter, r *http.Request) {
+	user, err := databaseControllers.IsAuthorized(w, r)
+	if err.Code == 0 {
+		fmt.Fprintf(w, "HELLO, "+user.FirstName)
+		return
+	}
+	writeJson(w, err)
+
 }

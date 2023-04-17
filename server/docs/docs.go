@@ -20,7 +20,7 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "Auth Login",
+                "description": "Login to the system and receive an authentication token.",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,18 +28,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "Authentication"
                 ],
-                "summary": "Auth Login",
-                "operationId": "auth-login",
+                "summary": "Authenticate user",
                 "parameters": [
                     {
-                        "description": "Auth Login Input",
-                        "name": "authLogin",
+                        "description": "User login information",
+                        "name": "login",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restTypes.AuthParam"
+                            "$ref": "#/definitions/restTypes.LoginRequest"
                         }
                     }
                 ],
@@ -47,7 +46,91 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restTypes.AuthResp"
+                            "$ref": "#/definitions/restTypes.LoginResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/testToken": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Greets the user with \"Hello, {userName}!\" if he's authorized",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Greet the user if he's authorized",
+                "responses": {
+                    "200": {
+                        "description": "Hello, {userName}!",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Greets the user with \"Hello, {userName}!\" if he's authorized",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Greet the user if he's authorized",
+                "responses": {
+                    "200": {
+                        "description": "Hello, {userName}!",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
                         }
                     }
                 }
@@ -55,28 +138,95 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "restTypes.AuthParam": {
+        "databaseTypes.User": {
             "type": "object",
             "properties": {
-                "password": {
-                    "type": "string"
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
                 },
-                "username": {
+                "first_name": {
+                    "type": "string",
+                    "example": "John"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "last_name": {
+                    "type": "string",
+                    "example": "Doe"
+                },
+                "rfid_token": {
+                    "type": "string",
+                    "example": "RFID_TOKEN_12345"
+                },
+                "user_type": {
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "restTypes.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "HTTP status code of the error response.\n\nExample: 400\n\nRequired: true",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "Error message.\n\nExample: Invalid request\n\nRequired: true",
                     "type": "string"
                 }
             }
         },
-        "restTypes.AuthResp": {
+        "restTypes.LoginRequest": {
             "type": "object",
             "properties": {
+                "password": {
+                    "description": "User's password.\n\nExample: mypassword123\n\nRequired: true",
+                    "type": "string",
+                    "example": "password1"
+                },
+                "username": {
+                    "description": "User's email or username.\n\nRequired: true",
+                    "type": "string",
+                    "example": "johnsmith@example.com"
+                }
+            }
+        },
+        "restTypes.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "Message indicating the result of the login attempt.\n\nExample: Login successful\n\nRequired: true",
+                    "type": "string",
+                    "example": "Login successful"
+                },
+                "status": {
+                    "description": "Status of the login attempt.\n\nExample: success\n\nRequired: true",
+                    "type": "string",
+                    "example": "success"
+                },
                 "token": {
-                    "type": "string"
+                    "description": "JWT token to be used for authentication in future requests.\n\nExample: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n\nRequired: true",
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                },
+                "user_data": {
+                    "description": "User data associated with the logged-in user.\n\nRequired: false\n@name User\n@in body\n@description User data associated with the logged-in user.\n\nExample: {\"id\":123,\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"user@example.com\",\"user_type\":\"student\"}",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/databaseTypes.User"
+                        }
+                    ]
                 }
             }
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -87,8 +237,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "172.16.130.25",
-	BasePath:         "/api/",
+	Host:             "",
+	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Go Rest API with Swagger for school system",
 	Description:      "Simple swagger implementation in Go HTTP",

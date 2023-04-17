@@ -1,18 +1,106 @@
-basePath: /api/
+basePath: /api
 definitions:
-  restTypes.AuthParam:
+  databaseTypes.User:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      first_name:
+        example: John
+        type: string
+      id:
+        example: 1
+        type: integer
+      last_name:
+        example: Doe
+        type: string
+      rfid_token:
+        example: RFID_TOKEN_12345
+        type: string
+      user_type:
+        example: 2
+        type: integer
+    type: object
+  restTypes.ErrorResponse:
+    properties:
+      code:
+        description: |-
+          HTTP status code of the error response.
+
+          Example: 400
+
+          Required: true
+        type: integer
+      message:
+        description: |-
+          Error message.
+
+          Example: Invalid request
+
+          Required: true
+        type: string
+    type: object
+  restTypes.LoginRequest:
     properties:
       password:
+        description: |-
+          User's password.
+
+          Example: mypassword123
+
+          Required: true
+        example: password1
         type: string
       username:
+        description: |-
+          User's email or username.
+
+          Required: true
+        example: johnsmith@example.com
         type: string
     type: object
-  restTypes.AuthResp:
+  restTypes.LoginResponse:
     properties:
-      token:
+      message:
+        description: |-
+          Message indicating the result of the login attempt.
+
+          Example: Login successful
+
+          Required: true
+        example: Login successful
         type: string
+      status:
+        description: |-
+          Status of the login attempt.
+
+          Example: success
+
+          Required: true
+        example: success
+        type: string
+      token:
+        description: |-
+          JWT token to be used for authentication in future requests.
+
+          Example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+          Required: true
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        type: string
+      user_data:
+        allOf:
+        - $ref: '#/definitions/databaseTypes.User'
+        description: |-
+          User data associated with the logged-in user.
+
+          Required: false
+          @name User
+          @in body
+          @description User data associated with the logged-in user.
+
+          Example: {"id":123,"first_name":"John","last_name":"Doe","email":"user@example.com","user_type":"student"}
     type: object
-host: 172.16.130.25
 info:
   contact:
     name: Senya
@@ -24,27 +112,80 @@ paths:
     post:
       consumes:
       - application/json
-      description: Auth Login
-      operationId: auth-login
+      description: Login to the system and receive an authentication token.
       parameters:
-      - description: Auth Login Input
+      - description: User login information
         in: body
-        name: authLogin
+        name: login
         required: true
         schema:
-          $ref: '#/definitions/restTypes.AuthParam'
+          $ref: '#/definitions/restTypes.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restTypes.AuthResp'
-      summary: Auth Login
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+      summary: Authenticate user
       tags:
-      - auth
+      - Authentication
+  /auth/testToken:
+    get:
+      consumes:
+      - application/json
+      description: Greets the user with "Hello, {userName}!" if he's authorized
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hello, {userName}!
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Greet the user if he's authorized
+      tags:
+      - Authentication
+    post:
+      consumes:
+      - application/json
+      description: Greets the user with "Hello, {userName}!" if he's authorized
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hello, {userName}!
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Greet the user if he's authorized
+      tags:
+      - Authentication
 securityDefinitions:
-  ApiKeyAuth:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
     in: header
     name: Authorization
     type: apiKey

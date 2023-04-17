@@ -11,20 +11,19 @@ import (
 // @title Go Rest API with Swagger for school system
 // @version 1.0
 // @description Simple swagger implementation in Go HTTP
-
 // @contact.name Senya
-
-// @securityDefinitions.apikey ApiKeyAuth
+// @BasePath /api
+// @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
-
-// @host 172.16.130.25
-// @BasePath /api/
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
-	http.HandleFunc("/auth/login", controllers.AuthLogin)
-	http.HandleFunc("/", controllers.SayHello)
+	http.HandleFunc("/auth/login", controllers.LoginHandler)
+	http.HandleFunc("/auth/testToken", controllers.TestToken)
 
 	http.ListenAndServe(":8082", nil)
+	//fmt.Println(databaseControllers.GetUserByEmail("johnsmith@example.com"))
+
 }
