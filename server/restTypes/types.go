@@ -68,3 +68,8 @@ type ErrorResponse struct {
 	// Required: true
 	Message string `json:"message"`
 }
+
+type DeleteResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}

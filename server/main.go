@@ -19,9 +19,9 @@ import (
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
-
 	http.HandleFunc("/auth/login", controllers.LoginHandler)
 	http.HandleFunc("/auth/testToken", controllers.TestToken)
+	http.HandleFunc("/food-menu/", controllers.FoodMenuByHandler)
 
 	http.ListenAndServe(":8082", nil)
 	//fmt.Println(databaseControllers.GetUserByEmail("johnsmith@example.com"))

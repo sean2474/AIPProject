@@ -135,9 +135,250 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/food-menu/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves the breakfast, lunch, and dinner menu for the current date from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FoodMenu"
+                ],
+                "summary": "Get the food menu for the current date",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/databaseTypes.FoodMenu"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a new food menu to the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FoodMenu"
+                ],
+                "summary": "Add a food menu",
+                "operationId": "addFoodMenu",
+                "parameters": [
+                    {
+                        "description": "Food menu to add",
+                        "name": "foodMenu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/databaseTypes.FoodMenu"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/food-menu/{date}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a food menu from the database for a given date",
+                "tags": [
+                    "FoodMenu"
+                ],
+                "summary": "Delete a food menu",
+                "operationId": "deleteFoodMenu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The date of the food menu to delete",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.DeleteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/food-menu/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update the food menu with the specified ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FoodMenu"
+                ],
+                "summary": "Update a food menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the food menu to update",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New values for the food menu",
+                        "name": "foodMenu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/databaseTypes.FoodMenu"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "databaseTypes.FoodMenu": {
+            "type": "object",
+            "properties": {
+                "breakfast": {
+                    "type": "string",
+                    "example": "Omelette"
+                },
+                "date": {
+                    "type": "string",
+                    "example": "2022-01-01"
+                },
+                "dinner": {
+                    "type": "string",
+                    "example": "Grilled chicken"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "lunch": {
+                    "type": "string",
+                    "example": "Pasta"
+                }
+            }
+        },
         "databaseTypes.User": {
             "type": "object",
             "properties": {
@@ -164,6 +405,17 @@ const docTemplate = `{
                 "user_type": {
                     "type": "integer",
                     "example": 2
+                }
+            }
+        },
+        "restTypes.DeleteResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },

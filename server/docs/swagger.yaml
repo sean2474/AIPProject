@@ -1,5 +1,23 @@
 basePath: /api
 definitions:
+  databaseTypes.FoodMenu:
+    properties:
+      breakfast:
+        example: Omelette
+        type: string
+      date:
+        example: "2022-01-01"
+        type: string
+      dinner:
+        example: Grilled chicken
+        type: string
+      id:
+        example: 1
+        type: integer
+      lunch:
+        example: Pasta
+        type: string
+    type: object
   databaseTypes.User:
     properties:
       email:
@@ -20,6 +38,13 @@ definitions:
       user_type:
         example: 2
         type: integer
+    type: object
+  restTypes.DeleteResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
     type: object
   restTypes.ErrorResponse:
     properties:
@@ -183,6 +208,145 @@ paths:
       summary: Greet the user if he's authorized
       tags:
       - Authentication
+  /food-menu/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the breakfast, lunch, and dinner menu for the current
+        date from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/databaseTypes.FoodMenu'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get the food menu for the current date
+      tags:
+      - FoodMenu
+    post:
+      consumes:
+      - application/json
+      description: Add a new food menu to the database
+      operationId: addFoodMenu
+      parameters:
+      - description: Food menu to add
+        in: body
+        name: foodMenu
+        required: true
+        schema:
+          $ref: '#/definitions/databaseTypes.FoodMenu'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add a food menu
+      tags:
+      - FoodMenu
+  /food-menu/{date}:
+    delete:
+      description: Delete a food menu from the database for a given date
+      operationId: deleteFoodMenu
+      parameters:
+      - description: The date of the food menu to delete
+        in: path
+        name: date
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.DeleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete a food menu
+      tags:
+      - FoodMenu
+  /food-menu/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update the food menu with the specified ID
+      parameters:
+      - description: ID of the food menu to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New values for the food menu
+        in: body
+        name: foodMenu
+        required: true
+        schema:
+          $ref: '#/definitions/databaseTypes.FoodMenu'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Update a food menu
+      tags:
+      - FoodMenu
 securityDefinitions:
   Bearer:
     description: Type "Bearer" followed by a space and JWT token.
