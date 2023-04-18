@@ -700,50 +700,56 @@ class SettingPageState extends State<SettingPage> {
         Text(
           title,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () {
-                if (title == 'Recent Games To Display') {
-                  if (localData.settings.recentGamesToShow > 0) {
-                    setState(() {
-                      localData.settings.recentGamesToShow--;
-                    });
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.3,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  if (title == 'Recent Games To Display') {
+                    if (localData.settings.recentGamesToShow > 0) {
+                      setState(() {
+                        localData.settings.recentGamesToShow--;
+                      });
+                    }
+                  } else if (title == 'Upcoming Games To Display') {
+                    if (localData.settings.upcomingGamesToShow > 0) {
+                      setState(() {
+                        localData.settings.upcomingGamesToShow--;
+                      });
+                    }
                   }
-                } else if (title == 'Upcoming Games To Display') {
-                  if (localData.settings.upcomingGamesToShow > 0) {
-                    setState(() {
-                      localData.settings.upcomingGamesToShow--;
-                    });
+                },
+                child: const Icon(Icons.remove, size: 25),
+              ),
+              Text(
+                title == 'Recent Games To Display' ? localData.settings.recentGamesToShow.toString() : localData.settings.upcomingGamesToShow.toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  if (title == 'Recent Games To Display') {
+                    if (localData.settings.recentGamesToShow < 5) {
+                      setState(() {
+                        localData.settings.recentGamesToShow++;
+                      });
+                    }
+                  } else if (title == 'Upcoming Games To Display') {
+                    if (localData.settings.upcomingGamesToShow < 5) {
+                      setState(() {
+                        localData.settings.upcomingGamesToShow++;
+                      });
+                    }
                   }
-                }
-              },
-              icon: const Icon(Icons.remove),
-            ),
-            Text(
-              title == 'Recent Games To Display' ? localData.settings.recentGamesToShow.toString() : localData.settings.upcomingGamesToShow.toString(),
-            ),
-            IconButton(
-              onPressed: () {
-                if (title == 'Recent Games To Display') {
-                  if (localData.settings.recentGamesToShow < 5) {
-                    setState(() {
-                      localData.settings.recentGamesToShow++;
-                    });
-                  }
-                } else if (title == 'Upcoming Games To Display') {
-                  if (localData.settings.upcomingGamesToShow < 5) {
-                    setState(() {
-                      localData.settings.upcomingGamesToShow++;
-                    });
-                  }
-                }
-              },
-              icon: const Icon(Icons.add),
-            ),
-          ],
+                },
+                child: const Icon(Icons.add, size: 25),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -911,10 +917,12 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
               child: child,
             ),
           ),
-          if (_expandedIndex == index)
-            SizedBox(
-              height: _animation.value == 1 ? 0 : double.infinity,
+          if (_expandedIndex == index) Positioned.fill(
+            child: IgnorePointer(
+              ignoring: _animation.value != 1,
+              child: Container(color: Colors.transparent),
             ),
+          ),
         ],
       ),
     );
