@@ -57,9 +57,10 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/
     - assets/sports_icons/
     - assets/daily_schedule/
-    - assets/
+    - assets/lost_and_found/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

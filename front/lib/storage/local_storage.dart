@@ -34,6 +34,7 @@ class FoodMenu {
   FoodMenu({required this.id, required this.date, required this.breakFast, required this.lunch, required this.dinner});
 }
 
+enum FoundStatus { returned, lost, na }
 class LostItem {
   int id;
   String name;
@@ -41,7 +42,7 @@ class LostItem {
   String imagePath;
   String locationFound;
   String dateFound;
-  String status;
+  FoundStatus status;
 
   LostItem({required this.id, required this.name, required this.description, required this.imagePath, required this.locationFound, required this.dateFound, required this.status});
 }
@@ -87,8 +88,8 @@ class StoreItem {
   ItemType itemType;
   String description;
   String imagePath;
-  String price;
-  String stock;
+  int price;
+  int stock;
   String dateAdded;
 
   StoreItem({required this.id, required this.name, required this.itemType, required this.description, required this.imagePath, required this.price, required this.stock, required this.dateAdded});
@@ -98,8 +99,9 @@ class Settings {
   int recentGamesToShow;
   int upcomingGamesToShow;
   String starredSports;
+  String sortLostAndFoundBy;
 
-  Settings({required this.recentGamesToShow, required this.upcomingGamesToShow, required this.starredSports});
+  Settings({required this.recentGamesToShow, required this.upcomingGamesToShow, required this.starredSports, required this.sortLostAndFoundBy});
 }
 class Data {
   List<User> users;
@@ -111,6 +113,29 @@ class Data {
   List<GameInfo> gameInfo;
 
   Settings settings;
+
+  void sortLostAndFoundBy(String sortType) {
+    switch (sortType) {
+      case "date":
+        lostAndFounds.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
+        lostAndFounds.sort((a, b) => a.name.compareTo(b.name));
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+        break;
+      case "status":
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+        lostAndFounds.sort((a, b) => a.name.compareTo(b.name));
+        lostAndFounds.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
+        break;
+      case "name":
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+        lostAndFounds.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
+        lostAndFounds.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      default:
+        print("sortLostAndFoundBy: no sort type found");
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+    }
+  }
   
   Data({required this.users, required this.dailySchedules, required this.foodMenus, required this.lostAndFounds, required this.storeItems, required this.sportsInfo, required this.gameInfo, required this.settings});
 }

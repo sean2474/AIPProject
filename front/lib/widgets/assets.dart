@@ -347,4 +347,47 @@ class Assets extends StatelessWidget {
       ),
     );
   }
+
+  Widget drawAppBarSelector({required BuildContext context, required List<String> titles, required Function(int) selectTab, required Animation<double> animation, required int selectedIndex}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: titles.asMap().entries.map((entry) {
+        int index = entry.key;
+        String category = entry.value;
+        return GestureDetector(
+          onTap: () => selectTab(index),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  category,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Opacity(
+                  opacity: selectedIndex == index
+                    ? animation.value
+                    : 0,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3eb9e4),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ]
+            )
+          ),
+        );
+      }).toList(),
+    );
+  }
 }

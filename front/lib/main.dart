@@ -1,5 +1,6 @@
 /// main.dart
 import 'package:flutter/material.dart';
+import 'package:front/common_pages/school_store.dart';
 import 'package:front/storage/local_storage.dart';
 import 'student/main_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,21 @@ Future<void> saveRecentGamesToShow(int recentGames) async {
 
 Future<void> saveUpcomingGamesToShow(int upcomingGames) async {
   saveValue('numbersOfUpcomingGamesResultToShow', upcomingGames.toString());
+}
+
+Future<void> saveSortLostAndFoundBy(String sort) async {
+  saveValue('sortLostAndFoundBy', sort);
+}
+
+Future<String?> getSortLostAndFoundBy() async {
+  return await readValue('sortLostAndFoundBy');
+}
+
+Future<void> saveSettings(Settings settings) async {
+  saveRecentGamesToShow(settings.recentGamesToShow);
+  saveUpcomingGamesToShow(settings.upcomingGamesToShow);
+  saveStarredSports(settings.starredSports.split(" "));
+  saveSortLostAndFoundBy(settings.sortLostAndFoundBy);
 }
 
 Future<int> getRecentGamesToShow() async {
@@ -49,7 +65,7 @@ Future<int> getUpcomingGamesToShow() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Data localData = Data(users: [], dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: ''));
+  Data localData = Data(users: [], dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'));
 
   // Sports data
   localData.sportsInfo.add(SportsInfo(
@@ -287,6 +303,85 @@ void main() async {
       ),
     );
   }
+  
+  // generate lost and found example datas
+  for (int i = 1; i <= 5; i++) {
+    localData.lostAndFounds.add(
+      LostItem(
+        id: i,
+        name: 'Lost item $i',
+        dateFound: '2023-04-0$i',
+        locationFound: 'Location $i',
+        status: FoundStatus.lost,
+        imagePath: 'assets/lost_and_found/diamond.jpg',
+        description: 'This is lost item $i',
+      ),
+    );
+  }
+  for (int i = 1; i <= 5; i++) {
+    localData.lostAndFounds.add(
+      LostItem(
+        id: i,
+        name: 'Lost item $i',
+        dateFound: '2023-04-0$i',
+        locationFound: 'Location $i',
+        status: FoundStatus.returned,
+        imagePath: 'assets/lost_and_found/diamond.jpg',
+        description: 'This is lost item $i',
+      ),
+    );
+  }
+
+  // generate store example datas
+  localData.storeItems.add(
+    StoreItem(
+      id: 1,
+      name: 'pizza',
+      itemType: ItemType.food,
+      price: 100,
+      stock: 10,
+      description: 'some description',
+      imagePath: 'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
+      dateAdded: '2023-03-31 09:00:00',
+    ),
+  );
+  localData.storeItems.add(
+    StoreItem(
+      id: 2,
+      name: 'gatorade',
+      itemType: ItemType.drink,
+      price: 100,
+      stock: 10,
+      description: 'some description',
+      imagePath: 'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
+      dateAdded: '2023-03-31 09:00:00',
+    ),
+  );
+  localData.storeItems.add(
+    StoreItem(
+      id: 3,
+      name: 'chicken',
+      itemType: ItemType.food,
+      price: 100,
+      stock: 10,
+      description: 'some description',
+      imagePath: 'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
+      dateAdded: '2023-03-31 09:00:00',
+    ),
+  );
+  localData.storeItems.add(
+    StoreItem(
+      id: 5,
+      name: 'avon hoodie',
+      itemType: ItemType.goods,
+      price: 100,
+      stock: 10,
+      description: 'some description',
+      imagePath: 'https://cdn.newspenguin.com/news/photo/202007/2106_6019_954.jpg',
+      dateAdded: '2023-03-31 09:00:00',
+    ),
+  );
+  
   // sort the games by date
   localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
   // sort the sports by name
@@ -312,7 +407,6 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   @override
   void initState() {
     super.initState();
-    print('App started');
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -326,10 +420,7 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
-      saveRecentGamesToShow(widget.localData.settings.recentGamesToShow);
-      saveUpcomingGamesToShow(widget.localData.settings.upcomingGamesToShow);
-      saveStarredSports(widget.localData.settings.starredSports.split(' '));
-      print('Saved settings');
+      saveSettings(widget.localData.settings);
     }
   }
 
