@@ -21,7 +21,8 @@ func main() {
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 	http.HandleFunc("/auth/login", controllers.LoginHandler)
 	http.HandleFunc("/auth/testToken", controllers.TestToken)
-	http.HandleFunc("/food-menu/", controllers.FoodMenuByHandler)
+	http.HandleFunc("/data/food-menu/", controllers.FoodMenuByHandler)
+	http.HandleFunc("/data/daily-schedule/", controllers.ScheduleHandler)
 
 	http.ListenAndServe(":8082", nil)
 	//fmt.Println(databaseControllers.GetUserByEmail("johnsmith@example.com"))

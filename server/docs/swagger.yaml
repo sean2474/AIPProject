@@ -208,7 +208,141 @@ paths:
       summary: Greet the user if he's authorized
       tags:
       - Authentication
-  /food-menu/:
+  /data/daily-schedule/:
+    get:
+      consumes:
+      - '*/*'
+      description: Retrieves the daily schedule image for the current date from the
+        database
+      produces:
+      - image/jpeg
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get the daily schedule image for the current date
+      tags:
+      - DailySchedule
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads the daily schedule image for the current date to the database
+      parameters:
+      - description: The daily schedule image file
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Upload the daily schedule image for the current date
+      tags:
+      - DailySchedule
+  /data/daily-schedule/{date}:
+    delete:
+      description: Deletes the daily schedule for a specific date from the database
+      parameters:
+      - description: The date of the daily schedule to delete (in YYYY-MM-DD format)
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete the daily schedule for a specific date
+      tags:
+      - DailySchedule
+    put:
+      description: Updates the daily schedule image for a specific date in the database
+      parameters:
+      - description: The date of the daily schedule to update (in YYYY-MM-DD format)
+        in: path
+        name: date
+        required: true
+        type: string
+      - description: 'The updated image file for the daily schedule (limit: 32 MB)'
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update the daily schedule for a specific date
+      tags:
+      - DailySchedule
+  /data/food-menu/:
     get:
       consumes:
       - application/json
@@ -274,10 +408,10 @@ paths:
       summary: Add a food menu
       tags:
       - FoodMenu
-  /food-menu/{date}:
+  /data/food-menu/{date}:
     delete:
       description: Delete a food menu from the database for a given date
-      operationId: deleteFoodMenu
+      operationId: DeleteFoodMenu
       parameters:
       - description: The date of the food menu to delete
         in: path
@@ -306,7 +440,7 @@ paths:
       summary: Delete a food menu
       tags:
       - FoodMenu
-  /food-menu/{id}:
+  /data/food-menu/{id}:
     put:
       consumes:
       - application/json

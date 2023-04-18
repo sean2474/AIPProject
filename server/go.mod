@@ -3,7 +3,6 @@ module server
 go 1.16
 
 require (
-	github.com/go-chi/chi v1.5.4
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/swaggo/http-swagger v1.3.4

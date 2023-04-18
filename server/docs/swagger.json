@@ -128,7 +128,215 @@
                 }
             }
         },
-        "/food-menu/": {
+        "/data/daily-schedule/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves the daily schedule image for the current date from the database",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "DailySchedule"
+                ],
+                "summary": "Get the daily schedule image for the current date",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Uploads the daily schedule image for the current date to the database",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DailySchedule"
+                ],
+                "summary": "Upload the daily schedule image for the current date",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "The daily schedule image file",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/daily-schedule/{date}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Updates the daily schedule image for a specific date in the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DailySchedule"
+                ],
+                "summary": "Update the daily schedule for a specific date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The date of the daily schedule to update (in YYYY-MM-DD format)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "The updated image file for the daily schedule (limit: 32 MB)",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes the daily schedule for a specific date from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DailySchedule"
+                ],
+                "summary": "Delete the daily schedule for a specific date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The date of the daily schedule to delete (in YYYY-MM-DD format)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/food-menu/": {
             "get": {
                 "security": [
                     {
@@ -230,7 +438,7 @@
                 }
             }
         },
-        "/food-menu/{date}": {
+        "/data/food-menu/{date}": {
             "delete": {
                 "security": [
                     {
@@ -242,7 +450,7 @@
                     "FoodMenu"
                 ],
                 "summary": "Delete a food menu",
-                "operationId": "deleteFoodMenu",
+                "operationId": "DeleteFoodMenu",
                 "parameters": [
                     {
                         "type": "string",
@@ -280,7 +488,7 @@
                 }
             }
         },
-        "/food-menu/{id}": {
+        "/data/food-menu/{id}": {
             "put": {
                 "security": [
                     {
