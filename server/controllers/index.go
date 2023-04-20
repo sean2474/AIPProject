@@ -8,6 +8,7 @@ import (
 	_ "server/authService"
 	"server/controllers/dailySchedule"
 	"server/controllers/food"
+	"server/controllers/lostAndFound"
 	"server/databaseControllers"
 	"server/databaseTypes"
 	"server/restTypes"
@@ -153,5 +154,27 @@ func ScheduleHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
+	}
+}
+
+func LostAndFoundHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		lostAndFound.PostLostAndFoundItem(w, r)
+		break
+	case "GET":
+		imageID := strings.TrimPrefix(r.URL.Path, "/data/lost-and-found/image/")
+		fmt.Println(imageID)
+		if imageID != "/data/lost-and-found/" {
+			lostAndFound.GetLostAndFoundImageHandler(w, r)
+			return
+		}
+		lostAndFound.GetLostAndFoundItemsHandler(w, r)
+	case "PUT":
+		lostAndFound.PutLostAndFoundItem(w, r)
+		break
+	default:
+		lostAndFound.GetLostAndFoundItemsHandler(w, r)
+		break
 	}
 }

@@ -73,3 +73,25 @@ type DeleteResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
+
+type LostAndFoundResponse struct {
+	Items []databaseTypes.LostAndFound `json:"items"`
+}
+
+type LostAndFoundPostResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	ID      int64  `json:"id,omitempty"`
+}
+
+type LostAndFoundErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type LostAndFoundInput struct {
+	ItemName      string `json:"item_name"`
+	Description   string `json:"description"`
+	DateFound     string `json:"date_found"`
+	LocationFound string `json:"location_found"`
+	Status        string `json:"status"`
+}

@@ -23,6 +23,7 @@ func main() {
 	http.HandleFunc("/auth/testToken", controllers.TestToken)
 	http.HandleFunc("/data/food-menu/", controllers.FoodMenuByHandler)
 	http.HandleFunc("/data/daily-schedule/", controllers.ScheduleHandler)
+	http.HandleFunc("/data/lost-and-found/", controllers.LostAndFoundHandler)
 
 	http.ListenAndServe(":8082", nil)
 	//fmt.Println(databaseControllers.GetUserByEmail("johnsmith@example.com"))

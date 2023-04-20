@@ -41,6 +41,7 @@ type LostAndFound struct {
 	Status        int       `json:"status" example:"1"`
 	ImageFile     []byte    `json:"image_file,omitempty"`
 	SubmitterID   int       `json:"submitter_id" example:"2"`
+	ImageURL      string    `json:"image_url"`
 }
 
 // SportsGame represents a sports game.

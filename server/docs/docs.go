@@ -559,6 +559,271 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/data/lost-and-found/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves a list of all lost and found items from the database and returns them as a JSON array in the response body.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LostAndFound"
+                ],
+                "summary": "Get all lost and found items",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/databaseTypes.LostAndFound"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Adds a lost and found item to the database and uploads an image file",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LostAndFound"
+                ],
+                "summary": "Add a lost and found item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the lost/found item",
+                        "name": "item_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description of the lost/found item",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date the item was found",
+                        "name": "date_found",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location where the item was found",
+                        "name": "location_found",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status of the item (lost or found)",
+                        "name": "status",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image of the lost/found item",
+                        "name": "image_file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LostAndFoundPostResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LostAndFoundErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LostAndFoundErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/lost-and-found/image/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update an existing lost and found item in the database with the specified ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LostAndFound"
+                ],
+                "summary": "Update a lost and found item",
+                "operationId": "update-lost-and-found-item",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lost and found item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Item name",
+                        "name": "item_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Item description",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date the item was found",
+                        "name": "date_found",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location where the item was found",
+                        "name": "location_found",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status of the lost and found item",
+                        "name": "status",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image file of the lost and found item",
+                        "name": "image_file",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LostAndFoundErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LostAndFoundErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.LostAndFoundErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/lost-and-found/image/{imageID}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Fetches the image file for a lost and found item with the specified ID from the database and returns it as a JPEG image in the response body.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "LostAndFound"
+                ],
+                "summary": "Get the image file for a lost and found item by ID.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The ID of the lost and found item to retrieve the image file for.",
+                        "name": "imageID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The image file for the specified lost and found item.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "The specified lost and found item ID was not found in the database.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -584,6 +849,47 @@ const docTemplate = `{
                 "lunch": {
                     "type": "string",
                     "example": "Pasta"
+                }
+            }
+        },
+        "databaseTypes.LostAndFound": {
+            "type": "object",
+            "properties": {
+                "date_found": {
+                    "type": "string",
+                    "example": "2022-01-01T12:00:00Z"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "image_file": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "item_name": {
+                    "type": "string",
+                    "example": "Backpack"
+                },
+                "location_found": {
+                    "type": "string",
+                    "example": "Library"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "submitter_id": {
+                    "type": "integer",
+                    "example": 2
                 }
             }
         },
@@ -680,6 +986,28 @@ const docTemplate = `{
                             "$ref": "#/definitions/databaseTypes.User"
                         }
                     ]
+                }
+            }
+        },
+        "restTypes.LostAndFoundErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "restTypes.LostAndFoundPostResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }
