@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"server/authService"
 	_ "server/authService"
 	"server/controllers/dailySchedule"
 	"server/controllers/food"
@@ -109,7 +110,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 // @Router /auth/testToken [get]
 // @Router /auth/testToken [post]
 func TestToken(w http.ResponseWriter, r *http.Request) {
-	user, err := databaseControllers.IsAuthorized(w, r)
+	user, err := authService.IsAuthorized(w, r)
 	if err.Code == 0 {
 		fmt.Fprintf(w, "HELLO, "+user.FirstName)
 		return
@@ -119,6 +120,7 @@ func TestToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func FoodMenuByHandler(w http.ResponseWriter, r *http.Request) {
+	authService.IsAuth(w, r)
 	path := strings.TrimPrefix(r.URL.Path, "/food-menu/")
 	switch r.Method {
 	case "POST":
@@ -140,6 +142,10 @@ func FoodMenuByHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ScheduleHandler(w http.ResponseWriter, r *http.Request) {
+	if !authService.IsAuth(w, r) {
+		return
+	}
+
 	switch r.Method {
 	case "POST":
 		dailySchedule.PostDailySchedule(w, r)
@@ -160,6 +166,9 @@ func ScheduleHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LostAndFoundHandler(w http.ResponseWriter, r *http.Request) {
+	if !authService.IsAuth(w, r) {
+		return
+	}
 	switch r.Method {
 	case "POST":
 		lostAndFound.PostLostAndFoundItem(w, r)

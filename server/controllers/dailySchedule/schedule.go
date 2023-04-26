@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"server/databaseControllers"
 	"server/restTypes"
 	"strings"
 	"time"
@@ -26,12 +25,6 @@ import (
 // @Failure 500 {string} Internal Server Error
 // @Router /data/daily-schedule/ [get]
 func GetDailySchedule(w http.ResponseWriter, r *http.Request) {
-	// Check authentication
-	_, erro := databaseControllers.IsAuthorized(w, r)
-	if erro.Code != 0 {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
 	db, err := sql.Open("sqlite3", "database.db")
 	if err != nil {
 		log.Fatal(err)
@@ -75,12 +68,6 @@ func GetDailySchedule(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {string} Internal Server Error
 // @Router /data/daily-schedule/ [post]
 func PostDailySchedule(w http.ResponseWriter, r *http.Request) {
-	// Check authentication
-	_, erro := databaseControllers.IsAuthorized(w, r)
-	if erro.Code != 0 {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
 
 	// Parse the form data
 	err := r.ParseMultipartForm(32 << 20) // Limit: 32 MB
@@ -143,12 +130,6 @@ func PostDailySchedule(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {string} Internal Server Error
 // @Router /data/daily-schedule/{date} [put]
 func PutDailySchedule(w http.ResponseWriter, r *http.Request) {
-	// Check authentication
-	_, erro := databaseControllers.IsAuthorized(w, r)
-	if erro.Code != 0 {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
 
 	// Get the schedule date from the URL path
 	parts := strings.Split(r.URL.Path, "/")
@@ -217,13 +198,6 @@ func PutDailySchedule(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {string} Internal Server Error
 // @Router /data/daily-schedule/{date} [delete]
 func DeleteDailySchedule(w http.ResponseWriter, r *http.Request) {
-	// Check authentication
-	_, erro := databaseControllers.IsAuthorized(w, r)
-	if erro.Code != 0 {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
 	// Get the schedule date from the URL path
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 4 {

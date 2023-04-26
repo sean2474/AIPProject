@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"server/databaseControllers"
 	"server/databaseTypes"
 	"server/restTypes"
 	"time"
@@ -194,12 +193,6 @@ func DeleteFoodMenu(w http.ResponseWriter, r *http.Request, date string) {
 // @Failure 500 {string} Internal Server Error
 // @Router /data/food-menu/ [get]
 func GetFoodMenu(w http.ResponseWriter, r *http.Request) {
-	// Check authentication
-	_, erro := databaseControllers.IsAuthorized(w, r)
-	if erro.Code != 0 {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
 
 	// Get the current date
 	date := time.Now()

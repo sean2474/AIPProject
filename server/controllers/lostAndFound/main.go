@@ -26,8 +26,7 @@ import (
 // @Failure 500 {string} Internal Server Error
 // @Router /data/lost-and-found/ [get]
 func GetLostAndFoundItemsHandler(w http.ResponseWriter, r *http.Request) {
-	//TODO: Check authentication
-	// Open database connection
+
 	db, err := sql.Open("sqlite3", "database.db")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
