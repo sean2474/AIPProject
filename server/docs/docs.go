@@ -560,6 +560,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/data/games/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves data about sports games and their results.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SportsData"
+                ],
+                "summary": "Get sports game data",
+                "operationId": "get-sports-game-data",
+                "responses": {
+                    "200": {
+                        "description": "List of sports game data",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.SportsGameDataList"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/data/lost-and-found/": {
             "get": {
                 "security": [
@@ -824,6 +865,352 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/data/school-store/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves a list of items from the School Store database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "School Store"
+                ],
+                "summary": "Get a list of items from the School Store",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.SchoolStoreResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Adds a new item to the School Store database",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "School Store"
+                ],
+                "summary": "Add an item to the School Store",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the item to add",
+                        "name": "item_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description of the item to add",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Price of the item to add",
+                        "name": "price",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category of the item to add",
+                        "name": "category",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image file of the item to add",
+                        "name": "image_file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/school-store/image/{item_id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves an image for a specified item from the School Store database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "School Store"
+                ],
+                "summary": "Get an image for an item from the School Store",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the item to retrieve the image for",
+                        "name": "item_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Item not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/school-store/{item_id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Updates an existing item in the School Store database",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "School Store"
+                ],
+                "summary": "Update an item in the School Store",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the item to update",
+                        "name": "item_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "New name of the item",
+                        "name": "item_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "New description of the item",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "number",
+                        "description": "New price of the item",
+                        "name": "price",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "New category of the item",
+                        "name": "category",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "New image file of the item",
+                        "name": "image_file",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.SchoolStorePostResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes an item from the School Store database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "School Store"
+                ],
+                "summary": "Delete an item from the School Store",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the item to delete",
+                        "name": "item_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.ErrorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Item not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/sports/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieves data about sports teams and their coaches.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SportsData"
+                ],
+                "summary": "Get sports data",
+                "operationId": "get-sports-data",
+                "responses": {
+                    "200": {
+                        "description": "List of sports data",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.SportsDataList"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -890,6 +1277,115 @@ const docTemplate = `{
                 "submitter_id": {
                     "type": "integer",
                     "example": 2
+                }
+            }
+        },
+        "databaseTypes.SchoolStore": {
+            "type": "object",
+            "properties": {
+                "Category": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "Date_Added": {
+                    "type": "string",
+                    "example": "2022-01-01T12:00:00Z"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "Price": {
+                    "type": "number",
+                    "example": 49.99
+                },
+                "Product_Name": {
+                    "type": "string",
+                    "example": "Backpack"
+                },
+                "Stock": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "image_file": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "databaseTypes.SportsGame": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "coach_comment": {
+                    "type": "string"
+                },
+                "game_location": {
+                    "type": "string",
+                    "example": "Stadium"
+                },
+                "game_schedule": {
+                    "type": "string",
+                    "example": "2022-01-01T12:00:00Z"
+                },
+                "home_or_away": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "match_result": {
+                    "type": "string"
+                },
+                "opponent_school": {
+                    "type": "string",
+                    "example": "Central High School"
+                },
+                "sport_name": {
+                    "type": "string",
+                    "example": "Football"
+                }
+            }
+        },
+        "databaseTypes.SportsInfo": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "coach_contact": {
+                    "type": "string",
+                    "example": "john.smith@example.com"
+                },
+                "coach_name": {
+                    "type": "string",
+                    "example": "John Smith"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "roster": {
+                    "type": "string"
+                },
+                "season": {
+                    "type": "integer",
+                    "example": 2022
+                },
+                "sport_name": {
+                    "type": "string",
+                    "example": "Basketball"
                 }
             }
         },
@@ -1008,6 +1504,53 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "restTypes.SchoolStorePostResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "restTypes.SchoolStoreResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/databaseTypes.SchoolStore"
+                    }
+                }
+            }
+        },
+        "restTypes.SportsDataList": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/databaseTypes.SportsInfo"
+                    }
+                }
+            }
+        },
+        "restTypes.SportsGameDataList": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/databaseTypes.SportsGame"
+                    }
                 }
             }
         }

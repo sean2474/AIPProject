@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"server/authService"
 	"server/databaseTypes"
 	"server/restTypes"
 	"strconv"
@@ -136,7 +137,6 @@ func GetLostAndFoundImageHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} restTypes.LostAndFoundErrorResponse
 // @Router /data/lost-and-found/ [post]
 func PostLostAndFoundItem(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check authentication
 
 	// Parse form data
 	err := r.ParseMultipartForm(30 << 20) // 30 MB max file size
@@ -214,8 +214,8 @@ func PostLostAndFoundItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer stmt.Close()
-
-	submitterID := 1 //TODO: change to real
+	user, _ := authService.IsAuthorized(w, r)
+	submitterID := user.ID
 	result, err := stmt.Exec(lostAndFound.ItemName, lostAndFound.Description, lostAndFound.DateFound, lostAndFound.LocationFound, lostAndFound.Status, image, submitterID)
 	if err != nil {
 		fmt.Println(err)
@@ -281,7 +281,6 @@ func PostLostAndFoundItem(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} restTypes.LostAndFoundErrorResponse
 // @Router /data/lost-and-found/image/{id} [put]
 func PutLostAndFoundItem(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check authentication
 
 	// Parse form data
 	err := r.ParseMultipartForm(30 << 20) // 30 MB max file size

@@ -95,3 +95,25 @@ type LostAndFoundInput struct {
 	LocationFound string `json:"location_found"`
 	Status        string `json:"status"`
 }
+
+type SportsDataList struct {
+	List []databaseTypes.SportsInfo `json:"list"`
+}
+
+type SportsGameDataList struct {
+	List []databaseTypes.SportsGame `json:"list"`
+}
+
+type SchoolStoreResponse struct {
+	List []databaseTypes.SchoolStore `json:"list"`
+}
+
+type SchoolStoreErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type SchoolStorePostResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	ID      int64  `json:"id"`
+}

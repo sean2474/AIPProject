@@ -9,6 +9,8 @@ import (
 	"server/controllers/dailySchedule"
 	"server/controllers/food"
 	"server/controllers/lostAndFound"
+	"server/controllers/schoolStore"
+	"server/controllers/sports"
 	"server/databaseControllers"
 	"server/databaseTypes"
 	"server/restTypes"
@@ -176,5 +178,44 @@ func LostAndFoundHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		lostAndFound.GetLostAndFoundItemsHandler(w, r)
 		break
+	}
+}
+
+func SportsHandler(w http.ResponseWriter, r *http.Request) {
+	if !authService.IsAuth(w, r) {
+		return
+	}
+	sports.GetSportsData(w, r)
+}
+
+func GamesHandler(w http.ResponseWriter, r *http.Request) {
+	if !authService.IsAuth(w, r) {
+		return
+	}
+	sports.GetSportsGameData(w, r)
+}
+
+func SchoolStoreHandler(w http.ResponseWriter, r *http.Request) {
+	if !authService.IsAuth(w, r) {
+		return
+	}
+	switch r.Method {
+	case "GET":
+
+		imageID := strings.TrimPrefix(r.URL.Path, "/data/school-store/image/")
+		fmt.Println(imageID)
+		if imageID != "" {
+			schoolStore.HandleSchoolStoreImage(w, r)
+			return
+		}
+		schoolStore.HandleSchoolStore(w, r)
+	case "POST":
+		schoolStore.HandleAddSchoolStoreItem(w, r)
+	case "PUT":
+		schoolStore.PutSchoolStoreItem(w, r)
+	case "DELETE":
+		schoolStore.HandleDeleteSchoolStoreItem(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }

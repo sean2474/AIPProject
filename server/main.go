@@ -24,8 +24,9 @@ func main() {
 	http.HandleFunc("/data/food-menu/", controllers.FoodMenuByHandler)
 	http.HandleFunc("/data/daily-schedule/", controllers.ScheduleHandler)
 	http.HandleFunc("/data/lost-and-found/", controllers.LostAndFoundHandler)
-
+	http.HandleFunc("/data/sports/", controllers.SportsHandler)
+	http.HandleFunc("/data/games/", controllers.GamesHandler)
+	http.HandleFunc("/data/school-store/", controllers.SchoolStoreHandler)
 	http.ListenAndServe(":8082", nil)
 	//fmt.Println(databaseControllers.GetUserByEmail("johnsmith@example.com"))
-
 }

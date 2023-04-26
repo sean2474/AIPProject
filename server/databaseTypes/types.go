@@ -59,13 +59,13 @@ type SportsGame struct {
 
 // SportsInfo represents information about a sports team.
 type SportsInfo struct {
-	ID           int      `json:"id" example:"1"`
-	SportName    string   `json:"sport_name" example:"Basketball"`
-	Category     int      `json:"category" example:"1"`
-	Season       int      `json:"season" example:"2022"`
-	CoachName    []string `json:"coach_name" example:"John Smith"`
-	CoachContact []string `json:"coach_contact" example:"john.smith@example.com"`
-	Roster       string   `json:"roster,omitempty"`
+	ID           int    `json:"id" example:"1"`
+	SportName    string `json:"sport_name" example:"Basketball"`
+	Category     int    `json:"category" example:"1"`
+	Season       int    `json:"season" example:"2022"`
+	CoachName    string `json:"coach_name" example:"John Smith"`
+	CoachContact string `json:"coach_contact" example:"john.smith@example.com"`
+	Roster       string `json:"roster,omitempty"`
 }
 
 // SchoolStore represents a product in the school store.

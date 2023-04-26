@@ -47,6 +47,84 @@ definitions:
         example: 2
         type: integer
     type: object
+  databaseTypes.SchoolStore:
+    properties:
+      Category:
+        example: 2
+        type: integer
+      Date_Added:
+        example: "2022-01-01T12:00:00Z"
+        type: string
+      Description:
+        type: string
+      ID:
+        example: 1
+        type: integer
+      Price:
+        example: 49.99
+        type: number
+      Product_Name:
+        example: Backpack
+        type: string
+      Stock:
+        example: 10
+        type: integer
+      image_file:
+        items:
+          type: integer
+        type: array
+    type: object
+  databaseTypes.SportsGame:
+    properties:
+      category:
+        example: 1
+        type: integer
+      coach_comment:
+        type: string
+      game_location:
+        example: Stadium
+        type: string
+      game_schedule:
+        example: "2022-01-01T12:00:00Z"
+        type: string
+      home_or_away:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      match_result:
+        type: string
+      opponent_school:
+        example: Central High School
+        type: string
+      sport_name:
+        example: Football
+        type: string
+    type: object
+  databaseTypes.SportsInfo:
+    properties:
+      category:
+        example: 1
+        type: integer
+      coach_contact:
+        example: john.smith@example.com
+        type: string
+      coach_name:
+        example: John Smith
+        type: string
+      id:
+        example: 1
+        type: integer
+      roster:
+        type: string
+      season:
+        example: 2022
+        type: integer
+      sport_name:
+        example: Basketball
+        type: string
+    type: object
   databaseTypes.User:
     properties:
       email:
@@ -168,6 +246,36 @@ definitions:
         type: string
       status:
         type: string
+    type: object
+  restTypes.SchoolStorePostResponse:
+    properties:
+      id:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  restTypes.SchoolStoreResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/databaseTypes.SchoolStore'
+        type: array
+    type: object
+  restTypes.SportsDataList:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/databaseTypes.SportsInfo'
+        type: array
+    type: object
+  restTypes.SportsGameDataList:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/databaseTypes.SportsGame'
+        type: array
     type: object
 info:
   contact:
@@ -524,6 +632,32 @@ paths:
       summary: Update a food menu
       tags:
       - FoodMenu
+  /data/games/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves data about sports games and their results.
+      operationId: get-sports-game-data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of sports game data
+          schema:
+            $ref: '#/definitions/restTypes.SportsGameDataList'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get sports game data
+      tags:
+      - SportsData
   /data/lost-and-found/:
     get:
       consumes:
@@ -701,6 +835,229 @@ paths:
       summary: Get the image file for a lost and found item by ID.
       tags:
       - LostAndFound
+  /data/school-store/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of items from the School Store database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.SchoolStoreResponse'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get a list of items from the School Store
+      tags:
+      - School Store
+    post:
+      consumes:
+      - multipart/form-data
+      description: Adds a new item to the School Store database
+      parameters:
+      - description: Name of the item to add
+        in: formData
+        name: item_name
+        required: true
+        type: string
+      - description: Description of the item to add
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Price of the item to add
+        in: formData
+        name: price
+        required: true
+        type: number
+      - description: Category of the item to add
+        in: formData
+        name: category
+        required: true
+        type: string
+      - description: Image file of the item to add
+        in: formData
+        name: image_file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Add an item to the School Store
+      tags:
+      - School Store
+  /data/school-store/{item_id}:
+    delete:
+      description: Deletes an item from the School Store database
+      parameters:
+      - description: ID of the item to delete
+        in: path
+        name: item_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.ErrorResponse'
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Item not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Delete an item from the School Store
+      tags:
+      - School Store
+    put:
+      consumes:
+      - multipart/form-data
+      description: Updates an existing item in the School Store database
+      parameters:
+      - description: ID of the item to update
+        in: path
+        name: item_id
+        required: true
+        type: integer
+      - description: New name of the item
+        in: formData
+        name: item_name
+        type: string
+      - description: New description of the item
+        in: formData
+        name: description
+        type: string
+      - description: New price of the item
+        in: formData
+        name: price
+        type: number
+      - description: New category of the item
+        in: formData
+        name: category
+        type: string
+      - description: New image file of the item
+        in: formData
+        name: image_file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.SchoolStorePostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Update an item in the School Store
+      tags:
+      - School Store
+  /data/school-store/image/{item_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves an image for a specified item from the School Store database
+      parameters:
+      - description: ID of the item to retrieve the image for
+        in: path
+        name: item_id
+        required: true
+        type: integer
+      produces:
+      - image/jpeg
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Item not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get an image for an item from the School Store
+      tags:
+      - School Store
+  /data/sports/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves data about sports teams and their coaches.
+      operationId: get-sports-data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of sports data
+          schema:
+            $ref: '#/definitions/restTypes.SportsDataList'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get sports data
+      tags:
+      - SportsData
 securityDefinitions:
   Bearer:
     description: Type "Bearer" followed by a space and JWT token.
