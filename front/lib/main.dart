@@ -1,9 +1,14 @@
 /// main.dart
+import 'dart:ui';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:front/common_pages/school_store.dart';
 import 'package:front/storage/local_storage.dart';
-import 'student/main_menu.dart';
+import 'pages/main_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 Future<void> saveValue(String key, String value) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -392,6 +397,28 @@ void main() async {
   localData.settings.starredSports = (await getStarredSports()).join(' ');
 
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+
+  FirebaseAuth.instance.authStateChanges().listen((user) {
+    if (user == null) {
+      print('User is currently signed out!');
+    } else {
+      print('User is signed in!');
+    }
+  });
+
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   runApp(StudentManagementApp(localData: localData));
 }
 

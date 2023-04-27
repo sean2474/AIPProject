@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 // local_storage.dart
 enum UserType {
   student,
@@ -5,14 +6,14 @@ enum UserType {
   parent,
   admin,
 }
-class User {
+class User_ {
   int id;
   String token;
   UserType userType;
   String name;
   String password;
 
-  User({required this.id, required this.token, required this.userType, required this.name, required this.password});
+  User_({required this.id, required this.token, required this.userType, required this.name, required this.password});
 }
 
 class DailySchedule {
@@ -104,7 +105,7 @@ class Settings {
   Settings({required this.recentGamesToShow, required this.upcomingGamesToShow, required this.starredSports, required this.sortLostAndFoundBy});
 }
 class Data {
-  List<User> users;
+  List<User_> users;
   List<DailySchedule> dailySchedules;
   List<FoodMenu> foodMenus;
   List<LostItem> lostAndFounds;
@@ -135,6 +136,17 @@ class Data {
         print("sortLostAndFoundBy: no sort type found");
         lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
     }
+  }
+
+  Future<void> saveUserData(Map<String, dynamic> userData) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Store user data as key-value pairs
+    await prefs.setString('id', userData['id'].toString());
+    await prefs.setString('token', userData['token']);
+    await prefs.setString('name', userData['name']);
+    await prefs.setString('userType', userData['user_type']);
+    await prefs.setString('email', userData['email']);
   }
   
   Data({required this.users, required this.dailySchedules, required this.foodMenus, required this.lostAndFounds, required this.storeItems, required this.sportsInfo, required this.gameInfo, required this.settings});

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/eabef03c-b50f-4d26-9998-582f612a102a/console_2.sql" dialect="SQLite" />
+    <file url="file://$PROJECT_DIR$/databaseControllers/main.go" dialect="GenericSQL" />
+    <file url="PROJECT" dialect="SQLite" />
+  </component>
+</project>

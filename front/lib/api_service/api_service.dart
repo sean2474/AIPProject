@@ -156,12 +156,10 @@ class ApiService {
         dynamic data = jsonDecode(responseBody);
         return data;
       } else {
-        print('Error: ${response.statusCode}');
-        throw Exception('Failed to load data');
+        throw Exception('Error ${response.statusCode}: Failed to load data');
       }
     } catch (e) {
-      print('Error: $e');
-      throw Exception('Failed to load data');
+      throw Exception('Error: $e: Failed to load data');
     }
   }
 }
