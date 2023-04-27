@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:front/api_service/api_service.dart';
 // local_storage.dart
 enum UserType {
   student,
@@ -101,8 +102,9 @@ class Settings {
   int upcomingGamesToShow;
   String starredSports;
   String sortLostAndFoundBy;
+  String baseUrl;
 
-  Settings({required this.recentGamesToShow, required this.upcomingGamesToShow, required this.starredSports, required this.sortLostAndFoundBy});
+  Settings({required this.recentGamesToShow, required this.upcomingGamesToShow, required this.starredSports, required this.sortLostAndFoundBy, required this.baseUrl});
 }
 class Data {
   List<User_> users;
@@ -112,6 +114,8 @@ class Data {
   List<StoreItem> storeItems;
   List<SportsInfo> sportsInfo;
   List<GameInfo> gameInfo;
+
+  ApiService apiService;
 
   Settings settings;
 
@@ -149,5 +153,5 @@ class Data {
     await prefs.setString('email', userData['email']);
   }
   
-  Data({required this.users, required this.dailySchedules, required this.foodMenus, required this.lostAndFounds, required this.storeItems, required this.sportsInfo, required this.gameInfo, required this.settings});
+  Data({required this.users, required this.dailySchedules, required this.foodMenus, required this.lostAndFounds, required this.storeItems, required this.sportsInfo, required this.gameInfo, required this.settings, required this.apiService});
 }

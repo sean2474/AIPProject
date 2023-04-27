@@ -2,118 +2,83 @@ import 'dart:convert';
 import 'dart:io';
 
 class ApiService {
-  final String baseUrl = 'https://domain.com/data';
+  final String baseUrl;
 
-  // classes
-  Future<List<dynamic>> getClasses() async {
-    return await _httpRequest('GET', '$baseUrl/classes');
-  }
-
-  Future<dynamic> postClasses(Map<String, dynamic> classData) async {
-    return await _httpRequest('POST', '$baseUrl/classes', classData);
-  }
-
-  Future<dynamic> putClasses(String id, Map<String, dynamic> classData) async {
-    return await _httpRequest('PUT', '$baseUrl/classes/$id', classData);
-  }
-
-  Future<dynamic> deleteClass(String id) async {
-    return await _httpRequest('DELETE', '$baseUrl/classes/$id');
-  }
+  ApiService({required this.baseUrl});
 
   // daily schedule
   Future<List<dynamic>> getDailySchedule() async {
-    return await _httpRequest('GET', '$baseUrl/daily-schedule');
+    return await _httpRequest('GET', '$baseUrl/data/daily-schedule/');
   }
 
   Future<dynamic> postDailySchedule(Map<String, dynamic> scheduleData) async {
-    return await _httpRequest('POST', '$baseUrl/daily-schedule', scheduleData);
+    return await _httpRequest('POST', '$baseUrl/data/daily-schedule/', scheduleData);
   }
 
   Future<dynamic> putDailySchedule(
-      String id, Map<String, dynamic> scheduleData) async {
+      String date, Map<String, dynamic> scheduleData) async {
     return await _httpRequest(
-        'PUT', '$baseUrl/daily-schedule/$id', scheduleData);
+        'PUT', '$baseUrl/data/daily-schedule/$date', scheduleData);
   }
 
-  Future<dynamic> deleteDailySchedule(String id) async {
-    return await _httpRequest('DELETE', '$baseUrl/daily-schedule/$id');
-  }
-
-  // duty administrator
-  Future<dynamic> getDutyAdministrator() async {
-    return await _httpRequest('GET', '$baseUrl/duty-administrator');
-  }
-
-  Future<dynamic> putDutyAdministrator(
-      String id, Map<String, dynamic> dutyAdministratorData) async {
-    return await _httpRequest(
-        'PUT', '$baseUrl/duty-administrator/$id', dutyAdministratorData);
-  }
-
-  // emergencies
-  Future<List<dynamic>> getEmergencies() async {
-    return await _httpRequest('GET', '$baseUrl/emergencies');
-  }
-
-  Future<dynamic> postEmergencies(Map<String, dynamic> emergencyData) async {
-    return await _httpRequest('POST', '$baseUrl/emergencies', emergencyData);
-  }
-
-  Future<dynamic> putEmergencies(
-      String id, Map<String, dynamic> emergencyData) async {
-    return await _httpRequest('PUT', '$baseUrl/emergencies/$id', emergencyData);
-  }
-
-  Future<dynamic> deleteEmergency(String id) async {
-    return await _httpRequest('DELETE', '$baseUrl/emergencies/$id');
+  Future<dynamic> deleteDailySchedule(String date) async {
+    return await _httpRequest('DELETE', '$baseUrl/data/daily-schedule/$date');
   }
 
   // food menu
   Future<List<dynamic>> getFoodMenu() async {
-    return await _httpRequest('GET', '$baseUrl/food-menu');
+    return await _httpRequest('GET', '$baseUrl/data/food-menu/');
   }
 
-  // off-campus requests
-  Future<List<dynamic>> getOffCampusRequests() async {
-    return await _httpRequest('GET', '$baseUrl/off-campus-requests');
+  Future<List<Map<String, dynamic>>> getGames() async {
+    return await _httpRequest('GET', '$baseUrl/data/games/');
   }
 
-  Future<dynamic> postOffCampusRequests(
-      Map<String, dynamic> requestData) async {
-    return await _httpRequest(
-        'POST', '$baseUrl/off-campus-requests', requestData);
+  Future<List<Map<String, dynamic>>> getSports() async {
+    return await _httpRequest('GET', '$baseUrl/data/sports/');
   }
 
-  Future<dynamic> putOffCampusRequests(
-      String id, Map<String, dynamic> requestData) async {
-    return await _httpRequest(
-        'PUT', '$baseUrl/off-campus-requests/$id', requestData);
+  Future<List<Map<String, dynamic>>> getLostAndFound() async {
+    return await _httpRequest('GET', '$baseUrl/data/lost-and-found/');
   }
 
-  Future<dynamic> deleteOffCampusRequests(String id) async {
-    return await _httpRequest('DELETE', '$baseUrl/off-campus-requests/$id');
+  Future<dynamic> postLostAndFound(Map<String, dynamic> lostAndFoundData) async {
+    return await _httpRequest('POST', '$baseUrl/data/lost-and-found/', lostAndFoundData);
   }
 
-  // notifications
-  Future<List<dynamic>> getNotifications() async {
-    return await _httpRequest('GET', '$baseUrl/notifications');
+  Future<dynamic> putLostAndFound(
+      String id, Map<String, dynamic> lostAndFoundData) async {
+    return await _httpRequest('PUT', '$baseUrl/data/lost-and-found/image/$id', lostAndFoundData);
   }
 
-  Future<dynamic> postNotifications(
-      Map<String, dynamic> notificationData) async {
-    return await _httpRequest(
-        'POST', '$baseUrl/notifications', notificationData);
+  // not added in server yet
+  // Future<dynamic> deleteLostAndFound(String id) async {
+  //   return await _httpRequest('DELETE', '$baseUrl/data/lost-and-found/$id');
+  // }
+
+  Future<dynamic> getLostAndFoundItemImage(String id) async {
+    return await _httpRequest('GET', '$baseUrl/data/lost-and-found/image/$id');
   }
 
-  Future<dynamic> putNotifications(
-      String id, Map<String, dynamic> notificationData) async {
-    return await _httpRequest(
-        'PUT', '$baseUrl/notifications/$id', notificationData);
+  Future<List<Map<String, dynamic>>> getSchoolStoreItems() async {
+    return await _httpRequest('GET', '$baseUrl/data/school-store/');
   }
 
-  Future<dynamic> deleteNotification(String id) async {
-    return await _httpRequest('DELETE', '$baseUrl/notifications/$id');
+  Future<dynamic> postSchoolStoreItem(Map<String, dynamic> schoolStoreItemData) async {
+    return await _httpRequest('POST', '$baseUrl/data/school-store/', schoolStoreItemData);
+  }
+
+  Future<dynamic> putSchoolStoreItem(
+      String id, Map<String, dynamic> schoolStoreItemData) async {
+    return await _httpRequest('PUT', '$baseUrl/data/school-store/$id', schoolStoreItemData);
+  }
+
+  Future<dynamic> getSchoolStoreItemImage(String id) async {
+    return await _httpRequest('GET', '$baseUrl/data/school-store/image/$id');
+  }
+
+  Future<dynamic> deleteSchoolStoreItem(String id) async {
+    return await _httpRequest('DELETE', '$baseUrl/data/school-store/$id');
   }
 
   Future<dynamic> _httpRequest(String method, String url,
@@ -141,10 +106,10 @@ class ApiService {
       }
 
       // Set the 'Origin' header
-      request.headers.set('Origin', 'https://your-origin.com');
+      // request.headers.set('Origin', 'https://your-origin.com');
 
       // Set the 'Referer-Policy' header
-      request.headers.set('Referer-Policy', 'strict-origin-when-cross-origin');
+      // request.headers.set('Referer-Policy', 'strict-origin-when-cross-origin');
 
       // Set any other necessary headers for authentication or API access
       request.headers.set('Client-data', 'your-session-token');
