@@ -1,8 +1,15 @@
 /// main.dart
+import 'dart:ui';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:front/api_service/api_service.dart';
 import 'package:front/storage/local_storage.dart';
-import 'student/main_menu.dart';
+import 'pages/main_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 Future<void> saveValue(String key, String value) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -20,6 +27,21 @@ Future<void> saveRecentGamesToShow(int recentGames) async {
 
 Future<void> saveUpcomingGamesToShow(int upcomingGames) async {
   saveValue('numbersOfUpcomingGamesResultToShow', upcomingGames.toString());
+}
+
+Future<void> saveSortLostAndFoundBy(String sort) async {
+  saveValue('sortLostAndFoundBy', sort);
+}
+
+Future<String?> getSortLostAndFoundBy() async {
+  return await readValue('sortLostAndFoundBy');
+}
+
+Future<void> saveSettings(Settings settings) async {
+  saveRecentGamesToShow(settings.recentGamesToShow);
+  saveUpcomingGamesToShow(settings.upcomingGamesToShow);
+  saveStarredSports(settings.starredSports.split(" "));
+  saveSortLostAndFoundBy(settings.sortLostAndFoundBy);
 }
 
 Future<int> getRecentGamesToShow() async {
@@ -49,244 +71,12 @@ Future<int> getUpcomingGamesToShow() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Data localData = Data(users: [], dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: ''));
+  String baseUrl = "http://127.0.0.1:8082";
+  Data localData = Data(users: [], dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date', baseUrl: baseUrl), apiService: ApiService(baseUrl: baseUrl));
 
-  // Sports data
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Baseball',
-    teamCategory: TeamCategory.varsity,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Lacrosse',
-    teamCategory: TeamCategory.jv,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Track and Field',
-    teamCategory: TeamCategory.varsity,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Tennis',
-    teamCategory: TeamCategory.jv,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Golf',
-    teamCategory: TeamCategory.varsity,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Hockey',
-    teamCategory: TeamCategory.jv,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.varsity,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.jv,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.thirds,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Wrestling',
-    teamCategory: TeamCategory.jv,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Squash',
-    teamCategory: TeamCategory.varsity,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Swimming',
-    teamCategory: TeamCategory.jv,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Football',
-    teamCategory: TeamCategory.varsity,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Soccer',
-    teamCategory: TeamCategory.varsity,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Soccer',
-    teamCategory: TeamCategory.jv,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Soccer',
-    teamCategory: TeamCategory.thirds,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Soccer',
-    teamCategory: TeamCategory.fourth,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Soccer',
-    teamCategory: TeamCategory.fifth,
-    season: Season.fall,
-    coachNames: ['Coach Michael', 'Coach Sarah'],
-    coachContacts: ['michael@example.com', 'sarah@example.com'],
-    roster: ['Player A', 'Player B', 'Player C'],
-  ));
-  localData.sportsInfo.add(SportsInfo(
-    sportsName: 'Cross Country',
-    teamCategory: TeamCategory.varsity,
-    season: Season.winter,
-    coachNames: ['Coach John', 'Coach Jane'],
-    coachContacts: ['john@example.com', 'jane@example.com'],
-    roster: ['Player 1', 'Player 2', 'Player 3'],
-  ));
-
-  // Game data
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.varsity,
-    gameLocation: 'Sailsbury',
-    opponent: 'Sailsbury',
-    isHomeGame: true,
-    matchResult: '65-40',
-    gameDate: '2023-04-10T16:00',
-    coachComment: 'Great job, team!',
-  ));
-
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.jv,
-    gameLocation: 'Home',
-    opponent: 'Suffield',
-    isHomeGame: true,
-    matchResult: '74-16',
-    gameDate: '2023-04-11T16:00',
-    coachComment: 'Great job, team!',
-  ));
-
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.varsity,
-    gameLocation: 'Home',
-    opponent: 'Dual',
-    isHomeGame: true,
-    matchResult: 'Win',
-    gameDate: '2023-04-12T16:00',
-    coachComment: 'Great job, team!',
-  ));
-
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.jv,
-    gameLocation: 'Pomfret',
-    opponent: 'Pomfret',
-    isHomeGame: false,
-    matchResult: 'Loss',
-    gameDate: '2024-04-15T16:00',
-    coachComment: 'Great job, team!',
-  ));
-
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.varsity,
-    gameLocation: 'Blair',
-    opponent: 'Blair',
-    isHomeGame: false,
-    matchResult: 'Win',
-    gameDate: '2024-04-10T16:00',
-    coachComment: 'Great job, team!',
-  ));
-
-  localData.gameInfo.add(GameInfo(
-    sportsName: 'Basketball',
-    teamCategory: TeamCategory.jv,
-    gameLocation: 'Home',
-    opponent: 'Sailsbury',
-    isHomeGame: false,
-    matchResult: 'Loss',
-    gameDate: '2024-04-15T16:00',
-    coachComment: 'Great job, team!',
-  ));
-
-  for (int i = 1; i <= 5; i++) {
-    localData.dailySchedules.add(
-      DailySchedule(
-        id: i,
-        date: '2023-04-0$i',
-        imagePath: 'assets/daily_schedule/IMG_0992.jpeg',
-      ),
-    );
-  }
+  print(localData.apiService.getSports());
+  print(localData.apiService.getGames());
+  
   // sort the games by date
   localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
   // sort the sports by name
@@ -297,6 +87,28 @@ void main() async {
   localData.settings.starredSports = (await getStarredSports()).join(' ');
 
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+
+  FirebaseAuth.instance.authStateChanges().listen((user) {
+    if (user == null) {
+      print('User is currently signed out!');
+    } else {
+      print('User is signed in!');
+    }
+  });
+
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   runApp(StudentManagementApp(localData: localData));
 }
 
@@ -312,7 +124,6 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   @override
   void initState() {
     super.initState();
-    print('App started');
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -326,10 +137,7 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
-      saveRecentGamesToShow(widget.localData.settings.recentGamesToShow);
-      saveUpcomingGamesToShow(widget.localData.settings.upcomingGamesToShow);
-      saveStarredSports(widget.localData.settings.starredSports.split(' '));
-      print('Saved settings');
+      saveSettings(widget.localData.settings);
     }
   }
 

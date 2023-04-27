@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:front/api_service/api_service.dart';
 // local_storage.dart
 enum UserType {
   student,
@@ -5,14 +7,14 @@ enum UserType {
   parent,
   admin,
 }
-class User {
+class User_ {
   int id;
   String token;
   UserType userType;
   String name;
   String password;
 
-  User({required this.id, required this.token, required this.userType, required this.name, required this.password});
+  User_({required this.id, required this.token, required this.userType, required this.name, required this.password});
 }
 
 class DailySchedule {
@@ -34,6 +36,7 @@ class FoodMenu {
   FoodMenu({required this.id, required this.date, required this.breakFast, required this.lunch, required this.dinner});
 }
 
+enum FoundStatus { returned, lost, na }
 class LostItem {
   int id;
   String name;
@@ -41,7 +44,7 @@ class LostItem {
   String imagePath;
   String locationFound;
   String dateFound;
-  String status;
+  FoundStatus status;
 
   LostItem({required this.id, required this.name, required this.description, required this.imagePath, required this.locationFound, required this.dateFound, required this.status});
 }
@@ -87,8 +90,8 @@ class StoreItem {
   ItemType itemType;
   String description;
   String imagePath;
-  String price;
-  String stock;
+  int price;
+  int stock;
   String dateAdded;
 
   StoreItem({required this.id, required this.name, required this.itemType, required this.description, required this.imagePath, required this.price, required this.stock, required this.dateAdded});
@@ -98,11 +101,13 @@ class Settings {
   int recentGamesToShow;
   int upcomingGamesToShow;
   String starredSports;
+  String sortLostAndFoundBy;
+  String baseUrl;
 
-  Settings({required this.recentGamesToShow, required this.upcomingGamesToShow, required this.starredSports});
+  Settings({required this.recentGamesToShow, required this.upcomingGamesToShow, required this.starredSports, required this.sortLostAndFoundBy, required this.baseUrl});
 }
 class Data {
-  List<User> users;
+  List<User_> users;
   List<DailySchedule> dailySchedules;
   List<FoodMenu> foodMenus;
   List<LostItem> lostAndFounds;
@@ -110,7 +115,43 @@ class Data {
   List<SportsInfo> sportsInfo;
   List<GameInfo> gameInfo;
 
+  ApiService apiService;
+
   Settings settings;
+
+  void sortLostAndFoundBy(String sortType) {
+    switch (sortType) {
+      case "date":
+        lostAndFounds.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
+        lostAndFounds.sort((a, b) => a.name.compareTo(b.name));
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+        break;
+      case "status":
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+        lostAndFounds.sort((a, b) => a.name.compareTo(b.name));
+        lostAndFounds.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
+        break;
+      case "name":
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+        lostAndFounds.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
+        lostAndFounds.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      default:
+        print("sortLostAndFoundBy: no sort type found");
+        lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
+    }
+  }
+
+  Future<void> saveUserData(Map<String, dynamic> userData) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Store user data as key-value pairs
+    await prefs.setString('id', userData['id'].toString());
+    await prefs.setString('token', userData['token']);
+    await prefs.setString('name', userData['name']);
+    await prefs.setString('userType', userData['user_type']);
+    await prefs.setString('email', userData['email']);
+  }
   
-  Data({required this.users, required this.dailySchedules, required this.foodMenus, required this.lostAndFounds, required this.storeItems, required this.sportsInfo, required this.gameInfo, required this.settings});
+  Data({required this.users, required this.dailySchedules, required this.foodMenus, required this.lostAndFounds, required this.storeItems, required this.sportsInfo, required this.gameInfo, required this.settings, required this.apiService});
 }
