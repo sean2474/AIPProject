@@ -186,7 +186,6 @@ func DeleteFoodMenu(w http.ResponseWriter, r *http.Request, date string) {
 // @Tags FoodMenu
 // @Accept  json
 // @Produce  json
-// @Security Bearer
 // @Success 200 {object} databaseTypes.FoodMenu
 // @Failure 401 {string} Unauthorized
 // @Failure 404 {string} Not Found

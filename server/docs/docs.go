@@ -138,11 +138,6 @@ const docTemplate = `{
         },
         "/data/daily-schedule/": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieves the daily schedule image for the current date from the database",
                 "consumes": [
                     "*/*"
@@ -346,11 +341,6 @@ const docTemplate = `{
         },
         "/data/food-menu/": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieves the breakfast, lunch, and dinner menu for the current date from the database",
                 "consumes": [
                     "application/json"
@@ -562,11 +552,6 @@ const docTemplate = `{
         },
         "/data/games/": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieves data about sports games and their results.",
                 "consumes": [
                     "application/json"
@@ -603,11 +588,6 @@ const docTemplate = `{
         },
         "/data/lost-and-found/": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieves a list of all lost and found items from the database and returns them as a JSON array in the response body.",
                 "consumes": [
                     "application/json"
@@ -819,11 +799,6 @@ const docTemplate = `{
         },
         "/data/lost-and-found/image/{imageID}": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Fetches the image file for a lost and found item with the specified ID from the database and returns it as a JPEG image in the response body.",
                 "consumes": [
                     "application/json"
@@ -983,11 +958,6 @@ const docTemplate = `{
         },
         "/data/school-store/image/{item_id}": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieves an image for a specified item from the School Store database",
                 "consumes": [
                     "application/json"
@@ -1173,11 +1143,6 @@ const docTemplate = `{
         },
         "/data/sports/": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieves data about sports teams and their coaches.",
                 "consumes": [
                     "application/json"
@@ -1199,6 +1164,63 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/lost-and-found/{id}": {
+            "delete": {
+                "description": "Deletes a lost and found item from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lost and Found"
+                ],
+                "summary": "Delete a lost and found item",
+                "operationId": "delete-lost-and-found-item",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/lostAndFound.deleteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid item ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Item not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Method not allowed",
                         "schema": {
                             "type": "string"
                         }
@@ -1418,6 +1440,14 @@ const docTemplate = `{
                 }
             }
         },
+        "lostAndFound.deleteResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "restTypes.DeleteResponse": {
             "type": "object",
             "properties": {
@@ -1569,7 +1599,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/api",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Go Rest API with Swagger for school system",
 	Description:      "Simple swagger implementation in Go HTTP",

@@ -20,7 +20,6 @@ import (
 // @Tags LostAndFound
 // @Accept  json
 // @Produce  json
-// @Security Bearer
 // @Success 200 {array} databaseTypes.LostAndFound
 // @Failure 401 {string} Unauthorized
 // @Failure 500 {string} Internal Server Error
@@ -81,7 +80,6 @@ func GetLostAndFoundItemsHandler(w http.ResponseWriter, r *http.Request) {
 // @Tags LostAndFound
 // @Accept  json
 // @Produce  image/jpeg
-// @Security Bearer
 // @Param imageID path string true "The ID of the lost and found item to retrieve the image file for."
 // @Success 200 {string} binary "The image file for the specified lost and found item."
 // @Failure 404 {string} Not Found "The specified lost and found item ID was not found in the database."
@@ -402,4 +400,79 @@ func PutLostAndFoundItem(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
+}
+
+type deleteResponse struct {
+	Status string `json:"status"`
+}
+
+// HandleDeleteLostAndFound  Delete a lost and found item
+// @Summary Delete a lost and found item
+// @Description Deletes a lost and found item from the database
+// @Tags Lost and Found
+// @ID delete-lost-and-found-item
+// @Accept json
+// @Produce json
+// @Param id path int true "Item ID"
+// @Success 200 {object} deleteResponse
+// @Failure 400 {string} string "Invalid item ID"
+// @Failure 404 {string} string "Item not found"
+// @Failure 405 {string} string "Method not allowed"
+// @Failure 500 {string} string "Internal server error"
+// @Router /lost-and-found/{id} [delete]
+func HandleDeleteLostAndFound(w http.ResponseWriter, r *http.Request) {
+	// Check if the request method is DELETE
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse the item_id from the URL path
+	urlPath := strings.Split(r.URL.Path, "/")
+	itemID := urlPath[len(urlPath)-1]
+
+	// Check if the item_id is valid
+	if _, err := strconv.Atoi(itemID); err != nil {
+		http.Error(w, "Invalid item ID", http.StatusBadRequest)
+		return
+	}
+
+	// Connect to the database
+	db, err := sql.Open("sqlite3", "database.db")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
+	// Delete the item from the LostAndFound table
+	result, err := db.Exec("DELETE FROM LostAndFound WHERE id=?", itemID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Check if the item was deleted successfully
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if rowsAffected == 0 {
+		http.Error(w, "Item not found", http.StatusNotFound)
+		return
+	}
+
+	// Create the response struct
+	response := deleteResponse{Status: "Item deleted successfully"}
+
+	// Return a JSON response with the status of the operation
+	jsonBytes, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonBytes)
 }

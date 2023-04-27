@@ -71,7 +71,6 @@ func HandleSchoolStore(w http.ResponseWriter, r *http.Request) {
 // @Description Retrieves an image for a specified item from the School Store database
 // @Tags School Store
 // @Accept  json
-// @Security Bearer
 // @Produce  jpeg
 // @Param   item_id    path    int     true        "ID of the item to retrieve the image for"
 // @Success 200 {string} string "OK"

@@ -14,7 +14,6 @@ import (
 // @Summary Get sports data
 // @Description Retrieves data about sports teams and their coaches.
 // @ID get-sports-data
-// @Security Bearer
 // @Tags SportsData
 // @Accept json
 // @Produce json
@@ -80,7 +79,6 @@ func GetSportsData(w http.ResponseWriter, r *http.Request) {
 // @ID get-sports-game-data
 // @Tags SportsData
 // @Accept json
-// @Security Bearer
 // @Produce json
 // @Success 200 {object} restTypes.SportsGameDataList "List of sports game data"
 // @Failure 401 {string} string "Unauthorized"
