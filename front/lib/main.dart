@@ -2,6 +2,7 @@
 /// 
 /// run by ... 
 /// flutter run --no-sound-null-safety
+import 'dart:io';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,12 @@ void main() async {
   Settings.baseUrl = baseUrl;
   Data localData = Data(dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'), apiService: ApiService(baseUrl: baseUrl));
 
+  try {
   localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
+  } on SocketException {
+    debugPrint("server not running");
+    rethrow;
+  }
   // localData.user = await localData.apiService.login("johnsmith@example.com", "password1");
 
   FirebaseAuth.instance.authStateChanges().listen((user) {
