@@ -2,9 +2,10 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import '../storage/local_storage.dart';
+import '../data/data.dart';
 import '../widgets/assets.dart';
 import 'package:intl/intl.dart';
+import 'package:front/data/sports.dart';
 
 getSportsIcon(String sportsName, Color iconColor, double size) {
   Widget icon;
@@ -106,6 +107,7 @@ TeamCategory getStringToCategory(String category) {
       throw Exception('Invalid category');
   }
 }
+
 class SportsPage extends StatefulWidget {
   final Data localData;
   const SportsPage({Key? key, required this.localData}) : super(key: key);
@@ -119,14 +121,15 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
   late final Animation<double> _animation;
 
   final GameInfo naGame = GameInfo(
-      sportsName : 'N/A',
-      teamCategory : TeamCategory.na,
-      gameLocation : 'N/A',
-      opponent : 'N/A',
-      matchResult : 'N/A',
-      gameDate : 'N/A',
-      coachComment : 'N/A',
-      isHomeGame: false,
+    id: -1,
+    sportsName : 'N/A',
+    teamCategory : TeamCategory.na,
+    gameLocation : 'N/A',
+    opponent : 'N/A',
+    matchResult : 'N/A',
+    gameDate : 'N/A',
+    coachComment : 'N/A',
+    isHomeGame: false,
   );
 
   @override
@@ -186,7 +189,12 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
     );
   }
 
-  List<GameInfo> getGames({required List<GameInfo> gameData, required int recentGamesCount, required int upcomingGamesCount, required bool getStarredGames}) {
+  List<GameInfo> getGames({
+    required List<GameInfo> gameData, 
+    required int recentGamesCount, 
+    required int upcomingGamesCount, 
+    required bool getStarredGames
+  }) {
     DateTime currentTime = DateTime.now();
     List<GameInfo> recentGames = [];
     List<GameInfo> upcomingGames = [];
@@ -389,7 +397,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
           ],
         ),
       ),
-      drawer: assets.build(context),
+      drawer: assets.buildDrawer(context),
       body: Container(
         decoration: const BoxDecoration(
           color: Color(0xFF0E1B2A),

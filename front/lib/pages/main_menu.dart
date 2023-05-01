@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../storage/local_storage.dart';
-import '../widgets/assets.dart';
+import 'package:front/data/data.dart';
+import 'package:front/widgets/assets.dart';
 import 'notifications.dart';
 
 class StudentMainMenu extends StatelessWidget {
@@ -70,7 +70,7 @@ class StudentMainMenu extends StatelessWidget {
           ],
         ),
       ),
-      drawer:  assets.build(context),
+      drawer:  assets.buildDrawer(context),
       body: Stack(
         children: [
           SingleChildScrollView(

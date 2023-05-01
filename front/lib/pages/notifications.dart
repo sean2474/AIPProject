@@ -1,7 +1,7 @@
 /// notifications.dart
 import 'package:flutter/material.dart';
-import '../storage/local_storage.dart';
-import '../widgets/assets.dart';
+import 'package:front/data/data.dart';
+import 'package:front/widgets/assets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -249,7 +249,7 @@ class NotificationsPageState extends State<NotificationsPage>
           ],
         ),
       ),
-      drawer: assets.build(context),
+      drawer: assets.buildDrawer(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: ListView.builder(
@@ -383,7 +383,7 @@ class MessagePage extends StatelessWidget {
           ],
         ),
       ),
-      drawer: assets.build(context),
+      drawer: assets.buildDrawer(context),
       body: Stack(
         children: [
           Container(
