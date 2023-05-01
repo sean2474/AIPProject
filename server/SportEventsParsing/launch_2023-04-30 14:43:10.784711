@@ -1,0 +1,74 @@
+2023-04-30 14:43:10,785 - INFO - Starting parsing...
+2023-04-30 14:43:10,873 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/varsityfootball
+2023-04-30 14:43:12,702 - ERROR - Invalid data had been gathered from Football, Varsity
+2023-04-30 14:43:12,703 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/jvfootball
+2023-04-30 14:43:13,976 - ERROR - Unable to get data about roster - 'NoneType' object has no attribute 'find'
+2023-04-30 14:43:13,977 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/jvfootball-clone
+2023-04-30 14:43:15,351 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/varsitysoccer
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - ERROR - Invalid data had been gathered from Soccer, Varsity
+2023-04-30 14:43:17,394 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/jvsoccer
+2023-04-30 14:43:18,596 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/thirdssoccer
+2023-04-30 14:43:19,981 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/fourthssoccer
+2023-04-30 14:43:22,428 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/fifthssoccer
+2023-04-30 14:43:24,436 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/crosscountry
+2023-04-30 14:43:26,865 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/varsityhockey
+2023-04-30 14:43:29,328 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/varsitybhockey
+2023-04-30 14:43:32,162 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/thirdsbluehockey
+2023-04-30 14:43:33,953 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/thirdsred
+2023-04-30 14:43:35,740 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/varsitybasketball
+2023-04-30 14:43:37,614 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/jvbasketball
+2023-04-30 14:43:39,140 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/thirdsbasketballblue
+2023-04-30 14:43:41,182 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/thirdsbasketballred
+2023-04-30 14:43:42,727 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/varsitysquash
+2023-04-30 14:43:44,852 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/jvsquash
+2023-04-30 14:43:46,543 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/thirdssquash
+2023-04-30 14:43:48,071 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/swimming
+2023-04-30 14:43:49,898 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/varsitywrestling
+2023-04-30 14:43:51,473 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/varsitybaseball
+2023-04-30 14:43:53,290 - ERROR - Invalid data had been gathered from Baseball, Varsity
+2023-04-30 14:43:53,290 - ERROR - Invalid data had been gathered from Baseball, Varsity
+2023-04-30 14:43:53,290 - ERROR - Invalid data had been gathered from Baseball, Varsity
+2023-04-30 14:43:53,291 - ERROR - Invalid data had been gathered from Baseball, Varsity
+2023-04-30 14:43:53,291 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/jvbaseball
+2023-04-30 14:43:55,388 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/baseballthirds
+2023-04-30 14:43:57,434 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/varsitylacrosse
+2023-04-30 14:43:58,846 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/varsityblacrosse
+2023-04-30 14:44:00,099 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/jvlacrosse
+2023-04-30 14:44:01,211 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/thirdslacrosse
+2023-04-30 14:44:02,720 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/varsitygolf
+2023-04-30 14:44:04,292 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/jvgolf
+2023-04-30 14:44:05,783 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/trackandfield
+2023-04-30 14:44:07,309 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/varsitytennis
+2023-04-30 14:44:08,605 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/jvtennis
+2023-04-30 14:44:08,942 - ERROR - Unable to get data about roster - 'NoneType' object has no attribute 'find'
+2023-04-30 14:44:08,943 - INFO - [~] Parsing https://www.avonoldfarms.com/athletics/teams-schedules/spring-sports/thirdstennis
+2023-04-30 14:44:10,527 - INFO - Successfully parsed all information.
+2023-04-30 14:44:10,533 - INFO - Successfully connected to database, started uploading data to DB
+2023-04-30 14:44:10,533 - INFO - Inserting information to SportsGames
+2023-04-30 14:44:10,543 - INFO - Inserting information to SportsInfo
+2023-04-30 14:44:10,545 - INFO - Successfully uploaded information to database
+2023-04-30 14:44:10,545 - INFO - Update finished.

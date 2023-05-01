@@ -1,4 +1,4 @@
-basePath: /api
+basePath: /
 definitions:
   databaseTypes.FoodMenu:
     properties:
@@ -145,6 +145,11 @@ definitions:
       user_type:
         example: 2
         type: integer
+    type: object
+  lostAndFound.deleteResponse:
+    properties:
+      status:
+        type: string
     type: object
   restTypes.DeleteResponse:
     properties:
@@ -384,8 +389,6 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get the daily schedule image for the current date
       tags:
       - DailySchedule
@@ -518,8 +521,6 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get the food menu for the current date
       tags:
       - FoodMenu
@@ -653,8 +654,6 @@ paths:
           description: Internal server error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get sports game data
       tags:
       - SportsData
@@ -681,8 +680,6 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get all lost and found items
       tags:
       - LostAndFound
@@ -830,8 +827,6 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get the image file for a lost and found item by ID.
       tags:
       - LostAndFound
@@ -1027,8 +1022,6 @@ paths:
           description: Internal server error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get an image for an item from the School Store
       tags:
       - School Store
@@ -1053,11 +1046,47 @@ paths:
           description: Internal server error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get sports data
       tags:
       - SportsData
+  /lost-and-found/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a lost and found item from the database
+      operationId: delete-lost-and-found-item
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/lostAndFound.deleteResponse'
+        "400":
+          description: Invalid item ID
+          schema:
+            type: string
+        "404":
+          description: Item not found
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a lost and found item
+      tags:
+      - Lost and Found
 securityDefinitions:
   Bearer:
     description: Type "Bearer" followed by a space and JWT token.

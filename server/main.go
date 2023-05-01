@@ -12,7 +12,7 @@ import (
 // @version 1.0
 // @description Simple swagger implementation in Go HTTP
 // @contact.name Senya
-// @BasePath /api
+// @BasePath /
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization

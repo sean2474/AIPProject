@@ -1,7 +1,8 @@
 /// school_store.dart
 import 'package:flutter/material.dart';
-import '../storage/local_storage.dart';
-import '../widgets/assets.dart';
+import 'package:front/data/data.dart';
+import 'package:front/widgets/assets.dart';
+import 'package:front/data/school_store.dart';
 
 String itemTypeToString(ItemType type) {
   switch (type) {
@@ -195,7 +196,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
           ],
         ),
       ),
-      drawer: assets.build(context),
+      drawer: assets.buildDrawer(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: GridView.builder(

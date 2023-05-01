@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/storage/local_storage.dart';
+import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 
 class DailySchedulePage extends StatefulWidget {
@@ -86,7 +86,7 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
           ],
         ),
       ),
-      drawer: assets.build(context),
+      drawer: assets.buildDrawer(context),
       body: Column(
         children: [
           Expanded(
@@ -104,14 +104,17 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
                       });
                     },
                     itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Image.asset(
-                          localData.dailySchedules[index].imagePath,
-                          fit: BoxFit.cover,
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xFF0E1B2A),
+                            width: 5,
+                          ),
                         ),
+                        child: localData.dailySchedules[index].imageWidget
                       );
                     },
+
                   ),
                 ),
                 Positioned(

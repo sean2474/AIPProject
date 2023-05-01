@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../storage/local_storage.dart';
-import '../widgets/assets.dart';
+import 'package:front/data/data.dart';
+import 'package:front/widgets/assets.dart';
+import 'package:front/data/lost_item.dart';
 
 
 String statusToString(FoundStatus status) {
@@ -102,7 +103,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
-                  data.imagePath,
+                  data.imageUrl,
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -286,7 +287,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
           ),
         ),
       ),
-      drawer: assets.build(context),
+      drawer: assets.buildDrawer(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: GridView.builder(
@@ -332,7 +333,7 @@ class ItemPage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.asset(
-                    itemData.imagePath,
+                    itemData.imageUrl,
                     height: 150,
                     width: double.infinity,
                     fit: BoxFit.cover,

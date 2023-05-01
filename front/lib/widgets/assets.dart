@@ -8,23 +8,18 @@ import 'package:front/pages/daily_schedule.dart';
 import 'package:front/pages/food_menu.dart';
 import 'package:front/pages/lost_and_found.dart';
 import 'package:front/pages/sports.dart';
-import '../storage/local_storage.dart';
+import 'package:front/data/data.dart';
 import 'package:front/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Assets extends StatelessWidget {
+class Assets {
   final Widget? currentPage;
   final Data localData;
   final User? user = FirebaseAuth.instance.currentUser;
 
-  Assets({Key? key, this.currentPage, required this.localData}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return _buildDrawer(context);
-  }
+  Assets({this.currentPage, required this.localData});
   
-  Widget _buildDrawer(BuildContext context) {
+  Widget buildDrawer(BuildContext context) {
     return StreamBuilder<User?> (
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
@@ -65,20 +60,22 @@ class Assets extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          if (currentUser == null) {
+                          if (!Data.loggedIn) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => LoginPage(localData: localData)),
                             );
                           } else {
                             FirebaseAuth.instance.signOut();
+                            localData.apiService.logout(localData);
+                            Data.loggedIn = false;
                             Navigator.pop(context);
                           }
                         },
                         child: Row(
                           children: [
                             Text(
-                              currentUser == null ? "SIGN IN" : "SIGN OUT",
+                              !Data.loggedIn ? "SIGN IN" : "SIGN OUT",
                               style: const TextStyle(color: Colors.white, fontSize: 18),
                             ),
                             const SizedBox(width: 8),
@@ -97,6 +94,9 @@ class Assets extends StatelessWidget {
     );
   }
 
+  /// This function returns a button that opens the drawer.
+  /// 
+  /// [drawer: assets.build(context)] must be added to the Scaffold for this to work.
   Widget menuBarButton(
     BuildContext context,
   ) {
@@ -185,6 +185,12 @@ class Assets extends StatelessWidget {
     }
   }
 
+  /// Returns a rounded button with a gradient background
+  /// 
+  /// [isRed] determines whether the button is red or blue
+  /// [onPressed] is the function that is called when the button is pressed
+  /// [text] is the text that is displayed on the button
+  /// [context] is the context of the page
   Widget gradientRoundBorderButton(
     BuildContext context, {
     required String text,
@@ -229,6 +235,14 @@ class Assets extends StatelessWidget {
     );
   }
 
+  /// Returns a button with a border on the left side
+  /// 
+  /// [title] is the text to display on the button
+  /// [borderColor] is the color of the border on the left side
+  /// [onTap] is the function to call when the button is pressed
+  /// [iconNextToArrow] is the icon to display next to the arrow
+  /// [text] is the text to display under the title
+  /// [margin] is the margin around the button
   Widget boxButton(
     BuildContext context, {
     required String title,
@@ -319,6 +333,7 @@ class Assets extends StatelessWidget {
     );
   }
 
+  /// Returns a [Widget] that displays a [text] button that calls [onTap] when pressed. 
   Widget textButton(
     BuildContext context, {
     required String text,
@@ -343,6 +358,11 @@ class Assets extends StatelessWidget {
     );
   }
 
+  /// Returns a [Widget] that displays a list of [titles] in a row, with the
+  /// 
+  /// [selectedIndex] being highlighted. The [selectTab] function is called when a tab is selected.
+  /// [titles] is a list of strings that are the titles of each tab.
+  /// [selectTab] should include the logic that changes the [selectedIndex] state and the page.
   Widget drawAppBarSelector({required BuildContext context, required List<String> titles, required Function(int) selectTab, required Animation<double> animation, required int selectedIndex}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

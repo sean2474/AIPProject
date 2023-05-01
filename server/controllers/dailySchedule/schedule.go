@@ -18,7 +18,6 @@ import (
 // @Tags DailySchedule
 // @Accept  */*
 // @Produce  image/jpeg
-// @Security Bearer
 // @Success 200 {string} OK
 // @Failure 401 {string} Unauthorized
 // @Failure 404 {string} Not Found

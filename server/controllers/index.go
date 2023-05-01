@@ -120,16 +120,24 @@ func TestToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func FoodMenuByHandler(w http.ResponseWriter, r *http.Request) {
-	authService.IsAuth(w, r)
 	path := strings.TrimPrefix(r.URL.Path, "/food-menu/")
 	switch r.Method {
 	case "POST":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		food.PostFoodMenuHandler(w, r)
 		break
 	case "PUT":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		food.PutFoodMenuHandler(w, r, path)
 		break
 	case "DELETE":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		food.DeleteFoodMenu(w, r, path)
 		break
 	case "GET":
@@ -142,18 +150,24 @@ func FoodMenuByHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ScheduleHandler(w http.ResponseWriter, r *http.Request) {
-	if !authService.IsAuth(w, r) {
-		return
-	}
 
 	switch r.Method {
 	case "POST":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		dailySchedule.PostDailySchedule(w, r)
 		break
 	case "PUT":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		dailySchedule.PutDailySchedule(w, r)
 		break
 	case "DELETE":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		dailySchedule.DeleteDailySchedule(w, r)
 		break
 	case "GET":
@@ -166,11 +180,12 @@ func ScheduleHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LostAndFoundHandler(w http.ResponseWriter, r *http.Request) {
-	if !authService.IsAuth(w, r) {
-		return
-	}
+
 	switch r.Method {
 	case "POST":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		lostAndFound.PostLostAndFoundItem(w, r)
 		break
 	case "GET":
@@ -182,8 +197,16 @@ func LostAndFoundHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		lostAndFound.GetLostAndFoundItemsHandler(w, r)
 	case "PUT":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		lostAndFound.PutLostAndFoundItem(w, r)
 		break
+	case "DELETE":
+		if !authService.IsAuth(w, r) {
+			return
+		}
+		lostAndFound.HandleDeleteLostAndFound(w, r)
 	default:
 		lostAndFound.GetLostAndFoundItemsHandler(w, r)
 		break
@@ -191,23 +214,15 @@ func LostAndFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SportsHandler(w http.ResponseWriter, r *http.Request) {
-	if !authService.IsAuth(w, r) {
-		return
-	}
 	sports.GetSportsData(w, r)
 }
 
 func GamesHandler(w http.ResponseWriter, r *http.Request) {
-	if !authService.IsAuth(w, r) {
-		return
-	}
 	sports.GetSportsGameData(w, r)
 }
 
 func SchoolStoreHandler(w http.ResponseWriter, r *http.Request) {
-	if !authService.IsAuth(w, r) {
-		return
-	}
+
 	switch r.Method {
 	case "GET":
 
@@ -219,10 +234,19 @@ func SchoolStoreHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		schoolStore.HandleSchoolStore(w, r)
 	case "POST":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		schoolStore.HandleAddSchoolStoreItem(w, r)
 	case "PUT":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		schoolStore.PutSchoolStoreItem(w, r)
 	case "DELETE":
+		if !authService.IsAuth(w, r) {
+			return
+		}
 		schoolStore.HandleDeleteSchoolStoreItem(w, r)
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
