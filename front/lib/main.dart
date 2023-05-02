@@ -11,9 +11,9 @@
  flutter devices
  
  if github commiting not working, try:
- 1. move to /Users/sean2474/Desktop/AIPProject/.git/refs/remotes
+ 1. move to ~/Desktop/AIPProject/.git/refs/remotes/origin
  2. remove all files in remotes
- cd /Users/sean2474/Desktop/AIPProject/.git/refs/remotes || rm -rf *
+ cd ~/Desktop/AIPProject/.git/refs/remotes/origin || rm -rf *
 */
 import 'dart:io';
 import 'dart:ui';
