@@ -45,7 +45,6 @@ void main() async {
     home: LoadingPage(),
   ));
 
-  // String baseUrl = 'http://127.0.0.1:8082';
   String baseUrl = 'http://52.91.153.106:8082';
   Settings.baseUrl = baseUrl;
   Data localData = Data(dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'), apiService: ApiService(baseUrl: baseUrl));
