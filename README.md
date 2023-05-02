@@ -1,6 +1,37 @@
-# AIPProject
+# School Life (AIPProject)
 
 Our goal is to create an Avon Webapp that includes lost and found, school store, daily schedule, sports information, and food menu features.
+
+## application review
+
+### dashboard (main menu)
+It is going to be different for student, not logged in user and administrator.
+Student main menu will have (undefined)
+Administrator main menu will have (undefined)
+
+### daily schedule
+The url is going to be posted in the server.
+In the app, by using flutter_webview package, that website is going to be displayed.
+
+### lost and found
+The administrator is going to post the lost items.
+The lost and found items are going to be displayed in the app.
+The users can find  the lost item by searching in the search bar.
+
+### food menu
+The data of the food menu is going to be parsed from https://avonoldfarms.flikisdining.com/.
+In the app, food menu of the day, day before, and after will going to be available.
+
+### school store (hawk's nest)
+The administrator is going to post the school store item.
+The items are going to be categorized by FOOD, DRINK, GOODS, or OTHER.
+
+### sports
+The data of the sports is going to be parsed from https://www.avonoldfarms.com/athletics/teams-schedules.
+In the app, the page will show the upcoming game schedule and previous game results.
+The number of upcoming game schedule and previous game results to show can be changed in setting.
+The users can star(check) the sports that they want to display.
+Below the game results, users can check sports informations such as coach info or roaster.
 
 ## Flutter Setup
 
