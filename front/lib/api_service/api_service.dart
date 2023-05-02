@@ -27,7 +27,6 @@ class ApiService {
       }
       Map<String, dynamic> userData = responseBody['user_data'];
       String name = "${userData['first_name'] as String} ${userData['last_name'] as String}";
-      debugPrint(responseBody.toString());
       return User_(
         id: userData['id'],
         name: name,
@@ -89,7 +88,7 @@ class ApiService {
   }
 
   Future<dynamic> postDailySchedule(String date, String url) async {
-    return await _httpRequest('POST', '$baseUrl/data/daily-schedule', {date: url});
+    return await _httpRequest('POST', '$baseUrl/data/daily-schedule/', {date: url});
   }
 
   Future<dynamic> putDailySchedule(String date, Map<String, dynamic> scheduleData) async {
@@ -102,33 +101,31 @@ class ApiService {
 
   // food menu
   Future<List<Map<String, String>>> getFoodMenu() async {
-    dynamic data = await _httpRequest('GET', '$baseUrl/data/food-menu');
-    return List<Map<String, String>>.from(data);
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/food-menu/');
+    List<Map<String, String>> listOfMaps = List<Map<String, String>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<List<Map<String, dynamic>>> getGames() async {
-    dynamic result = await _httpRequest('GET', '$baseUrl/data/games');
-    if (result is Map<String, dynamic>) {
-      return [Map<String, dynamic>.from(result)];
-    }
-    return List<Map<String, dynamic>>.from(result);
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/games/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<List<Map<String, dynamic>>> getSports() async {
-    dynamic result = await _httpRequest('GET', '$baseUrl/data/sports');
-    if (result is Map<String, dynamic>) {
-      return [Map<String, dynamic>.from(result)];
-    }
-    return List<Map<String, dynamic>>.from(result);
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/sports/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<List<Map<String, dynamic>>> getLostAndFound() async {
-    dynamic data = await _httpRequest('GET', '$baseUrl/data/lost-and-found');
-    return List<Map<String, dynamic>>.from(data);
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/lost-and-found/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['items']);
+    return listOfMaps;
   }
 
   Future<dynamic> postLostAndFound(Map<String, dynamic> lostAndFoundData) async {
-    return await _httpRequest('POST', '$baseUrl/data/lost-and-found', lostAndFoundData);
+    return await _httpRequest('POST', '$baseUrl/data/lost-and-found/', lostAndFoundData);
   }
 
   Future<dynamic> putLostAndFound(String id, Map<String, dynamic> lostAndFoundData) async {
@@ -144,12 +141,13 @@ class ApiService {
   }
 
   Future<List<Map<String, dynamic>>> getSchoolStoreItems() async {
-    dynamic data = await _httpRequest('GET', '$baseUrl/data/school-store');
-    return List<Map<String, dynamic>>.from(data);
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/school-store/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<dynamic> postSchoolStoreItem(Map<String, dynamic> schoolStoreItemData) async {
-    return await _httpRequest('POST', '$baseUrl/data/school-store', schoolStoreItemData);
+    return await _httpRequest('POST', '$baseUrl/data/school-store/', schoolStoreItemData);
   }
 
   Future<dynamic> putSchoolStoreItem(

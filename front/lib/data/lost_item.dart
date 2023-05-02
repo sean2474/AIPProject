@@ -1,3 +1,5 @@
+import 'settings.dart';
+
 enum FoundStatus { returned, lost, na }
 class LostItem {
   int id;
@@ -28,11 +30,11 @@ class LostItem {
     return LostItem(
       id: json['id'],
       name: json['item_name'],
-      description: json['description'],
-      imageUrl: json['image_url'],
+      description: json['description'] ?? '',
+      imageUrl: "${Settings.baseUrl}${json['image_url']}",
       locationFound: json['location_found'],
       dateFound: json['date_found'],
-      status: FoundStatus.values[json['status']],
+      status: json['status'] == null ? FoundStatus.na : FoundStatus.values[json['status'] - 1],
       founderId: json['submitter_id'],
     );
   }

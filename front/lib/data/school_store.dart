@@ -1,14 +1,13 @@
-import 'package:front/data/data.dart';
 import 'package:front/data/settings.dart';
 
-enum ItemType { food, drink, goods, other }
+enum ItemType { food, drink, goods, other, na }
 class StoreItem {
   int id;
   String name;
   ItemType itemType;
   String description;
   String imagePath;
-  int price;
+  double price;
   int stock;
   String dateAdded;
 
@@ -28,13 +27,16 @@ class StoreItem {
   }
 
   factory StoreItem.fromJson(Map<String, dynamic> json) {
+    if (json['Category'] > 4) {
+      json['Category'] = 4;
+    }
     return StoreItem(
       id: json['ID'],
       name: json['Product_Name'],
-      itemType: ItemType.values[json['Category']],
+      itemType: json['Category'] == null ? ItemType.na : ItemType.values[json['Category']],
       description: json['Description'],
-      imagePath: "${Settings.baseUrl}school-store/image/${json['ID']}",
-      price: json['Price'],
+      imagePath: "${Settings.baseUrl}/data/school-store/image/${json['ID']}",
+      price: json['Price'].toDouble(),
       stock: json['Stock'],
       dateAdded: json['Date_Added'],
     );

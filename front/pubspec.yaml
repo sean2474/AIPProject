@@ -51,6 +51,7 @@ dependencies:
   style: ^0.0.5
   webview_flutter: ^4.2.0
   webview_flutter_wkwebview: ^3.4.0
+  cached_network_image: ^3.2.3
   
 dev_dependencies:
   flutter_test:
@@ -75,8 +76,6 @@ flutter:
   assets:
     - assets/
     - assets/sports_icons/
-    - assets/daily_schedule/
-    - assets/lost_and_found/
     - assets/google_login_icon/
 
   # The following line ensures that the Material Icons font is

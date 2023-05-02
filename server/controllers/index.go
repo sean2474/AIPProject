@@ -141,6 +141,11 @@ func FoodMenuByHandler(w http.ResponseWriter, r *http.Request) {
 		food.DeleteFoodMenu(w, r, path)
 		break
 	case "GET":
+		dateStr := strings.TrimPrefix(r.URL.Path, "/data/food-menu/")
+		if dateStr != "" {
+			food.GetFoodMenuByDate(w, r)
+			break
+		}
 		food.GetFoodMenu(w, r)
 		break
 	default:
@@ -226,7 +231,7 @@ func SchoolStoreHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 
-		imageID := strings.TrimPrefix(r.URL.Path, "/data/school-store/image/")
+		imageID := strings.TrimPrefix(r.URL.Path, "/data/school-store/")
 		fmt.Println(imageID)
 		if imageID != "" {
 			schoolStore.HandleSchoolStoreImage(w, r)

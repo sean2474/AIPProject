@@ -592,6 +592,42 @@ paths:
       summary: Delete a food menu
       tags:
       - FoodMenu
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the breakfast, lunch, and dinner menu for a specific
+        date from the database
+      parameters:
+      - description: The date of the food menu (YYYY-MM-DD)
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/databaseTypes.FoodMenu'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      tags:
+      - FoodMenu
   /data/food-menu/{id}:
     put:
       consumes:
@@ -850,8 +886,6 @@ paths:
           description: Internal server error
           schema:
             type: string
-      security:
-      - Bearer: []
       summary: Get a list of items from the School Store
       tags:
       - School Store
@@ -1086,7 +1120,7 @@ paths:
             type: string
       summary: Delete a lost and found item
       tags:
-      - Lost and Found
+      - LostAndFound
 securityDefinitions:
   Bearer:
     description: Type "Bearer" followed by a space and JWT token.

@@ -3,10 +3,12 @@ package food
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"server/databaseTypes"
 	"server/restTypes"
+	"strings"
 	"time"
 )
 
@@ -201,6 +203,72 @@ func GetFoodMenu(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	// Query the database for the food menu for the current date
+	query := "SELECT breakfast, lunch, dinner FROM FoodMenu WHERE date = ?"
+	row := db.QueryRow(query, date.Format("2006-01-02"))
+	fmt.Println(date.Format("2006-01-02"))
+	// Extract the values from the row
+	var breakfast, lunch, dinner string
+	err = row.Scan(&breakfast, &lunch, &dinner)
+	if err == sql.ErrNoRows {
+		fmt.Println(err.Error())
+		http.NotFound(w, r)
+		return
+	} else if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Create a FoodMenu struct from the values
+	foodMenu := databaseTypes.FoodMenu{
+		Date:      date.Format("2006-01-02"),
+		Breakfast: breakfast,
+		Lunch:     lunch,
+		Dinner:    dinner,
+	}
+
+	// Convert the FoodMenu struct to a JSON object
+	jsonData, err := json.Marshal(foodMenu)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set the response headers
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	// Write the response
+	w.Write(jsonData)
+}
+
+// GetFoodMenuByDate @Summary Get the food menu for a specific date
+// @Description Retrieves the breakfast, lunch, and dinner menu for a specific date from the database
+// @Tags FoodMenu
+// @Accept  json
+// @Produce  json
+// @Param   date      path    string    true        "The date of the food menu (YYYY-MM-DD)"
+// @Success 200 {object} databaseTypes.FoodMenu
+// @Failure 400 {string} Bad Request
+// @Failure 401 {string} Unauthorized
+// @Failure 404 {string} Not Found
+// @Failure 500 {string} Internal Server Error
+// @Router /data/food-menu/{date} [get]
+func GetFoodMenuByDate(w http.ResponseWriter, r *http.Request) {
+	// Get the date parameter from the path
+	dateStr := strings.TrimPrefix(r.URL.Path, "/data/food-menu/")
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	db, err := sql.Open("sqlite3", "database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Query the database for the food menu for the specified date
 	query := "SELECT breakfast, lunch, dinner FROM FoodMenu WHERE date = ?"
 	row := db.QueryRow(query, date.Format("2006-01-02"))
 

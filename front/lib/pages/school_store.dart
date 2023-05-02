@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/school_store.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 String itemTypeToString(ItemType type) {
   switch (type) {
@@ -14,6 +15,8 @@ String itemTypeToString(ItemType type) {
       return 'goods';
     case ItemType.other:
       return 'other';
+    default:
+      return 'na';
   }
 }
 
@@ -111,11 +114,12 @@ class SchoolStorePageState extends State<SchoolStorePage>
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  storeItem.imagePath,
-                  height: 150,
+                child: CachedNetworkImage(
+                  imageUrl: storeItem.imagePath,
+                  height: 130,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
               const SizedBox(height: 8),
@@ -239,11 +243,12 @@ class ItemPage extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    itemData.imagePath,
+                  child: CachedNetworkImage(
+                    imageUrl: itemData.imagePath,
                     height: 150,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -281,11 +286,16 @@ class ItemPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  itemData.description, // Add the description text
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                LimitedBox(
+                  maxHeight: 175, // Adjust this value based on your desired maximum height
+                  child: SingleChildScrollView(
+                    child: Text(
+                      itemData.description, // Add the description text
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
                   ),
                 ),
               ],

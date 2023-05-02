@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/lost_item.dart';
-
+import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 String statusToString(FoundStatus status) {
   switch (status) {
@@ -102,11 +103,12 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  data.imageUrl,
-                  height: 150,
+                child: CachedNetworkImage(
+                  imageUrl: data.imageUrl,
+                  height: 130,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
               const SizedBox(height: 8),
@@ -222,7 +224,6 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                   child: SizedBox(
                     height: 40,
                     child: TextField(
-                      // change detail
                       showCursor: false,
                       onChanged: (value) {
                         setState(() {
@@ -234,6 +235,14 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                         fillColor: Colors.white,
                         hintText: 'Search items',
                         contentPadding: const EdgeInsets.all(8.0),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -318,6 +327,7 @@ class ItemPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
     return Stack(
       children: [
         Container(
@@ -332,11 +342,12 @@ class ItemPage extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    itemData.imageUrl,
+                  child: CachedNetworkImage(
+                    imageUrl: itemData.imageUrl,
                     height: 150,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -361,7 +372,7 @@ class ItemPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          itemData.dateFound,
+                          dateFormat.format(DateTime.parse(itemData.dateFound)),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],

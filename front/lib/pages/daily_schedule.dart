@@ -96,6 +96,7 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
                   margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: PageView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     controller: _controller,
                     itemCount: localData.dailySchedules.length,
                     onPageChanged: (int index) {
@@ -104,15 +105,7 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
                       });
                     },
                     itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0xFF0E1B2A),
-                            width: 5,
-                          ),
-                        ),
-                        child: localData.dailySchedules[index].imageWidget
-                      );
+                      return localData.dailySchedules[index].imageWidget;
                     },
 
                   ),

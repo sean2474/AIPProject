@@ -94,8 +94,6 @@ class DailySchedule {
         AndroidWebViewController.enableDebugging(true);
         (controller.platform as AndroidWebViewController)
             .setMediaPlaybackRequiresUserGesture(false);
-        (controller.platform as AndroidWebViewController)
-          .enableZoom(true);
       }
 
       controller.loadHtmlString(centeredHtml);

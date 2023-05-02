@@ -18,7 +18,6 @@ import (
 // @Summary Get a list of items from the School Store
 // @Description Retrieves a list of items from the School Store database
 // @Tags School Store
-// @Security Bearer
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} restTypes.SchoolStoreResponse

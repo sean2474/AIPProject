@@ -1,4 +1,3 @@
-
 enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
 enum Season { fall, winter, spring, na }
 
@@ -42,12 +41,12 @@ class SportsInfo {
 
     return SportsInfo(
       id: json['id'],
-      sportsName: json['sports_name'],
+      sportsName: json['sport_name'],
       teamCategory: teamCategory,
       season: season,
-      coachNames: json['coach_name'].split("/"),
-      coachContacts: json['coach_contact'].split("/"),
-      roster: json['roster'].split("/"),
+      coachNames: json['coach_name']?.split("/"),
+      coachContacts: json['coach_contact']?.split("/"),
+      roster: json['roster']?.split("/"),
     );
   }
 }
