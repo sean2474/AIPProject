@@ -1,6 +1,6 @@
 import 'settings.dart';
+import 'data.dart';
 
-enum FoundStatus { returned, lost, na }
 class LostItem {
   int id;
   String name;

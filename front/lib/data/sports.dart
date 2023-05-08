@@ -1,5 +1,4 @@
-enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
-enum Season { fall, winter, spring, na }
+import 'data.dart';
 
 class SportsInfo {
   int id;
@@ -48,6 +47,11 @@ class SportsInfo {
       coachContacts: json['coach_contact']?.split("/"),
       roster: json['roster']?.split("/"),
     );
+  }
+
+  @override
+  String toString() { 
+    return 'SportsInfo(id: $id, sportsName: $sportsName, teamCategory: $teamCategory, season: $season)';
   }
 }
 

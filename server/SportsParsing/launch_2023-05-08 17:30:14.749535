@@ -1,0 +1,15 @@
+2023-05-08 17:30:14,749 - INFO - Starting parsing...
+2023-05-08 17:30:16,243 - WARNING - Empty roster in (https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/jvfootball); ('NoneType' object has no attribute 'find')
+2023-05-08 17:30:32,697 - WARNING - Empty roster in (https://www.avonoldfarms.com/athletics/teams-schedules/wintersports/thirdsbasketballred); ('NoneType' object has no attribute 'find')
+2023-05-08 17:30:53,075 - INFO - Successfully parsed all information.
+2023-05-08 17:30:53,076 - INFO - Successfully connected to database, started uploading data to DB
+2023-05-08 17:30:53,076 - INFO - Inserting information to SportsGames
+2023-05-08 17:30:58,319 - ERROR - Writing to database failed with sqlite3.Error: database is locked
+2023-05-08 17:36:58,322 - INFO - Starting parsing...
+2023-05-08 17:37:02,054 - WARNING - Empty roster in (https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/jvfootball); ('NoneType' object has no attribute 'find')
+2023-05-08 17:37:46,624 - INFO - Successfully parsed all information.
+2023-05-08 17:37:46,625 - INFO - Successfully connected to database, started uploading data to DB
+2023-05-08 17:37:46,625 - INFO - Inserting information to SportsGames
+2023-05-08 17:37:46,632 - INFO - Inserting information to SportsInfo
+2023-05-08 17:37:46,634 - INFO - Successfully uploaded information to database
+2023-05-08 17:37:46,634 - INFO - Update finished.

@@ -3,11 +3,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:front/pages/school_store.dart';
-import 'package:front/pages/main_menu.dart';
-import 'package:front/pages/daily_schedule.dart';
-import 'package:front/pages/food_menu.dart';
-import 'package:front/pages/lost_and_found.dart';
-import 'package:front/pages/sports.dart';
+import 'package:front/pages/main_menu/main_menu.dart';
+import 'package:front/pages/daily_schedule/daily_schedule.dart';
+import 'package:front/pages/food_menu/food_menu.dart';
+import 'package:front/pages/lost_and_found/lost_and_found.dart';
+import 'package:front/pages/sports/sports.dart';
 import 'package:front/data/data.dart';
 import 'package:front/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';

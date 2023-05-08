@@ -108,6 +108,7 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> getGames() async {
     dynamic data = await _httpRequest('GET', '$baseUrl/data/games/');
+    debugPrint(data.toString());
     List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
     return listOfMaps;
   }

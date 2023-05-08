@@ -1,0 +1,6 @@
+2023-05-08 15:55:22,412 - INFO - Starting parsing...
+2023-05-08 15:55:25,166 - WARNING - Empty roster in (https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/jvfootball); ('NoneType' object has no attribute 'find')
+2023-05-08 15:56:01,516 - INFO - Successfully parsed all information.
+2023-05-08 15:56:01,518 - INFO - Successfully connected to database, started uploading data to DB
+2023-05-08 15:56:01,518 - INFO - Inserting information to SportsGames
+2023-05-08 15:56:01,521 - ERROR - Writing to database failed with sqlite3.Error: no such table: SportsGames

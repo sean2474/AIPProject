@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
-import 'notifications.dart';
+import '../notifications/notifications.dart';
 
 class StudentMainMenu extends StatelessWidget {
   final Data localData;

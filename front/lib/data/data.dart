@@ -10,6 +10,12 @@ import 'school_store.dart';
 import 'user_.dart';
 import 'settings.dart';
 
+enum ItemType { food, drink, goods, other, na }
+enum FoundStatus { returned, lost, na }
+enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
+enum Season { fall, winter, spring, na }
+enum UserType { student, teacher, parent, admin }
+
 class Data {
   User_? user;
   static bool loggedIn = false;

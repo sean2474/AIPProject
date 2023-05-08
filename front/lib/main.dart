@@ -21,12 +21,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:front/api_service/api_service.dart';
 import 'package:front/data/data.dart';
-import 'package:front/data/food_menu.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:front/data/school_store.dart';
 import 'package:front/data/sports.dart';
 import 'package:front/utils/loading.dart';
-import 'package:front/pages/main_menu.dart';
+import 'package:front/pages/main_menu/main_menu.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -45,7 +44,10 @@ void main() async {
     home: LoadingPage(),
   ));
 
-  String baseUrl = 'http://52.91.153.106:8082';
+  //String baseUrl = 'http://52.45.134.101:8082';
+  String baseUrl = 'http://127.0.0.1:8082';
+  debugPrint("connecting to $baseUrl");
+
   Settings.baseUrl = baseUrl;
   Data localData = Data(dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'), apiService: ApiService(baseUrl: baseUrl));
 

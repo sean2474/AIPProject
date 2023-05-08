@@ -1,9 +1,5 @@
-enum UserType {
-  student,
-  teacher,
-  parent,
-  admin,
-}
+import 'data.dart';
+
 class User_ {
   int id;
   String token;

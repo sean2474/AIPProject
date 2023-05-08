@@ -1,6 +1,6 @@
 import 'package:front/data/settings.dart';
+import 'data.dart';
 
-enum ItemType { food, drink, goods, other, na }
 class StoreItem {
   int id;
   String name;
