@@ -1,6 +1,0 @@
-2023-05-02 16:35:28,330 - INFO - Started parsing
-2023-05-02 16:35:30,090 - INFO - Parsing finished, writing to database started
-2023-05-02 16:35:30,091 - INFO - Successfully connected to database, started uploading data to DB
-2023-05-02 16:35:30,091 - INFO - Inserting information to FoodMenu
-2023-05-02 16:35:30,096 - INFO - Successfully uploaded information to database
-2023-05-02 16:35:30,097 - INFO - Writing to database finished

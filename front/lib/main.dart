@@ -1,11 +1,11 @@
 /// main.dart
-/// 
+
 /*
  running in emulator
  flutter run --no-sound-null-safety
  
  running in my iphone ...
- flutter run -d 00008110-00184D620E22801E --no-sound-null-safety
+ flutter run -d [device id] --no-sound-null-safety
  
  checking for connected devices
  flutter devices
@@ -13,20 +13,27 @@
  if github commiting not working, try:
  1. move to ~/Desktop/AIPProject/.git/refs/remotes/origin
  2. remove all files in remotes
- cd ~/Desktop/AIPProject/.git/refs/remotes/origin || rm -rf *
+ cd ~/Desktop/AIPProject/.git/refs/remotes/origin || rm -rf *\
+
+ I commented out the code that was throwing error for webview
+ which is "package:webview_flutter_wkwebview/src/common/web_kit.g.dart:2789:7"
+ if there is error, uncomment it, or try flutter clean and flutter pub get
 */
+
 import 'dart:io';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:front/api_service/api_service.dart';
+import 'package:front/api_service/exceptions.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:front/data/school_store.dart';
 import 'package:front/data/sports.dart';
-import 'package:front/utils/loading.dart';
+import 'package:front/loading/loading.dart';
 import 'package:front/pages/main_menu/main_menu.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:front/data/food_menu.dart';
 import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:front/data/sharedPreferenceStorage.dart';
@@ -46,7 +53,7 @@ void main() async {
 
   //String baseUrl = 'http://52.45.134.101:8082';
   String baseUrl = 'http://127.0.0.1:8082';
-  debugPrint("connecting to $baseUrl");
+  debugPrint("connecting to $baseUrl...");
 
   Settings.baseUrl = baseUrl;
   Data localData = Data(dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'), apiService: ApiService(baseUrl: baseUrl));
@@ -68,25 +75,75 @@ void main() async {
       localData.user = User_(id: 0, token: user.uid, userType: UserType.student, name: '', password: '', email: user.email ?? '');
       Data.loggedIn = true;
     } else {
-      debugPrint("signed out");
+      debugPrint("user signed out");
       Data.loggedIn = false;
     }
   });
   
-  if (await localData.apiService.checkAuth(localData.user)) {
-    debugPrint("user is authenticated");
-  } else {
-    debugPrint("user is not authenticated");
+  if (Data.loggedIn) {
+    if (await localData.apiService.checkAuth(localData.user)) {
+      debugPrint("user is authenticated");
+    } else {
+      debugPrint("user is not authenticated");
+    }
   }
   
   /// endpoint connections to backend
-  localData.gameInfo = GameInfo.transformData(await localData.apiService.getGames());
-  localData.sportsInfo = SportsInfo.transformData(await localData.apiService.getSports());
-  localData.dailySchedules = DailySchedule.transformData(await localData.apiService.getDailySchedule());
-  // localData.foodMenus = FoodMenu.transformData(await localData.apiService.getFoodMenu());
-  localData.lostAndFounds = LostItem.transformData(await localData.apiService.getLostAndFound());
-  localData.storeItems = StoreItem.transformData(await localData.apiService.getSchoolStoreItems());
-  
+  try {
+    localData.gameInfo = GameInfo.transformData(await localData.apiService.getGames());
+  } on NoSuchMethodError {
+    debugPrint("failed to load games data");
+  } on BadRequestException {
+    debugPrint("bad request on games");
+  } on NotFoundException {
+    debugPrint("page not found on games");
+  }
+  try {
+    localData.sportsInfo = SportsInfo.transformData(await localData.apiService.getSports());
+  } on NoSuchMethodError {
+    debugPrint("failed to load sports data");
+  } on BadRequestException {
+    debugPrint("bad request on sports");
+  } on NotFoundException {
+    debugPrint("page not found on sports");
+  }
+  try {
+    localData.foodMenus = FoodMenu.transformData(await localData.apiService.getFoodMenu());
+  } on NoSuchMethodError {
+    debugPrint("failed to load food menu data");
+  } on BadRequestException {
+    debugPrint("bad request on food menu");
+  } on NotFoundException {
+    debugPrint("page not found on food menu");
+  }
+  try {
+    localData.lostAndFounds = LostItem.transformData(await localData.apiService.getLostAndFound());
+  } on NoSuchMethodError {
+    debugPrint("failed to load lost and found data");
+  } on BadRequestException {
+    debugPrint("bad request on lost and found");
+  } on NotFoundException {
+    debugPrint("page not found on lost and found");
+  }
+  try {
+    localData.storeItems = StoreItem.transformData(await localData.apiService.getSchoolStoreItems());
+  } on NoSuchMethodError {
+    debugPrint("failed to load store items data");
+  } on BadRequestException {
+    debugPrint("bad request on store items"); 
+  } on NotFoundException {
+    debugPrint("page not found on store items");
+  }
+  try {
+    localData.dailySchedules = DailySchedule.transformData(await localData.apiService.getDailySchedule());
+  } on NoSuchMethodError {
+    debugPrint("failed to load daily schedule data");
+  } on BadRequestException {
+    debugPrint("bad request on daily schedule"); 
+  } on NotFoundException {
+    debugPrint("page not found on daily schedule");
+  }
+
   localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
   localData.sportsInfo.sort((a, b) => a.sportsName.compareTo(b.sportsName));
 

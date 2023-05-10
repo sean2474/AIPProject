@@ -26,4 +26,9 @@ class FoodMenu {
       dinner: json['dinner'],
     );
   }
+
+  @override
+  String toString() { 
+    return 'FoodMenu(id: $id, date: $date, breakFast: $breakFast, lunch: $lunch, dinner: $dinner)';
+  }
 }

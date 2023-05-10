@@ -2,7 +2,7 @@
 /// This file contains the assets used in the app.
 
 import 'package:flutter/material.dart';
-import 'package:front/pages/school_store.dart';
+import 'package:front/pages/school_store/school_store.dart';
 import 'package:front/pages/main_menu/main_menu.dart';
 import 'package:front/pages/daily_schedule/daily_schedule.dart';
 import 'package:front/pages/food_menu/food_menu.dart';

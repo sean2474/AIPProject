@@ -97,8 +97,8 @@ func GetSportsGameData(w http.ResponseWriter, r *http.Request) {
 
 	// Query the SportsGames table to get the data
 	rows, err := db.Query("SELECT SportsGames.id, SportsGames.sport_name, SportsGames.category, SportsGames.game_location, SportsGames.opponent_school, SportsGames.home_or_away, SportsGames.match_result, SportsGames.coach_comment, SportsGames.game_schedule FROM SportsGames JOIN SportsInfo ON SportsGames.id = SportsInfo.id")
-	fmt.Print(rows)
 	if err != nil {
+		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

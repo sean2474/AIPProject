@@ -1,15 +1,17 @@
 /// sports.dart
 // ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../data/data.dart';
 import '../../widgets/assets.dart';
 import 'package:intl/intl.dart';
 import 'package:front/data/sports.dart';
 import 'settings.dart';
 import 'method.dart';
-import 'sportsInfo.dart';
-import 'gameInfo.dart';
+import 'sports_info.dart';
+import 'game_info.dart';
 
 class SportsPage extends StatefulWidget {
   final Data localData;
@@ -223,7 +225,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
     List<SportsInfo> sportsInfo = localData.sportsInfo;
     List<GameInfo> gameInfo = localData.gameInfo;
     Map<String, bool> sportsListMap = {};
-
+    RefreshController refreshController = RefreshController(initialRefresh: false);
     for(SportsInfo sports in sportsInfo) {
       sportsListMap[sports.sportsName] = true;
     }
@@ -304,107 +306,142 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
         ),
       ),
       drawer: assets.buildDrawer(context),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF0E1B2A),
+      body: SmartRefresher(
+        enablePullUp: true,
+        enablePullDown: false,
+        controller: refreshController,
+        header: CustomHeader(
+          builder: (BuildContext context, RefreshStatus? mode) {
+            Widget body;
+            if (mode == RefreshStatus.idle) {
+              body = Text('');
+            } else if (mode == RefreshStatus.refreshing) {
+              body = CupertinoActivityIndicator(color: Colors.white,);
+            } else {
+              body = Text('');
+            }
+            return Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF0E1B2A),
+              ),
+              height: 55.0,
+              child: Center(child: body),
+            );
+          },
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 0, left: 0, right: 0,),
-                padding: const EdgeInsets.only(bottom: 10),
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF0E1B2A),
+        onRefresh: () => Future.delayed(const Duration(seconds: 0), () async {
+          try {
+            widget.localData.gameInfo = GameInfo.transformData(await widget.localData.apiService.getGames());
+            widget.localData.sportsInfo = SportsInfo.transformData(await widget.localData.apiService.getSports());
+          } catch (e) {
+            debugPrint(e.toString());
+            debugPrint("failed to fetch data");
+          }
+          setState(() { });
+          refreshController.refreshCompleted();
+        }),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF0E1B2A),
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Stack(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 0, left: 0, right: 0,),
+                  padding: const EdgeInsets.only(bottom: 10),
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF0E1B2A),
+                  ),
+                  child: assets.drawAppBarSelector(context: context, titles: ["STARRED", "ALL"], selectTab: _selectTab, animation:_animation, selectedIndex: _selectedTabIndex) 
                 ),
-                child: assets.drawAppBarSelector(context: context, titles: ["STARRED", "ALL"], selectTab: _selectTab, animation:_animation, selectedIndex: _selectedTabIndex) 
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 40,),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF7F6FB),
-                ),
-                child: Column(
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: FadeTransition(
-                        opacity: _animation,
-                        child: _selectedTabIndex == 0
-                          ? buildGamesList(starredGames, assets)
-                          : buildGamesList(games, assets),
+                Container(
+                  margin: const EdgeInsets.only(top: 40,),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF7F6FB),
+                  ),
+                  child: Column(
+                    children: [
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: FadeTransition(
+                          opacity: _animation,
+                          child: _selectedTabIndex == 0
+                            ? buildGamesList(starredGames, assets)
+                            : buildGamesList(games, assets),
+                        ),
                       ),
-                    ),
-                    const Text(
-                      'SPORTS INFO',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      const Text(
+                        'SPORTS INFO',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 10,
-                        right: 10,
+                      const SizedBox(
+                        height: 10,
                       ),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 8,
-                          crossAxisSpacing: 8,
-                        ), 
-                        itemCount: sportsList.length,
-                        itemBuilder: (context, index) {
-                          final String sportsName = sportsList[index].toLowerCase().replaceAll(' ', '_');
-                          const Color iconColor = Colors.black;
-                          const double size = 80;
-                          List<SportsInfo> sportsCategoryList = [];
-                          sportsCategoryList = sportsInfo.where((element) => element.sportsName == sportsList[index]).toList();
-                          sportsCategoryList.sort((a, b) {
-                              int aIndex = sortOrder.indexOf(a.teamCategory);
-                              int bIndex = sortOrder.indexOf(b.teamCategory);
-                              return aIndex.compareTo(bIndex);
-                          });
-                          return sportsInfoBox(
-                            sports: sportsCategoryList[0],
-                            child: getSportsIcon(sportsName, iconColor, size),
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: MediaQuery.of(context).size.height * 0.6,
-                                      child: SportsInfoPage(
-                                        sportsData: sportsCategoryList,
-                                        gameData: gameInfo,
-                                        localData: localData,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                          right: 10,
+                        ),
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                          ), 
+                          itemCount: sportsList.length,
+                          itemBuilder: (context, index) {
+                            final String sportsName = sportsList[index].toLowerCase().replaceAll(' ', '_');
+                            const Color iconColor = Colors.black;
+                            const double size = 80;
+                            List<SportsInfo> sportsCategoryList = [];
+                            sportsCategoryList = sportsInfo.where((element) => element.sportsName == sportsList[index]).toList();
+                            sportsCategoryList.sort((a, b) {
+                                int aIndex = sortOrder.indexOf(a.teamCategory);
+                                int bIndex = sortOrder.indexOf(b.teamCategory);
+                                return aIndex.compareTo(bIndex);
+                            });
+                            return sportsInfoBox(
+                              sports: sportsCategoryList[0],
+                              child: getSportsIcon(sportsName, iconColor, size),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }
-                      ),
-                    )
-                  ],
-                )
-              ),
-            ],
+                                      child: SizedBox(
+                                        width: MediaQuery.of(context).size.width,
+                                        height: MediaQuery.of(context).size.height * 0.6,
+                                        child: SportsInfoPage(
+                                          sportsData: sportsCategoryList,
+                                          gameData: gameInfo,
+                                          localData: localData,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          }
+                        ),
+                      )
+                    ],
+                  )
+                ),
+              ],
+            ),
           ),
         ),
       )

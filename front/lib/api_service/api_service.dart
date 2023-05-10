@@ -100,15 +100,17 @@ class ApiService {
   }
 
   // food menu
-  Future<List<Map<String, String>>> getFoodMenu() async {
+  Future<List<Map<String, dynamic>>> getFoodMenu() async {
     dynamic data = await _httpRequest('GET', '$baseUrl/data/food-menu/');
+    if (data['list'] == null) {
+      return [Map<String, dynamic>.from(data)];
+    }
     List<Map<String, String>> listOfMaps = List<Map<String, String>>.from(data['list']);
     return listOfMaps;
   }
 
   Future<List<Map<String, dynamic>>> getGames() async {
     dynamic data = await _httpRequest('GET', '$baseUrl/data/games/');
-    debugPrint(data.toString());
     List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
     return listOfMaps;
   }

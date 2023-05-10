@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'data.dart';
 
 class SportsInfo {
@@ -7,7 +8,7 @@ class SportsInfo {
   Season season;
   List<String> coachNames;
   List<String> coachContacts;
-  List<String> roster;
+  List<List<String>> roster;
 
   SportsInfo({
     required this.id,
@@ -38,6 +39,34 @@ class SportsInfo {
       season = Season.values[seasonIndex];
     }
 
+    List<List<String>> roster = [];
+    if (json['roster'] != null && json['roster'] != 'Empty roster') {
+      List<dynamic> proccessing = jsonDecode(json['roster']
+        .replaceAll(" '", " %")
+        .replaceAll("',", "%,")
+        .replaceAll("']", "%]")
+        .replaceAll("['", "[%")
+
+        .replaceAll(" \"", " %")
+        .replaceAll("\",", "%,")
+        .replaceAll("\"]", "%]")
+        .replaceAll("[\"", "[%")
+
+        .replaceAll("\"", "\\\"")
+        .replaceAll("\\'", "'")
+
+        .replaceAll(" %", " \"")
+        .replaceAll("%,", "\",")
+        .replaceAll("%]", "\"]")
+        .replaceAll("[%", "[\"")
+      );
+      for (List<dynamic> row in proccessing) {
+        roster.add(row.map((e) => e.toString()).toList());
+      }
+    } else {
+      roster = [['name']];
+    }
+
     return SportsInfo(
       id: json['id'],
       sportsName: json['sport_name'],
@@ -45,7 +74,7 @@ class SportsInfo {
       season: season,
       coachNames: json['coach_name']?.split("/"),
       coachContacts: json['coach_contact']?.split("/"),
-      roster: json['roster']?.split("/"),
+      roster: roster,
     );
   }
 
