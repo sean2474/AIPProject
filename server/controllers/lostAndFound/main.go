@@ -409,7 +409,7 @@ type deleteResponse struct {
 // HandleDeleteLostAndFound  Delete a lost and found item
 // @Summary Delete a lost and found item
 // @Description Deletes a lost and found item from the database
-// @Tags Lost and Found
+// @Tags LostAndFound
 // @ID delete-lost-and-found-item
 // @Accept json
 // @Produce json

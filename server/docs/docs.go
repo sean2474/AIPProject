@@ -138,17 +138,24 @@ const docTemplate = `{
         },
         "/data/daily-schedule/": {
             "get": {
-                "description": "Retrieves the daily schedule image for the current date from the database",
                 "consumes": [
                     "*/*"
                 ],
                 "produces": [
-                    "image/jpeg"
+                    "text/html"
                 ],
                 "tags": [
                     "DailySchedule"
                 ],
-                "summary": "Get the daily schedule image for the current date",
+                "summary": "Get the daily schedule HTML template for the specified date or the current date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The date for which to retrieve the daily schedule in the format 'YYYY-MM-DD'. If not provided, the current date is used.",
+                        "name": "date",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -437,6 +444,59 @@ const docTemplate = `{
             }
         },
         "/data/food-menu/{date}": {
+            "get": {
+                "description": "Retrieves the breakfast, lunch, and dinner menu for a specific date from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FoodMenu"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The date of the food menu (YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/databaseTypes.FoodMenu"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -843,11 +903,6 @@ const docTemplate = `{
         },
         "/data/school-store/": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Retrieves a list of items from the School Store database",
                 "consumes": [
                     "application/json"
@@ -1187,7 +1242,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Lost and Found"
+                    "LostAndFound"
                 ],
                 "summary": "Delete a lost and found item",
                 "operationId": "delete-lost-and-found-item",
