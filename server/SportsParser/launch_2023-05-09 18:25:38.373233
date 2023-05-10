@@ -1,0 +1,12 @@
+2023-05-09 18:25:38,373 - INFO - Starting parsing...
+2023-05-09 18:25:40,839 - WARNING - Empty roster in (https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/jvfootball); ('NoneType' object has no attribute 'find')
+2023-05-09 18:26:16,462 - INFO - Successfully parsed all information.
+2023-05-09 18:26:16,463 - INFO - Successfully connected to database
+2023-05-09 18:26:16,463 - INFO - Started clearing the contents of SportsGames table
+2023-05-09 18:26:16,467 - INFO - Cleared the contents of SportsGames table
+2023-05-09 18:26:16,467 - INFO - Inserting information to SportsGames
+2023-05-09 18:26:16,472 - INFO - Started clearing the contents of SportsInfo table
+2023-05-09 18:26:16,472 - INFO - Cleared the contents of SportsInfo table
+2023-05-09 18:26:16,472 - INFO - Inserting information to SportsInfo
+2023-05-09 18:26:16,473 - INFO - Successfully uploaded information to database
+2023-05-09 18:26:16,473 - INFO - Update finished.

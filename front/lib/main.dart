@@ -1,107 +1,155 @@
 /// main.dart
-import 'dart:ui';
 
+/*
+ running in emulator
+ flutter run --no-sound-null-safety
+ 
+ running in my iphone ...
+ flutter run -d [device id] --no-sound-null-safety
+ 
+ checking for connected devices
+ flutter devices
+ 
+ if github commiting not working, try:
+ 1. move to ~/Desktop/AIPProject/.git/refs/remotes/origin
+ 2. remove all files in remotes
+ cd ~/Desktop/AIPProject/.git/refs/remotes/origin || rm -rf *\
+
+ I commented out the code that was throwing error for webview
+ which is "package:webview_flutter_wkwebview/src/common/web_kit.g.dart:2789:7"
+ if there is error, uncomment it, or try flutter clean and flutter pub get
+*/
+
+import 'dart:io';
+import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:front/api_service/api_service.dart';
-import 'package:front/storage/local_storage.dart';
-import 'pages/main_menu.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:front/api_service/exceptions.dart';
+import 'package:front/data/data.dart';
+import 'package:front/data/lost_item.dart';
+import 'package:front/data/school_store.dart';
+import 'package:front/data/sports.dart';
+import 'package:front/loading/loading.dart';
+import 'package:front/pages/main_menu/main_menu.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:front/data/food_menu.dart';
 import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-
-Future<void> saveValue(String key, String value) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString(key, value);
-}
-
-Future<String?> readValue(String key) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString(key);
-}
-
-Future<void> saveRecentGamesToShow(int recentGames) async {
-  saveValue('numbersOfRecentGamesResultToShow', recentGames.toString());
-}
-
-Future<void> saveUpcomingGamesToShow(int upcomingGames) async {
-  saveValue('numbersOfUpcomingGamesResultToShow', upcomingGames.toString());
-}
-
-Future<void> saveSortLostAndFoundBy(String sort) async {
-  saveValue('sortLostAndFoundBy', sort);
-}
-
-Future<String?> getSortLostAndFoundBy() async {
-  return await readValue('sortLostAndFoundBy');
-}
-
-Future<void> saveSettings(Settings settings) async {
-  saveRecentGamesToShow(settings.recentGamesToShow);
-  saveUpcomingGamesToShow(settings.upcomingGamesToShow);
-  saveStarredSports(settings.starredSports.split(" "));
-  saveSortLostAndFoundBy(settings.sortLostAndFoundBy);
-}
-
-Future<int> getRecentGamesToShow() async {
-  int recentGames = int.parse(await readValue('numbersOfRecentGamesResultToShow') ?? '3');
-  return recentGames;
-}
-
-Future<int> getUpcomingGamesToShow() async {
-  int upcomingGames = int.parse(await readValue('numbersOfUpcomingGamesResultToShow') ?? '3');
-  return upcomingGames;
-}
-
-  Future<void> saveStarredSports(List<String> sports) async {
-    saveValue('starredSports', sports.join(' '));
-  }
-
-  Future<List<String>> getStarredSports() async {
-    String? starredSports = await readValue('starredSports');
-    if (starredSports == null) {
-      return [];
-    } else {
-      return starredSports.split(' ');
-    }
-  }
-
+import 'package:front/data/sharedPreferenceStorage.dart';
+import 'package:front/data/daily_schedule.dart';
+import 'package:front/data/settings.dart';
+import 'package:front/data/user_.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  String baseUrl = "http://127.0.0.1:8082";
-  Data localData = Data(users: [], dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date', baseUrl: baseUrl), apiService: ApiService(baseUrl: baseUrl));
-
-  print(localData.apiService.getSports());
-  print(localData.apiService.getGames());
-  
-  // sort the games by date
-  localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
-  // sort the sports by name
-  localData.sportsInfo.sort((a, b) => a.sportsName.compareTo(b.sportsName));
-
-  localData.settings.recentGamesToShow = await getRecentGamesToShow();
-  localData.settings.upcomingGamesToShow = await getUpcomingGamesToShow();
-  localData.settings.starredSports = (await getStarredSports()).join(' ');
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
+  runApp(MaterialApp(
+    home: LoadingPage(),
+  ));
+
+  //String baseUrl = 'http://52.45.134.101:8082';
+  String baseUrl = 'http://127.0.0.1:8082';
+  debugPrint("connecting to $baseUrl...");
+
+  Settings.baseUrl = baseUrl;
+  Data localData = Data(dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'), apiService: ApiService(baseUrl: baseUrl));
+
+  try {
+  localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
+  } on SocketException {
+    debugPrint("server not running");
+    rethrow;
+  }
+  // localData.user = await localData.apiService.login("johnsmith@example.com", "password1");
 
   FirebaseAuth.instance.authStateChanges().listen((user) {
-    if (user == null) {
-      print('User is currently signed out!');
+    if (localData.user != null && user == null) {
+      debugPrint("signed in with local");
+      Data.loggedIn = true;
+    } else if (user != null) {
+      debugPrint("signed in with google");
+      localData.user = User_(id: 0, token: user.uid, userType: UserType.student, name: '', password: '', email: user.email ?? '');
+      Data.loggedIn = true;
     } else {
-      print('User is signed in!');
+      debugPrint("user signed out");
+      Data.loggedIn = false;
     }
   });
+  
+  if (Data.loggedIn) {
+    if (await localData.apiService.checkAuth(localData.user)) {
+      debugPrint("user is authenticated");
+    } else {
+      debugPrint("user is not authenticated");
+    }
+  }
+  
+  /// endpoint connections to backend
+  try {
+    localData.gameInfo = GameInfo.transformData(await localData.apiService.getGames());
+  } on NoSuchMethodError {
+    debugPrint("failed to load games data");
+  } on BadRequestException {
+    debugPrint("bad request on games");
+  } on NotFoundException {
+    debugPrint("page not found on games");
+  }
+  try {
+    localData.sportsInfo = SportsInfo.transformData(await localData.apiService.getSports());
+  } on NoSuchMethodError {
+    debugPrint("failed to load sports data");
+  } on BadRequestException {
+    debugPrint("bad request on sports");
+  } on NotFoundException {
+    debugPrint("page not found on sports");
+  }
+  try {
+    localData.foodMenus = FoodMenu.transformData(await localData.apiService.getFoodMenu());
+  } on NoSuchMethodError {
+    debugPrint("failed to load food menu data");
+  } on BadRequestException {
+    debugPrint("bad request on food menu");
+  } on NotFoundException {
+    debugPrint("page not found on food menu");
+  }
+  try {
+    localData.lostAndFounds = LostItem.transformData(await localData.apiService.getLostAndFound());
+  } on NoSuchMethodError {
+    debugPrint("failed to load lost and found data");
+  } on BadRequestException {
+    debugPrint("bad request on lost and found");
+  } on NotFoundException {
+    debugPrint("page not found on lost and found");
+  }
+  try {
+    localData.storeItems = StoreItem.transformData(await localData.apiService.getSchoolStoreItems());
+  } on NoSuchMethodError {
+    debugPrint("failed to load store items data");
+  } on BadRequestException {
+    debugPrint("bad request on store items"); 
+  } on NotFoundException {
+    debugPrint("page not found on store items");
+  }
+  try {
+    localData.dailySchedules = DailySchedule.transformData(await localData.apiService.getDailySchedule());
+  } on NoSuchMethodError {
+    debugPrint("failed to load daily schedule data");
+  } on BadRequestException {
+    debugPrint("bad request on daily schedule"); 
+  } on NotFoundException {
+    debugPrint("page not found on daily schedule");
+  }
+
+  localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
+  localData.sportsInfo.sort((a, b) => a.sportsName.compareTo(b.sportsName));
+
+  localData.settings.recentGamesToShow = await getRecentGamesToShow();
+  localData.settings.upcomingGamesToShow = await getUpcomingGamesToShow();
+  localData.settings.starredSports = (await getStarredSports()).join(' ');
 
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -109,6 +157,7 @@ void main() async {
     return true;
   };
 
+  debugPrint("lanching app");
   runApp(StudentManagementApp(localData: localData));
 }
 
@@ -129,7 +178,7 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
 
   @override
   void dispose() {
-    print('app disposed');
+    debugPrint('app disposed');
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -138,6 +187,9 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
       saveSettings(widget.localData.settings);
+      if (widget.localData.user != null) {
+        saveUser(widget.localData.user!);
+      }
     }
   }
 

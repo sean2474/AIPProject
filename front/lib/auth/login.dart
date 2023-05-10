@@ -1,12 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import '../storage/local_storage.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:front/data/data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:front/api_service/authenication.dart';
+import 'package:front/data/user_.dart';
 
 class LoginPage extends StatefulWidget {
   final Data localData;
@@ -21,9 +19,6 @@ class LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -65,29 +60,30 @@ class LoginPageState extends State<LoginPage> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.only(left: 30,),
-            child: const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(17, 32, 51, 1),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.only(left: 30,),
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(17, 32, 51, 1),
+                  ),
                 ),
               ),
             ),
-          ),
-          _isLoading 
-              ? const Center(child: CircularProgressIndicator())
-              : Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(30),
+            Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(30),
+                child: Form(
+                  key: _formKey,
                   child: Column(
                     children: [
                       Container(
@@ -153,10 +149,19 @@ class LoginPageState extends State<LoginPage> {
                           },
                         ),
                       ),
+                      // login button
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_formKey.currentState!.validate()) {
-                            _loginUser();
+                            User_? user = await widget.localData.apiService.login(_emailController.text, _passwordController.text);
+                            if (user == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login failed')));
+                            } else {
+                              widget.localData.user = user;
+                              debugPrint("login success");
+                              debugPrint("$user");
+                              Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
+                            }
                           }
                         },
                         child: Container(
@@ -179,86 +184,59 @@ class LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+                      // sign in with google button
                       GestureDetector(
                         onTap: () async {
                           await Authentication.signInWithGoogle(context: context);
-                          FirebaseAuth.instance.authStateChanges().listen((user) {
+                          FirebaseAuth.instance.authStateChanges().listen((User? user) {
                             if (user != null) {
+                              widget.localData.user = User_(id: 0, token: user.uid, userType: UserType.student, name: '', password: '', email: user.email ?? '');
                               Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
                             } 
-                          }
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 55,
-                        margin: const EdgeInsets.only(left: 40, right: 40, top: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.grey,
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 55,
+                          margin: const EdgeInsets.only(left: 40, right: 40, top: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.grey,
+                            ),
+                            color: Colors.white, // change the background color to white
                           ),
-                          color: Colors.white, // change the background color to white
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'assets/google_login_icon/g-logo.png',
-                                width: 36,
-                              ),
-                              const SizedBox(width: 24,),
-                              const Text(
-                                'SIGN IN WITH GOOGLE',
-                                style: TextStyle(
-                                  color: Color.fromARGB(138, 0, 0, 0),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  'assets/google_login_icon/g-logo.png',
+                                  width: 36,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 24,),
+                                const Text(
+                                  'SIGN IN WITH GOOGLE',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(138, 0, 0, 0),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
-  }
-
-  Future<void> _loginUser() async {
-    setState(() {
-      _isLoading = true;
-    });
-    String email = _emailController.text;
-    String password = _passwordController.text;
-
-    var response = await http.post(
-      Uri.parse('https://example.com/api/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> userData = jsonDecode(response.body);
-      widget.localData.saveUserData(userData);
-      // Navigate to the main page
-      Navigator.pushReplacementNamed(context, '/main');
-    } else {
-      // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid email or password')),
-      );
-    }
   }
 
   @override

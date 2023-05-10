@@ -1,24 +1,98 @@
+/// api_service.dart
+// ignore_for_file: depend_on_referenced_packages, import_of_legacy_library_into_null_safe
+
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
+import 'package:http/http.dart' as http;
+import 'package:front/data/data.dart';
+import 'package:front/api_service/exceptions.dart';
+import 'package:front/data/user_.dart';
 
 class ApiService {
   final String baseUrl;
 
   ApiService({required this.baseUrl});
 
+  Future<User_?> login(String userEmail, String password) async {
+    try {
+      Map<String, dynamic> responseBody = await _httpRequest('POST', '$baseUrl/auth/login', {
+        'username': userEmail,
+        'password': password,
+      });
+
+      if (responseBody['code'] != null && responseBody['code'] == 401) {
+        throw const UnauthorizedException("Invalid username or password");
+      }
+      Map<String, dynamic> userData = responseBody['user_data'];
+      String name = "${userData['first_name'] as String} ${userData['last_name'] as String}";
+      return User_(
+        id: userData['id'],
+        name: name,
+        token: responseBody['token'],
+        userType: UserType.admin,
+        password: userData['password'],
+        email: userData['email'],
+      );
+    } on UnauthorizedException {
+      return null;
+    }
+  }
+
+  Future<bool> checkAuth(User_? user) async {
+    dynamic responseBody = await _httpRequest('GET', '$baseUrl/auth/testToken', {'token': user?.token});  
+    return responseBody.runtimeType == String;
+  }
+
+  void logout(Data? data) {
+    if (data != null) {
+      data.user = null;
+    }
+  }
+
   // daily schedule
-  Future<List<dynamic>> getDailySchedule() async {
-    return await _httpRequest('GET', '$baseUrl/data/daily-schedule/');
+  Future<List<Map<String, dynamic>>> getDailySchedule() async {
+    // dynamic result = await _httpRequest('GET', '$baseUrl/data/daily-schedule');
+    // if (result is Map<String, dynamic>) {
+    //   return [Map<String, dynamic>.from(result)];
+    // }
+      // return List<Map<String, dynamic>>.from(result);
+    List<Map<String, dynamic>> widgets = [
+      {'image_html': '', 'date': '2021-10-01'},
+      {'image_html': '', 'date': '2021-10-02'},
+      {'image_html': '', 'date': '2021-10-03'},
+    ];
+
+    // widgets[0]['image_url'] =
+    //     'https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?';
+    // widgets[1]['image_url'] =
+    //     'https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?';
+    // widgets[2]['image_url'] =
+    //     'https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?';
+
+    widgets[0]['image_html'] =
+        parse((await http.Client().get(Uri.parse('https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?'))).body)
+        .getElementById('contents')
+        .innerHtml;
+    widgets[1]['image_html'] =
+        parse((await http.Client().get(Uri.parse('https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?'))).body)
+        .getElementById('contents')
+        .innerHtml;
+    widgets[2]['image_html'] =
+        parse((await http.Client().get(Uri.parse('https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?'))).body)
+        .getElementById('contents')
+        .innerHtml;
+
+    return widgets;
   }
 
-  Future<dynamic> postDailySchedule(Map<String, dynamic> scheduleData) async {
-    return await _httpRequest('POST', '$baseUrl/data/daily-schedule/', scheduleData);
+  Future<dynamic> postDailySchedule(String date, String url) async {
+    return await _httpRequest('POST', '$baseUrl/data/daily-schedule/', {date: url});
   }
 
-  Future<dynamic> putDailySchedule(
-      String date, Map<String, dynamic> scheduleData) async {
-    return await _httpRequest(
-        'PUT', '$baseUrl/data/daily-schedule/$date', scheduleData);
+  Future<dynamic> putDailySchedule(String date, Map<String, dynamic> scheduleData) async {
+    return await _httpRequest('PUT', '$baseUrl/data/daily-schedule/$date', scheduleData);
   }
 
   Future<dynamic> deleteDailySchedule(String date) async {
@@ -26,42 +100,53 @@ class ApiService {
   }
 
   // food menu
-  Future<List<dynamic>> getFoodMenu() async {
-    return await _httpRequest('GET', '$baseUrl/data/food-menu/');
+  Future<List<Map<String, dynamic>>> getFoodMenu() async {
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/food-menu/');
+    if (data['list'] == null) {
+      return [Map<String, dynamic>.from(data)];
+    }
+    List<Map<String, String>> listOfMaps = List<Map<String, String>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<List<Map<String, dynamic>>> getGames() async {
-    return await _httpRequest('GET', '$baseUrl/data/games/');
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/games/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<List<Map<String, dynamic>>> getSports() async {
-    return await _httpRequest('GET', '$baseUrl/data/sports/');
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/sports/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<List<Map<String, dynamic>>> getLostAndFound() async {
-    return await _httpRequest('GET', '$baseUrl/data/lost-and-found/');
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/lost-and-found/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['items']);
+    return listOfMaps;
   }
 
   Future<dynamic> postLostAndFound(Map<String, dynamic> lostAndFoundData) async {
     return await _httpRequest('POST', '$baseUrl/data/lost-and-found/', lostAndFoundData);
   }
 
-  Future<dynamic> putLostAndFound(
-      String id, Map<String, dynamic> lostAndFoundData) async {
+  Future<dynamic> putLostAndFound(String id, Map<String, dynamic> lostAndFoundData) async {
     return await _httpRequest('PUT', '$baseUrl/data/lost-and-found/image/$id', lostAndFoundData);
   }
 
-  // not added in server yet
-  // Future<dynamic> deleteLostAndFound(String id) async {
-  //   return await _httpRequest('DELETE', '$baseUrl/data/lost-and-found/$id');
-  // }
+  Future<dynamic> deleteLostAndFound(String id) async {
+    return await _httpRequest('DELETE', '$baseUrl/data/lost-and-found/$id');
+  }
 
   Future<dynamic> getLostAndFoundItemImage(String id) async {
     return await _httpRequest('GET', '$baseUrl/data/lost-and-found/image/$id');
   }
 
   Future<List<Map<String, dynamic>>> getSchoolStoreItems() async {
-    return await _httpRequest('GET', '$baseUrl/data/school-store/');
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/school-store/');
+    List<Map<String, dynamic>> listOfMaps = List<Map<String, dynamic>>.from(data['list']);
+    return listOfMaps;
   }
 
   Future<dynamic> postSchoolStoreItem(Map<String, dynamic> schoolStoreItemData) async {
@@ -81,28 +166,40 @@ class ApiService {
     return await _httpRequest('DELETE', '$baseUrl/data/school-store/$id');
   }
 
-  Future<dynamic> _httpRequest(String method, String url,
-      [Map<String, dynamic>? data]) async {
+  Future<dynamic> _httpRequest(String method, String url, [Map<String, dynamic>? data]) async {
+    HttpClient httpClient = HttpClient();
+    HttpClientRequest request;
+    HttpClientResponse response;
     try {
-      HttpClient httpClient = HttpClient();
-      HttpClientRequest request;
-
       switch (method) {
         case 'POST':
           request = await httpClient.postUrl(Uri.parse(url));
           request.headers.contentType = ContentType.json;
           request.write(json.encode(data));
+          if (data != null && data.containsKey('token')) {
+            debugPrint('token: ${data['token']}');
+            request.headers.set("Authorization", "Bearer ${data['token']}");
+          }
           break;
         case 'PUT':
           request = await httpClient.putUrl(Uri.parse(url));
           request.headers.contentType = ContentType.json;
           request.write(json.encode(data));
+          if (data != null && data.containsKey('token')) {
+            request.headers.set("Authorization", "Bearer ${data['token']}");
+          }
           break;
         case 'DELETE':
           request = await httpClient.deleteUrl(Uri.parse(url));
+          if (data != null && data.containsKey('token')) {
+            request.headers.set("Authorization", "Bearer ${data['token']}");
+          }
           break;
         default: // GET
           request = await httpClient.getUrl(Uri.parse(url));
+          if (data != null && data.containsKey('token')) {
+            request.headers.set("Authorization", "Bearer ${data['token']}");
+          }
       }
 
       // Set the 'Origin' header
@@ -112,19 +209,38 @@ class ApiService {
       // request.headers.set('Referer-Policy', 'strict-origin-when-cross-origin');
 
       // Set any other necessary headers for authentication or API access
-      request.headers.set('Client-data', 'your-session-token');
+      // request.headers.set('Client-data', 'your-session-token');
 
-      HttpClientResponse response = await request.close();
-
-      if (response.statusCode == 200) {
-        String responseBody = await response.transform(utf8.decoder).join();
-        dynamic data = jsonDecode(responseBody);
-        return data;
-      } else {
-        throw Exception('Error ${response.statusCode}: Failed to load data');
-      }
+      response = await request.close();
+      
     } catch (e) {
-      throw Exception('Error: $e: Failed to load data');
+      throw Exception(e);
     }
+    if (response.statusCode == ResponseType.UNAUTHORIZED) {
+      throw UnauthorizedException('Error ${response.statusCode}: Failed to load data');
+    } else if (response.statusCode == ResponseType.BAD_REQUEST) {
+      throw BadRequestException('Error ${response.statusCode}: Failed to load data');
+    } else if (response.statusCode == ResponseType.NOT_FOUND) {
+      throw NotFoundException('Error ${response.statusCode}: Failed to load data');
+    } else if (response.statusCode == ResponseType.INTERNAL_SERVER_ERROR) {
+      throw InternalServerErrorException('Error ${response.statusCode}: Failed to load data');
+    } else if (response.statusCode == ResponseType.SERVICE_UNAVAILABLE) {
+      throw ServiceUnavailableException('Error ${response.statusCode}: Failed to load data');
+    } else if (response.statusCode == ResponseType.GATEWAY_TIMEOUT) {
+      throw GatewayTimeoutException('Error ${response.statusCode}: Failed to load data');
+    } 
+
+    if (response.statusCode == 200) {
+      dynamic data;
+      String responseBody = await response.transform(utf8.decoder).join();
+      try {
+        data = jsonDecode(responseBody);
+      } on FormatException {
+        // responseBody is not valid JSON but string
+        return responseBody;
+      }
+      return data;
+    } 
+    throw UnknownResponseException('Error ${response.statusCode}: Failed to load data');
   }
 }
