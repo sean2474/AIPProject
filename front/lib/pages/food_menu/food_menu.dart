@@ -13,6 +13,7 @@ class FoodMenuPage extends StatefulWidget {
   FoodMenuPageState createState() => FoodMenuPageState();
 }
 
+// TODO: add refresh indicator in body
 class FoodMenuPageState extends State<FoodMenuPage> {
   String _selectedMealTime = '';
   bool _isToday = true;

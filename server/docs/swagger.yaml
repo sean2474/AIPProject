@@ -368,10 +368,14 @@ paths:
     get:
       consumes:
       - '*/*'
-      description: Retrieves the daily schedule image for the current date from the
-        database
+      parameters:
+      - description: The date for which to retrieve the daily schedule in the format
+          'YYYY-MM-DD'. If not provided, the current date is used.
+        in: query
+        name: date
+        type: string
       produces:
-      - image/jpeg
+      - text/html
       responses:
         "200":
           description: OK
@@ -389,7 +393,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      summary: Get the daily schedule image for the current date
+      summary: Get the daily schedule HTML template for the specified date or the
+        current date
       tags:
       - DailySchedule
     post:

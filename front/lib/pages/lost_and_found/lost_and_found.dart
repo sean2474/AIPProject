@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/lost_item.dart';
-import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'item.dart';
 
 class LostAndFoundPage extends StatefulWidget {
@@ -21,6 +21,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
     with TickerProviderStateMixin {
   late final AnimationController _animationController;
   String _searchText = "";
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   List<LostItem> selectedItem(List<LostItem> items, String keyWord) {
     if (keyWord == "") {
@@ -209,9 +210,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   Widget build(BuildContext context) {
     Assets assets = Assets(currentPage: LostAndFoundPage(localData: widget.localData), localData: widget.localData,);
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F6FB),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0E1B2A),
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: false,
@@ -222,7 +221,6 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
           ),
         ),
@@ -251,11 +249,9 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                         hintText: 'Search items',
                         contentPadding: const EdgeInsets.all(8.0),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         border: OutlineInputBorder(
@@ -278,7 +274,6 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                             "Sorted by",
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white,
                             ),
                           ),
                           Text(
@@ -286,7 +281,6 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
                             ),
                           ),
                         ],
@@ -299,7 +293,6 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                           color: Colors.transparent,
                           child: const Icon(
                             Icons.sort,
-                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -314,20 +307,31 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
       drawer: assets.buildDrawer(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: GridView.builder(
-          key: ValueKey<String>(_searchText),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2 / 2.5, 
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
+        child: SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: false,
+          controller: _refreshController,
+          header: assets.refreshHeader(indicatorColor: Colors.grey,),
+          onRefresh: () => Future.delayed(const Duration(milliseconds: 500), () async {
+            widget.localData.lostAndFounds = LostItem.transformData(await widget.localData.apiService.getLostAndFound());
+            setState(() {});
+            _refreshController.refreshCompleted();
+          }),
+          child: GridView.builder(
+            key: ValueKey<String>(_searchText),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 2 / 2.5, 
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            padding: const EdgeInsets.all(10),
+            itemCount: selectedItem(widget.localData.lostAndFounds, _searchText).length,
+            itemBuilder: (context, index) {
+              LostItem item = selectedItem(widget.localData.lostAndFounds, _searchText)[index];
+              return itemBox(item);
+            },
           ),
-          padding: const EdgeInsets.all(10),
-          itemCount: selectedItem(widget.localData.lostAndFounds, _searchText).length,
-          itemBuilder: (context, index) {
-            LostItem item = selectedItem(widget.localData.lostAndFounds, _searchText)[index];
-            return itemBox(item);
-          },
         ),
       ),
 

@@ -1,10 +1,8 @@
 from datetime import datetime
-from pprint import pprint
 import json
 from typing import List, Tuple, Dict, Any
 
 import requests as r
-from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
 

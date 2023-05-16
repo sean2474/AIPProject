@@ -1,6 +1,9 @@
 /// assets.dart
 /// This file contains the assets used in the app.
 
+// ignore_for_file: prefer_const_constructors
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:front/pages/school_store/school_store.dart';
 import 'package:front/pages/main_menu/main_menu.dart';
@@ -11,6 +14,8 @@ import 'package:front/pages/sports/sports.dart';
 import 'package:front/data/data.dart';
 import 'package:front/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:front/color_schemes.g.dart';
 
 class Assets {
   final Widget? currentPage;
@@ -28,7 +33,6 @@ class Assets {
           child: Stack(
             children: [
               Container(
-                color: const Color(0xFF0e1b2a), 
                 child: ListView(
                   padding: const EdgeInsets.only(top: 150), // Add padding to ListView
                   children: [
@@ -48,12 +52,11 @@ class Assets {
                 child: Container(
                   padding: const EdgeInsets.only(left: 10, right: 20, top: 70),
                   height: 100,
-                  color: const Color(0xFF0e1b2a),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
+                        icon: const Icon(Icons.close),
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -76,10 +79,10 @@ class Assets {
                           children: [
                             Text(
                               !Data.loggedIn ? "SIGN IN" : "SIGN OUT",
-                              style: const TextStyle(color: Colors.white, fontSize: 18),
+                              style: const TextStyle(fontSize: 18),
                             ),
                             const SizedBox(width: 8),
-                            const Icon(Icons.account_circle, color: Colors.white, size: 32),
+                            const Icon(Icons.account_circle, size: 32),
                           ],
                         ),
                       ),
@@ -118,10 +121,10 @@ class Assets {
   }
 
   Widget _buildDrawerItem(BuildContext context, IconData icon, String title,
-      {Color textColor = Colors.white, Widget? currentPage}) {
+      {Widget? currentPage}) {
     return ListTile(
-      leading: Icon(icon, color: textColor),
-      title: Text(title, style: TextStyle(color: textColor)),
+      leading: Icon(icon,),
+      title: Text(title,),
       onTap: () {
         Navigator.pop(context);
         if (currentPage != null &&
@@ -256,7 +259,7 @@ class Assets {
     margin: margin,
     padding: const EdgeInsets.all(0),
     decoration: BoxDecoration(
-      color: const Color(0xFFFFFFFF),
+      color: Colors.white,
       border: Border(
         left: BorderSide(width: 4, color: borderColor),
       ),
@@ -281,7 +284,6 @@ class Assets {
                             title,
                             style: const TextStyle(
                               fontSize: 16,
-                              color: Colors.black,
                             ),
                           ),
                         )
@@ -294,7 +296,6 @@ class Assets {
                                   title,
                                   style: const TextStyle(
                                     fontSize: 16,
-                                    color: Colors.black,
                                   ),
                                 ),
                               ),
@@ -312,7 +313,6 @@ class Assets {
                 iconNextToArrow == null
                   ? const Icon(
                       Icons.arrow_circle_right_outlined,
-                      color: Colors.grey,
                       size: 30,
                     )
                   : Row(
@@ -320,7 +320,6 @@ class Assets {
                         iconNextToArrow,
                         const Icon(
                           Icons.arrow_circle_right_outlined,
-                          color: Colors.grey,
                           size: 30,
                         ),
                       ],
@@ -381,7 +380,6 @@ class Assets {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -393,7 +391,7 @@ class Assets {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3eb9e4),
+                      color: lightColorScheme.secondary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -404,5 +402,27 @@ class Assets {
         );
       }).toList(),
     );
+  }
+
+  // TODO: delete backgroundColor variable
+  CustomHeader refreshHeader({required Color indicatorColor, Color? backgroundColor}) {
+    return CustomHeader(
+        builder: (BuildContext context, RefreshStatus? mode) {
+          Widget body;
+          if (mode == RefreshStatus.idle) {
+            body = Text('');
+          } else if (mode == RefreshStatus.refreshing) {
+            body = CupertinoActivityIndicator(color: indicatorColor,);
+          } else {
+            body = CupertinoActivityIndicator(color: indicatorColor,);
+          }
+          return Container(
+            padding: EdgeInsets.only(bottom: 20),
+            alignment: Alignment.bottomCenter,
+            height: 1000.0,
+            child: body,
+          );
+        },
+      );
   }
 }

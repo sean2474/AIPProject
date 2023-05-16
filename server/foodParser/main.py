@@ -2,15 +2,14 @@ import argparse
 import logging
 import re
 import sqlite3
-# import schedule as schedule
 from datetime import datetime
 from typing import Tuple, Dict, Any
 
 
 from FoodMenuEntries import FoodMenuEntries
 
-SQL_INSERT_STATEMENT = "INSERT INTO FoodMenu (id, date, breakfast, lunch, dinner) VALUES (?, ?, ?, ?, ?)"
-
+SQL_INSERT_QUERY = "INSERT INTO FoodMenu (id, date, breakfast, lunch, dinner) VALUES (?, ?, ?, ?, ?)"
+SQL_DELETE_QUERY = "DELETE FROM FoodMenu"
 database_filename = "../database.db"
 
 
@@ -19,7 +18,7 @@ def get_current_date() -> Tuple[str, str, str]:
     return now.strftime("%Y"), now.strftime("%m"), now.strftime("%d")
 
 
-def parse_content() -> Tuple[Dict[Tuple[Any, str], dict], Dict[str, str]]:
+def parse_content() -> Dict[Any, Dict[Any, Any]]:
     parser = FoodMenuEntries(get_current_date())    # Constructor calls parsing function
     return parser.get_parsed_data()
 
@@ -52,13 +51,17 @@ def write_data_to_database(data: Dict[Any, Dict[Any, Any]], database) -> bool:
             # Connecting to the database
             sqlite_connection = sqlite3.connect(database)
             cursor = sqlite_connection.cursor()
-            logging.info("Successfully connected to database, started uploading data to DB")
+            logging.info("Successfully connected to database")
+
+            logging.info("Started clearing the contents of FoodMenu table")
+            cursor.execute(SQL_DELETE_QUERY)
+            logging.info("Cleared the contents of FoodMenu table")
 
             # Inserting parsed data to FoodMenu
             #
-            logging.info("Inserting information to FoodMenu")
+            logging.info("Inserting new data to FoodMenu")
             # Creating data records from FoodMenu record (EventRecord)
-            cursor.executemany(SQL_INSERT_STATEMENT, cast_to_tuple(data))
+            cursor.executemany(SQL_INSERT_QUERY, cast_to_tuple(data))
 
             sqlite_connection.commit()
 
@@ -105,60 +108,9 @@ def update() -> None:
 
 
 def setup() -> None:
-    # global database_filename
-    # Logging settings
     logging.basicConfig(filename=f'food_parsing_launch_{datetime.now()}', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    # # Parser settings
-    # arg_parser = argparse.ArgumentParser(description='Program that accepts multiple time values in 24-hour format and '
-    #                                                  'database filename')
-    # # Argument for setting up the time
-    # arg_parser.add_argument('-t', '--times', type=is_time24_format, nargs='+',
-    #                         help='Time values in 24-hour format (HH:mm)')
-    #
-    # # Argument for setting up database filename
-    # arg_parser.add_argument('-d', '--database', type=str, required=True, help='Path to the SQLite database file')
-    #
-    # # Parsing command line arguments
-    # args = arg_parser.parse_args()
-    #
-    # # Set up database file
-    # database_filename = args.database
-    #
-    # # Passing user times to schedule if there are any
-    # schedule_logging_message = list()
-    # if len(args.times) > 0:
-    #     # Custom parsing time
-    #     for t in args.times:
-    #         schedule.every().day.at(t).do(update)
-    #         schedule_logging_message += t + " "
-    # else:
-    #     # Default time
-    #     schedule.every().day.at("00:00").do(update)
-    #     schedule.every().day.at("12:00").do(update)
-    #     schedule_logging_message.append("00.00")
-    #     schedule_logging_message.append("12.00")
-    #
-    # # Logging setup information
-    # logging.info(f"Successfully scheduled parsing processes at {schedule_logging_message} every day")
-
-#
-# def check_if_update() -> None:
-#     # Getting information about scheduled tasks
-#     job = schedule.get_jobs()[0]
-#     remaining_time = time_remaining(job)
-#
-#     # Printing information about current scheduled task.
-#     print(f"[T] Time remaining until the next complete sport parsing: {remaining_time}")
-#     print("\033[F", end='')  # Move cursor up one line
-#     print("\033[K", end='')  # Clear the line
-#
-#     # Checking if there is a task to run
-#     schedule.run_pending()
 
 
 if __name__ == "__main__":
     setup()
     update()
-    # while True:
-    #     check_if_update()
-    #     time.sleep(60)  # Waiting until the next check

@@ -172,39 +172,56 @@ class Parser:
             # Parsing information from the response text
             try:
                 # Getting information about coaches
-                coach_name = "";coach_phone = ""
+                coach_data = {}
                 try:
                     # Only completely filled profiles are going to be parsed ( fsHasPhoto )
-                    coach_blocks = soup.find_all("div", class_="fsConstituentItem fsHasPhoto")
-
+                    coach_blocks = soup.find_all(lambda tag: tag.get('class') is not None and 'fsConstituentItem' in tag.get('class'))
                     # Getting information about coach
                     for element in coach_blocks:
-                        coach_name = element.find("a", "fsConstituentProfileLink").text.strip()
-                        coach_phone = element.find("div", "fsPhones").find("a").text.strip()
+                        try:
+                            coach_name = element.find(class_="fsConstituentProfileLink").text.strip()  # Name
+                            if "View Profile" in coach_name or "\t" in coach_name:
+                                1/0  # Genius
+                        except Exception as _:
+                            try:
+                                coach_name = element.find(class_="fsFullName").text.strip()
+                            except Exception as _:
+                                coach_name = None
+
+                        coach_phone = element.find(class_="fsPhones").find("a").text.strip()
+                        if coach_name:
+                            coach_data[coach_name] = coach_phone
 
                 except Exception as e:
                     logging.error(f"Unable to gather coach data from {link} - {e}")
-                    coach_name = coach_phone = "null"
 
                 # Getting team roster
                 roster = []
                 try:
                     if not soup:
                         raise NullSoupException("Bad soup")
-                    header = soup.find("table", "fsElementTable").find("thead").find("tr")
-                    roster.append([el.strip() for el in header.text.split("\n") if len(el.strip()) > 0])
-
+                    headers = [n.strip() for n in
+                               [j.text for j in soup.find("table", "fsElementTable")
+                               .find("thead").find("tr").find_all("th")]]
                     raw_roster = soup.find("table", "fsElementTable").find("tbody").find_all("tr")
                     for element in raw_roster:
-                        # Parsing each element of table and cleaning it.
-                        roster.append([el.strip() for el in element.text.split("\n") if len(el.strip()) > 0])
+                        raw = {}
+                        data = [j.strip() for j in [j.text for j in element.find_all("td")]]
+                        for num, header in enumerate(headers):
+                            try:
+                                raw[header] = data[num]
+                            except Exception as _:
+                                raw[header] = ''
+                        if raw:
+                            roster.append(raw)
+
                 except Exception as e:
                     logging.warning(f"Empty roster in ({link}); ({e})")
                     roster = "Empty roster"
 
                 # Passing data to SportsInfoRecord to organize it
                 self.sport_records.append(
-                    SportsInfoRecord(sport, category, season, coach_name, coach_phone, roster)
+                    SportsInfoRecord(sport, category, season, coach_data, roster)
                 )
 
                 # Indicator of invalid info

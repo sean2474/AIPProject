@@ -40,6 +40,7 @@ import 'package:front/data/sharedPreferenceStorage.dart';
 import 'package:front/data/daily_schedule.dart';
 import 'package:front/data/settings.dart';
 import 'package:front/data/user_.dart';
+import 'color_schemes.g.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -196,6 +197,7 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       debugShowCheckedModeBanner: false,
       home: StudentMainMenu(localData: widget.localData),
     );

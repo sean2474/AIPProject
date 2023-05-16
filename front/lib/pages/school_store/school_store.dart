@@ -6,6 +6,7 @@ import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/school_store.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'item_page.dart';
 
 String itemTypeToString(ItemType type) {
@@ -36,6 +37,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
   int _selectedTabIndex = 0;
   late final AnimationController _animationController;
   late final Animation<double> _animation;
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -196,13 +198,11 @@ class SchoolStorePageState extends State<SchoolStorePage>
     Assets assets = Assets(currentPage: SchoolStorePage(localData: widget.localData), localData: widget.localData,);
     List<StoreItem> items = getItemsOfType(ItemType.values[_selectedTabIndex]);
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F6FB),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(100),
         child: Stack(
           children: [
             AppBar(
-              backgroundColor: const Color(0xFF0E1B2A),
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
@@ -225,7 +225,6 @@ class SchoolStorePageState extends State<SchoolStorePage>
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
                 ),
               ),
@@ -236,19 +235,30 @@ class SchoolStorePageState extends State<SchoolStorePage>
       drawer: assets.buildDrawer(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: GridView.builder(
-          key: ValueKey<int>(_selectedTabIndex),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2 / 2.5, 
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
+        child: SmartRefresher(
+          enablePullUp: false,
+          enablePullDown: true,
+          header: assets.refreshHeader(indicatorColor: Colors.grey,),
+          controller: _refreshController,
+          onRefresh: () => Future.delayed(const Duration(milliseconds: 500), () async {
+            widget.localData.storeItems = StoreItem.transformData(await widget.localData.apiService.getSchoolStoreItems());
+            setState(() {});
+            _refreshController.refreshCompleted();
+          }),
+          child: GridView.builder(
+            key: ValueKey<int>(_selectedTabIndex),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 2 / 2.5, 
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            padding: const EdgeInsets.all(10),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return itemBox(items[index]);
+            },
           ),
-          padding: const EdgeInsets.all(10),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return itemBox(items[index]);
-          },
         ),
       ),
     );

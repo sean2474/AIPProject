@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,12 +13,15 @@ import (
 	"time"
 )
 
-// GetDailySchedule @Summary Get the daily schedule image for the current date
-// @Summary Get the daily schedule image for the current date
-// @Description Retrieves the daily schedule image for the current date from the database
+// GetDailySchedule returns the HTML template for the daily schedule of the specified date or the current date.
+//
+// Retrieves the daily schedule HTML template for the specified date or the current date from the database.
+//
+// @Summary Get the daily schedule HTML template for the specified date or the current date
 // @Tags DailySchedule
 // @Accept  */*
-// @Produce  image/jpeg
+// @Produce  text/html
+// @Param date query string false "The date for which to retrieve the daily schedule in the format 'YYYY-MM-DD'. If not provided, the current date is used."
 // @Success 200 {string} OK
 // @Failure 401 {string} Unauthorized
 // @Failure 404 {string} Not Found
@@ -30,14 +34,22 @@ func GetDailySchedule(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// Query the database for the daily schedule image
-	query := "SELECT image_file FROM DailySchedule WHERE date = ?"
-	row := db.QueryRow(query, time.Now().Format("2006-01-02"))
+	// Get the date parameter from the request, or use the current date if it's not provided
+	dateParam := r.URL.Query().Get("date")
+	date := time.Now().Format("2006-01-02")
+	if dateParam != "" {
+		date = dateParam
+	}
 
-	// Extract the image data from the row
-	var image []byte
-	err = row.Scan(&image)
+	// Query the database for the daily schedule HTML template for the specified date
+	query := "SELECT html_page FROM DailySchedule WHERE date = ?"
+	row := db.QueryRow(query, date)
+
+	// Extract the HTML template data from the row
+	var htmlTemplate string
+	err = row.Scan(&htmlTemplate)
 	if err == sql.ErrNoRows {
+		fmt.Println(err.Error())
 		http.NotFound(w, r)
 		return
 	} else if err != nil {
@@ -45,12 +57,19 @@ func GetDailySchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Set the response headers
-	w.Header().Set("Content-Type", "image/jpeg")
-	w.WriteHeader(http.StatusOK)
+	// Parse the HTML template
+	tmpl, err := template.New("dailySchedule").Parse(htmlTemplate)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
-	// Write the image data to the response body
-	w.Write(image)
+	// Execute the template with no data and write the output to the response body
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }
 
 // PostDailySchedule @Summary Upload the daily schedule image for the current date

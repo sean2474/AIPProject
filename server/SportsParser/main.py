@@ -10,7 +10,7 @@ import re
 
 import ConstantExpressions
 
-database_filename = "../database.db"
+database_filename = "./database.db"
 
 
 def time_remaining(task):

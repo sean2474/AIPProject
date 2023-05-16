@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:front/data/daily_schedule.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class DailySchedulePage extends StatefulWidget {
   final Data localData;
@@ -13,7 +15,8 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
   int _currentIndex = 0;
   late final AnimationController _animationController;
   late final Animation<double> _animation;
-
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  
   @override
   void initState() {
     super.initState();
@@ -57,7 +60,6 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
         child: Stack(
           children: [
             AppBar(
-              backgroundColor: const Color(0xFF0E1B2A),
               elevation: 0,
               automaticallyImplyLeading: false,
               centerTitle: false,
@@ -68,7 +70,6 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
                 ),
               ),
@@ -87,53 +88,64 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
         ),
       ),
       drawer: assets.buildDrawer(context),
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: PageView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _controller,
-                    itemCount: localData.dailySchedules.length,
-                    onPageChanged: (int index) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                    itemBuilder: (BuildContext context, int index) {
-                      return localData.dailySchedules[index].imageWidget;
-                    },
-
+      body: SmartRefresher(
+        enablePullUp: false,
+        enablePullDown: true,
+        controller: _refreshController,
+        header: assets.refreshHeader(indicatorColor: Colors.grey,),
+        onRefresh: () => Future.delayed(const Duration(milliseconds: 0), () async {
+          widget.localData.dailySchedules = DailySchedule.transformData(await widget.localData.apiService.getDailySchedule());
+          setState(() { });
+          _refreshController.refreshCompleted();
+        }),
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: PageView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _controller,
+                      itemCount: localData.dailySchedules.length,
+                      onPageChanged: (int index) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return localData.dailySchedules[index].imageWidget;
+                      },
+      
+                    ),
                   ),
-                ),
-                Positioned(
-                  top: MediaQuery.of(context).size.height * 0.7 * 0.5 - 36,
-                  left: 10,
-                  child: GestureDetector(
-                    onTap: _currentIndex > 0
-                        ? () => _scrollToIndex(_currentIndex - 1)
-                        : null,
-                    child: const Icon(Icons.arrow_back_ios, size: 24, color: Color(0xFF0E1B2A)),
+                  Positioned(
+                    top: MediaQuery.of(context).size.height * 0.7 * 0.5 - 36,
+                    left: 10,
+                    child: GestureDetector(
+                      onTap: _currentIndex > 0
+                          ? () => _scrollToIndex(_currentIndex - 1)
+                          : null,
+                      child: const Icon(Icons.arrow_back_ios, size: 24,),
+                    ),
                   ),
-                ),
-                Positioned(
-                  top: MediaQuery.of(context).size.height * 0.7 * 0.5 - 36,
-                  right: 10,
-                  child: GestureDetector(
-                    onTap: _currentIndex < localData.dailySchedules.length - 1
-                        ? () => _scrollToIndex(_currentIndex + 1)
-                        : null,
-                    child: const Icon(Icons.arrow_forward_ios, size: 24, color: Color(0xFF0E1B2A)),
+                  Positioned(
+                    top: MediaQuery.of(context).size.height * 0.7 * 0.5 - 36,
+                    right: 10,
+                    child: GestureDetector(
+                      onTap: _currentIndex < localData.dailySchedules.length - 1
+                          ? () => _scrollToIndex(_currentIndex + 1)
+                          : null,
+                      child: const Icon(Icons.arrow_forward_ios, size: 24,),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

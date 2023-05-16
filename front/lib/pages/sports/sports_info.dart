@@ -4,7 +4,11 @@ import 'package:front/data/sports.dart';
 import 'package:intl/intl.dart';
 import 'package:front/widgets/assets.dart';
 import 'method.dart';
+import 'package:front/color_schemes.g.dart';
 
+
+// TODO: change roster from row to column 
+// check https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/varsityfootball in mobile view
 class SportsInfoPage extends StatefulWidget {
   final List<SportsInfo> sportsData;
   final List<GameInfo> gameData;
@@ -40,6 +44,7 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
   void _selectTab(int index) {
     setState(() {
       _selectedCategoryIndex = index;
+      _expandedIndex = -1;
     });
     _animationController.forward(from: 0);
   }
@@ -52,7 +57,6 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
 
   Widget getSlidingAnimation(int index, Widget child) {
     return AnimatedSize(
-      vsync: this,
       duration: const Duration(milliseconds: 300),
       child: Stack(
         children: [
@@ -78,7 +82,7 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
     List<String> teamCategories = widget.sportsData.map((e) => getCategoryToString(e.teamCategory)).toList();
 
     Widget getInformationContent(int index) {
-      Color containerColor = Color.fromARGB(255, 236, 234, 241);
+      Color containerColor = lightColorScheme.secondaryContainer;
       switch (index) {
         case 0:
           List<GameInfo> filteredGameData = widget.gameData
@@ -185,7 +189,7 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                       .entries
                       .map<Widget>((entry) {
                         String playerInfo = entry.value;
-                        return Expanded(
+                        return Flexible(
                           child: Text(
                             playerInfo,
                             textAlign: TextAlign.center,
@@ -207,14 +211,12 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF7F6FB),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(100),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: AppBar(
               elevation: 5,
-              backgroundColor: Color(0xFF0E1B2A),
               automaticallyImplyLeading: false,
               centerTitle: false,
               actions: [
@@ -224,7 +226,6 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                     onTap: () => Navigator.pop(context),
                     child: Icon(
                       Icons.close,
-                      color: Colors.white,
                       size: 30,
                     ),
                   ),
@@ -237,7 +238,6 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                   style: const TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
                 ),
               ),
@@ -275,10 +275,8 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                         padding: EdgeInsets.all(16.0),
                         width: MediaQuery.of(context).size.width * 0.9,
                         decoration: BoxDecoration(
-                          color: Colors.grey[10],
                           border: Border(
                             bottom: BorderSide(
-                              color: Colors.grey,
                               width: 0.5,
                             ),
                           ),
@@ -286,7 +284,7 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                         child: Text(
                           textAlign: TextAlign.center,
                           information,
-                          style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

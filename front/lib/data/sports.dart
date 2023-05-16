@@ -66,7 +66,6 @@ class SportsInfo {
     } else {
       roster = [['name']];
     }
-
     return SportsInfo(
       id: json['id'],
       sportsName: json['sport_name'],

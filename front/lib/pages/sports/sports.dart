@@ -1,7 +1,7 @@
 /// sports.dart
-// ignore_for_file: prefer_const_constructors
 
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../data/data.dart';
@@ -12,6 +12,7 @@ import 'settings.dart';
 import 'method.dart';
 import 'sports_info.dart';
 import 'game_info.dart';
+import 'package:front/color_schemes.g.dart';
 
 class SportsPage extends StatefulWidget {
   final Data localData;
@@ -24,6 +25,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
   int _selectedTabIndex = 0;
   late final AnimationController _animationController;
   late final Animation<double> _animation;
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   final GameInfo naGame = GameInfo(
     id: -1,
@@ -152,7 +154,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
     ]);
   }
 
-
+  // TODO: game date is weird
   ListView buildGamesList(List<GameInfo> gamesList, Assets assets) {
     return ListView.builder(
       key: ValueKey<int>(_selectedTabIndex),
@@ -186,11 +188,11 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
           )
           : assets.boxButton(
             context,
-            title: " ${gamesList[index].sportsName} - ${getCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}",
+            title: " ${gamesList[index].sportsName.trim()} - ${getCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}",
             borderColor: gamesList[index].matchResult == ''
-            ? Colors.red.shade400
-            : Colors.lightBlue.shade200,
-            text: '${DateFormat('yyyy-MM-dd hh:mm a').format(DateTime.parse(gamesList[index].gameDate)).toString()}, ${gamesList[index].gameLocation}${gamesList[index].matchResult == '' ? '' : ', '}${gamesList[index].matchResult}',
+            ? Colors.grey
+            : lightColorScheme.secondary,
+            text: '${DateFormat('yyyy-MM-dd').format(DateTime.parse(gamesList[index].gameDate)).toString()}, ${gamesList[index].gameLocation}${gamesList[index].matchResult == '' ? '' : ', ${gamesList[index].matchResult}'}',
             onTap: () => {
               showDialog(
                 context: context,
@@ -219,13 +221,14 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
   @override
   Widget build(BuildContext context) {
     Data localData = widget.localData;
+    Size screen = MediaQuery.of(context).size;
     Assets assets = Assets(currentPage: SportsPage(localData: localData), localData: localData);
     int recentGametoDisplay = localData.settings.recentGamesToShow;
     int upcomingGametoDisplay = localData.settings.upcomingGamesToShow;
     List<SportsInfo> sportsInfo = localData.sportsInfo;
     List<GameInfo> gameInfo = localData.gameInfo;
     Map<String, bool> sportsListMap = {};
-    RefreshController refreshController = RefreshController(initialRefresh: false);
+    
     for(SportsInfo sports in sportsInfo) {
       sportsListMap[sports.sportsName] = true;
     }
@@ -247,13 +250,12 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F6FB),
+      backgroundColor: lightColorScheme.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: Stack(
           children: [
             AppBar(
-              backgroundColor: const Color(0xFF0E1B2A),
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
@@ -297,7 +299,6 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
                 ),
               ),
@@ -307,141 +308,142 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
       ),
       drawer: assets.buildDrawer(context),
       body: SmartRefresher(
-        enablePullUp: true,
-        enablePullDown: false,
-        controller: refreshController,
-        header: CustomHeader(
-          builder: (BuildContext context, RefreshStatus? mode) {
-            Widget body;
-            if (mode == RefreshStatus.idle) {
-              body = Text('');
-            } else if (mode == RefreshStatus.refreshing) {
-              body = CupertinoActivityIndicator(color: Colors.white,);
-            } else {
-              body = Text('');
-            }
-            return Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF0E1B2A),
-              ),
-              height: 55.0,
-              child: Center(child: body),
-            );
-          },
-        ),
-        onRefresh: () => Future.delayed(const Duration(seconds: 0), () async {
+        enablePullUp: false,
+        enablePullDown: true,
+        controller: _refreshController,
+        header: assets.refreshHeader(indicatorColor: Colors.grey,),
+        onRefresh: () => Future.delayed(const Duration(milliseconds: 0), () async {
+          String errorMessage = '';
           try {
             widget.localData.gameInfo = GameInfo.transformData(await widget.localData.apiService.getGames());
+          } catch (e) {
+            errorMessage = 'Failed to load game data';
+          }
+          try {
             widget.localData.sportsInfo = SportsInfo.transformData(await widget.localData.apiService.getSports());
           } catch (e) {
-            debugPrint(e.toString());
-            debugPrint("failed to fetch data");
+            if (errorMessage != '') {
+              errorMessage = '$errorMessage\n';
+            }
+            errorMessage = '${errorMessage}Failed to load sports data';
+          }
+
+          if (errorMessage != '') {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Center(
+                child: Text(
+                  errorMessage, 
+                  textAlign: TextAlign.center, 
+                  style: const TextStyle(
+                    fontSize: 15, 
+                  ),
+                )
+              ),
+              duration: Duration(seconds: 1),
+              backgroundColor: const Color(0xfff24c5d),
+              behavior: SnackBarBehavior.floating,
+              shape: StadiumBorder(),
+              width: screen.width * 0.6,
+              
+            ));
           }
           setState(() { });
-          refreshController.refreshCompleted();
+          _refreshController.refreshCompleted();
         }),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF0E1B2A),
-          ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Stack(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 0, left: 0, right: 0,),
-                  padding: const EdgeInsets.only(bottom: 10),
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF0E1B2A),
-                  ),
-                  child: assets.drawAppBarSelector(context: context, titles: ["STARRED", "ALL"], selectTab: _selectTab, animation:_animation, selectedIndex: _selectedTabIndex) 
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 0, left: 0, right: 0,),
+                padding: const EdgeInsets.only(bottom: 10),
+                height: 50,
+                child: assets.drawAppBarSelector(context: context, titles: ["STARRED", "ALL"], selectTab: _selectTab, animation:_animation, selectedIndex: _selectedTabIndex) 
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 40,),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF7F6FB),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(top: 40,),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF7F6FB),
-                  ),
-                  child: Column(
-                    children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: FadeTransition(
-                          opacity: _animation,
-                          child: _selectedTabIndex == 0
-                            ? buildGamesList(starredGames, assets)
-                            : buildGamesList(games, assets),
-                        ),
+                child: Column(
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: FadeTransition(
+                        opacity: _animation,
+                        child: _selectedTabIndex == 0
+                          ? buildGamesList(starredGames, assets)
+                          : buildGamesList(games, assets),
                       ),
-                      const Text(
-                        'SPORTS INFO',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                    const Text(
+                      'SPORTS INFO',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(
-                        height: 10,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 10,
-                          right: 10,
-                        ),
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
-                          ), 
-                          itemCount: sportsList.length,
-                          itemBuilder: (context, index) {
-                            final String sportsName = sportsList[index].toLowerCase().replaceAll(' ', '_');
-                            const Color iconColor = Colors.black;
-                            const double size = 80;
-                            List<SportsInfo> sportsCategoryList = [];
-                            sportsCategoryList = sportsInfo.where((element) => element.sportsName == sportsList[index]).toList();
-                            sportsCategoryList.sort((a, b) {
-                                int aIndex = sortOrder.indexOf(a.teamCategory);
-                                int bIndex = sortOrder.indexOf(b.teamCategory);
-                                return aIndex.compareTo(bIndex);
-                            });
-                            return sportsInfoBox(
-                              sports: sportsCategoryList[0],
-                              child: getSportsIcon(sportsName, iconColor, size),
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 8,
+                        ), 
+                        itemCount: sportsList.length,
+                        itemBuilder: (context, index) {
+                          final String sportsName = sportsList[index].toLowerCase().replaceAll(' ', '_');
+                          Color iconColor = lightColorScheme.secondary;
+                          const double size = 80;
+                          List<SportsInfo> sportsCategoryList = [];
+                          sportsCategoryList = sportsInfo.where((element) => element.sportsName == sportsList[index]).toList();
+                          sportsCategoryList.sort((a, b) {
+                              int aIndex = sortOrder.indexOf(a.teamCategory);
+                              int bIndex = sortOrder.indexOf(b.teamCategory);
+                              return aIndex.compareTo(bIndex);
+                          });
+                          return sportsInfoBox(
+                            sports: sportsCategoryList[0],
+                            child: getSportsIcon(sportsName, iconColor, size),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: MediaQuery.of(context).size.height * 0.6,
+                                      child: SportsInfoPage(
+                                        sportsData: sportsCategoryList,
+                                        gameData: gameInfo,
+                                        localData: localData,
                                       ),
-                                      child: SizedBox(
-                                        width: MediaQuery.of(context).size.width,
-                                        height: MediaQuery.of(context).size.height * 0.6,
-                                        child: SportsInfoPage(
-                                          sportsData: sportsCategoryList,
-                                          gameData: gameInfo,
-                                          localData: localData,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          }
-                        ),
-                      )
-                    ],
-                  )
-                ),
-              ],
-            ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                      ),
+                    )
+                  ],
+                )
+              ),
+            ],
           ),
         ),
       )

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-cd `pwd`/server/foodParser
+cd `pwd`/server/SportDataParser
 python main.py
 cd ..
-cd SportsParser
+cd FoodMenuParser
 python main.py
 cd ../../

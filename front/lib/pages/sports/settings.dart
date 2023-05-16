@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/sports.dart';
 import 'method.dart';
@@ -25,7 +26,6 @@ class SettingPageState extends State<SettingPage> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: Scaffold(
-        backgroundColor: Color(0xFFF7F6FB),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Stack(
@@ -40,14 +40,12 @@ class SettingPageState extends State<SettingPage> {
                     child: const Text(
                       'Settings',
                       style: TextStyle(
-                        color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   automaticallyImplyLeading: false,
-                  backgroundColor: const Color(0xFF0E1B2A),
                 ),
               ),
               Positioned(
@@ -60,7 +58,6 @@ class SettingPageState extends State<SettingPage> {
                   child: Icon(
                     Icons.close,
                     size: 30, // You can adjust the icon size here
-                    color: Colors.white,
                   ),
                 ),
               ),
@@ -91,7 +88,6 @@ class SettingPageState extends State<SettingPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.grey,
                           width: 0.5,
                         ),
                       ),
@@ -103,7 +99,6 @@ class SettingPageState extends State<SettingPage> {
                       textAlign: TextAlign.center,
                       'Select the sports that you want to mark.\nReceive the game information only what you want!',
                       style: TextStyle(
-                        color: Colors.grey[600],
                         fontSize: 14,
                       ),
                     ),
@@ -126,6 +121,7 @@ class SettingPageState extends State<SettingPage> {
                             }
                           }
                           return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               GestureDetector(
                                 onTap: () {
@@ -144,27 +140,27 @@ class SettingPageState extends State<SettingPage> {
                                   });
                                 },
                                 child: Card(
-                                  elevation: allSelected ? 5 : 2,
+                                  elevation: allSelected ? 10 : 2,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
                                     side: BorderSide(
-                                      color: allSelected ? Colors.yellow : Colors.transparent,
+                                      color: lightColorScheme.secondary,
                                       width: 1.0,
                                     ),
                                   ),
                                   child: SizedBox(
-                                    width: 100,
-                                    height: 100,
+                                    width: 180,
+                                    height: 180,
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        getSportsIcon(sportsName, allSelected ? Colors.yellow : Colors.black, 70),
+                                        getSportsIcon(sportsName, lightColorScheme.secondary, 130),
                                         Text(
                                           sport,
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -179,40 +175,18 @@ class SettingPageState extends State<SettingPage> {
                                   direction: Axis.horizontal,
                                   alignment: WrapAlignment.start,
                                   runAlignment: WrapAlignment.center,
+                                  spacing: 5,
                                   children: sportsCategoryList.map<Widget>((sportsInfo) {
                                     String categoryString = getCategoryToString(sportsInfo.teamCategory).toLowerCase();
                                     bool categorySelected = selectedCards['${sportsName}_$categoryString'] ?? false;
-                                    return GestureDetector(
-                                      onTap: () {
+                                    return ActionChip(
+                                      avatar: Icon(categorySelected ? Icons.star : Icons.star_border, ),
+                                      label: SizedBox(width: 80,child: Text(categoryString)),
+                                      onPressed: () {
                                         setState(() {
                                           selectedCards['${sportsName}_$categoryString'] = !categorySelected;
                                         });
                                       },
-                                      child: Card(
-                                        elevation: categorySelected ? 5 : 2,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15),
-                                          side: BorderSide(
-                                            color: categorySelected ? Colors.yellow : Colors.transparent,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                categoryString,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: categorySelected ? Colors.yellow : Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
                                     );
                                   }).toList(),
                                 ),

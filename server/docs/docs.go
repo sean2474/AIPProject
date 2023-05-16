@@ -138,17 +138,24 @@ const docTemplate = `{
         },
         "/data/daily-schedule/": {
             "get": {
-                "description": "Retrieves the daily schedule image for the current date from the database",
                 "consumes": [
                     "*/*"
                 ],
                 "produces": [
-                    "image/jpeg"
+                    "text/html"
                 ],
                 "tags": [
                     "DailySchedule"
                 ],
-                "summary": "Get the daily schedule image for the current date",
+                "summary": "Get the daily schedule HTML template for the specified date or the current date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The date for which to retrieve the daily schedule in the format 'YYYY-MM-DD'. If not provided, the current date is used.",
+                        "name": "date",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

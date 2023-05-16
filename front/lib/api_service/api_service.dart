@@ -4,7 +4,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:front/data/data.dart';
 import 'package:front/api_service/exceptions.dart';
@@ -63,26 +62,6 @@ class ApiService {
       {'image_html': '', 'date': '2021-10-02'},
       {'image_html': '', 'date': '2021-10-03'},
     ];
-
-    // widgets[0]['image_url'] =
-    //     'https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?';
-    // widgets[1]['image_url'] =
-    //     'https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?';
-    // widgets[2]['image_url'] =
-    //     'https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?';
-
-    widgets[0]['image_html'] =
-        parse((await http.Client().get(Uri.parse('https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?'))).body)
-        .getElementById('contents')
-        .innerHtml;
-    widgets[1]['image_html'] =
-        parse((await http.Client().get(Uri.parse('https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?'))).body)
-        .getElementById('contents')
-        .innerHtml;
-    widgets[2]['image_html'] =
-        parse((await http.Client().get(Uri.parse('https://docs.google.com/document/u/1/d/e/2PACX-1vSC590xaxAZUR_MhmIPWcV-lh35ZNs7s5zJyn0n6l0ryPmtLuVEIvuP7s40-uI7Y4MPQuX_oX5-SmKa/pub?'))).body)
-        .getElementById('contents')
-        .innerHtml;
 
     return widgets;
   }

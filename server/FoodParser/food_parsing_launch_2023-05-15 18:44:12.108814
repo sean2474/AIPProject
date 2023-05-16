@@ -1,0 +1,8 @@
+2023-05-15 18:44:12,109 - INFO - Started parsing
+2023-05-15 18:44:12,665 - INFO - Parsing finished, writing to database started
+2023-05-15 18:44:12,672 - INFO - Successfully connected to database
+2023-05-15 18:44:12,672 - INFO - Started clearing the contents of FoodMenu table
+2023-05-15 18:44:12,678 - INFO - Cleared the contents of FoodMenu table
+2023-05-15 18:44:12,678 - INFO - Inserting new data to FoodMenu
+2023-05-15 18:44:12,679 - INFO - Successfully uploaded information to database
+2023-05-15 18:44:12,679 - INFO - Writing to database finished

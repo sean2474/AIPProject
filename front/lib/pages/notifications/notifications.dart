@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'message.dart';
 
 class NotificationsPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class NotificationsPageState extends State<NotificationsPage>
   int _selectedTabIndex = 0;
   late final AnimationController _animationController;
   late final Animation<double> _animation;
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -243,34 +245,45 @@ class NotificationsPageState extends State<NotificationsPage>
       drawer: assets.buildDrawer(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: ListView.builder(
-          key: ValueKey<int>(_selectedTabIndex),
-          itemCount:
-              _selectedTabIndex == 0 ? unreadMessages.length : messages.length,
-          itemBuilder: (context, index) {
-            Map<String, dynamic> message = _selectedTabIndex == 0
-                ? unreadMessages[index]
-                : messages[index];
-            return assets.boxButton(
-              context,
-              title: message['title'],
-              onTap: () {
-                _markAsRead(messages.indexOf(message));
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MessagePage(
-                      messageData: message, localData: widget.localData,
+        child: SmartRefresher(
+          enablePullUp: false,
+          enablePullDown: true,
+          header: assets.refreshHeader(indicatorColor: Colors.grey, backgroundColor: Color(0xFFF7F6FB)),
+          controller: _refreshController,
+          onRefresh: () => Future.delayed(const Duration(milliseconds: 0), () async {
+            // TODO: add fetch notification datas
+            setState(() {});
+            _refreshController.refreshCompleted();
+          }),
+          child: ListView.builder(
+            key: ValueKey<int>(_selectedTabIndex),
+            itemCount:
+                _selectedTabIndex == 0 ? unreadMessages.length : messages.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> message = _selectedTabIndex == 0
+                  ? unreadMessages[index]
+                  : messages[index];
+              return assets.boxButton(
+                context,
+                title: message['title'],
+                onTap: () {
+                  _markAsRead(messages.indexOf(message));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MessagePage(
+                        messageData: message, localData: widget.localData,
+                      ),
                     ),
-                  ),
-                );
-              },
-              text: message['date'],
-              borderColor: Colors.white,
-              iconNextToArrow: Icon(Icons.error_outline,
-                  color: alertColors[message['alert_priority']], size: 30),
-            );
-          },
+                  );
+                },
+                text: message['date'],
+                borderColor: Colors.white,
+                iconNextToArrow: Icon(Icons.error_outline,
+                    color: alertColors[message['alert_priority']], size: 30),
+              );
+            },
+          ),
         ),
       ),
     );
