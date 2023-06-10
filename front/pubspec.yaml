@@ -29,6 +29,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies: 
+  flutter:
+    sdk: flutter
   cached_network_image: ^3.2.3
   cupertino_icons: ^1.0.5
   firebase_auth: ^4.6.0
@@ -46,9 +48,6 @@ dependencies:
   shared_preferences: ^2.1.1
   style: ^0.0.5
   url_launcher: ^6.1.11
-  webview_flutter: ^4.2.0
-  webview_flutter_wkwebview: ^3.4.3
-
   
 dev_dependencies:
   flutter_test:

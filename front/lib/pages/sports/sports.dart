@@ -162,57 +162,32 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return gamesList[index].sportsName == 'N/A'
-          ? assets.boxButton(
-            context,
-            title: "N/A",
-            borderColor: Colors.grey,
-            onTap: () => {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8, 
-                      height: MediaQuery.of(context).size.height * 0.6, 
-                      child: GameInfoPage(gameData: gamesList[index]),
-                    ),
-                  );
-                },
-              )
-            },
-            margin: const EdgeInsets.only(top: 10, left: 10),
-          )
-          : assets.boxButton(
-            context,
-            title: " ${gamesList[index].sportsName.trim()} - ${getCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}",
-            borderColor: gamesList[index].matchResult == ''
-            ? Colors.grey
-            : lightColorScheme.secondary,
-            text: '${DateFormat('yyyy-MM-dd').format(DateTime.parse(gamesList[index].gameDate)).toString()}, ${gamesList[index].gameLocation}${gamesList[index].matchResult == '' ? '' : ', ${gamesList[index].matchResult}'}',
-            onTap: () => {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width *
-                          0.8, // Adjust the width of the modal
-                      height: MediaQuery.of(context).size.height *
-                          0.5, // Adjust the height of the modal
-                      child: GameInfoPage(gameData: gamesList[index]),
-                    ),
-                  );
-                },
-              )
-            },
-            margin: const EdgeInsets.only(top: 10, left: 10),
+        String title = gamesList[index].sportsName == 'N/A' ? 'N/A' : '${gamesList[index].sportsName.trim()} - ${getCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}';
+        String? text = gamesList[index].sportsName == 'N/A' ? null : '${DateFormat('yyyy-MM-dd').format(DateTime.parse(gamesList[index].gameDate)).toString()}, ${gamesList[index].gameLocation}${gamesList[index].matchResult == '' ? '' : ', ${gamesList[index].matchResult}'}';
+        Color borderColor = gamesList[index].sportsName == 'N/A' ? Colors.grey : gamesList[index].matchResult == '' ? lightColorScheme.onSecondaryContainer : lightColorScheme.secondary;
+        return assets.boxButton(
+          context, 
+          title: title, 
+          borderColor: borderColor, 
+          text: text,
+          onTap: () => {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8, 
+                    height: MediaQuery.of(context).size.height * 0.6, 
+                    child: GameInfoPage(gameData: gamesList[index]),
+                  ),
+                );
+              },
+            )
+          },
+          margin: const EdgeInsets.only(top: 10, left: 10),
         );
       }
     );

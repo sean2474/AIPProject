@@ -4,7 +4,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:front/data/data.dart';
 import 'package:front/api_service/exceptions.dart';
 import 'package:front/data/user_.dart';
@@ -56,11 +55,11 @@ class ApiService {
     // if (result is Map<String, dynamic>) {
     //   return [Map<String, dynamic>.from(result)];
     // }
-      // return List<Map<String, dynamic>>.from(result);
-    List<Map<String, dynamic>> widgets = [
-      {'image_html': '', 'date': '2021-10-01'},
-      {'image_html': '', 'date': '2021-10-02'},
-      {'image_html': '', 'date': '2021-10-03'},
+    // return List<Map<String, dynamic>>.from(result);
+    List<Map<String, String>> widgets = [
+      {'url': 'www.naver.com', 'date': '2021-10-01'},
+      {'url': 'www.google.com', 'date': '2021-10-02'},
+      {'url': 'www.bing.com', 'date': '2021-10-03'},
     ];
 
     return widgets;

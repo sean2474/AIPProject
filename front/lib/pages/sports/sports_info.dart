@@ -120,12 +120,12 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                           'Opponent: ${gameData.opponent}',
                           style: TextStyle(fontSize: 16),
                         ),
-                        if (gameData.matchResult != '')
+                        if (gameData.matchResult != 'null')
                           Text(
                             'Match Result: ${gameData.matchResult}',
                             style: TextStyle(fontSize: 16),
                           ),
-                        if (gameData.coachComment != '')
+                        if (gameData.coachComment != 'null')
                           Text(
                             'Coach Comment: ${gameData.coachComment}',
                             style: TextStyle(fontSize: 16),

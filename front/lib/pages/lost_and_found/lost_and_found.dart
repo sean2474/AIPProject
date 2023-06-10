@@ -7,7 +7,7 @@ import 'package:front/widgets/assets.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'item.dart';
+import 'lost_item.dart';
 
 class LostAndFoundPage extends StatefulWidget {
   final Data localData;

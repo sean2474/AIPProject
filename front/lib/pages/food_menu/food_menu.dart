@@ -14,126 +14,81 @@ class FoodMenuPage extends StatefulWidget {
 }
 
 // TODO: add refresh indicator in body
-class FoodMenuPageState extends State<FoodMenuPage> {
-  String _selectedMealTime = '';
-  bool _isToday = true;
-  String _menu = '';
+class FoodMenuPageState extends State<FoodMenuPage> 
+    with TickerProviderStateMixin {
+  int _selectedTabIndex = 0;
+  late final AnimationController _animationController;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0, end: 1).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _selectTab(int index) {
+    setState(() { 
+      _selectedTabIndex = index;
+    });
+    _animationController.forward(from: 0);
+  }
 
   @override
   Widget build(BuildContext context) {
-    String day = _isToday ? "Today's" : "Tomorrow's";
+    Assets assets = Assets(currentPage: FoodMenuPage(localData: widget.localData), localData: widget.localData,);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF0E1B2A),
-        title: Text('$day Menu'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Menu:',
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-          SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              '$_menu',
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _isToday ? 0 : 1,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.arrow_back),
-            label: 'Yesterday',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.arrow_forward),
-            label: 'Tomorrow',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            setState(() {
-              _isToday = false;
-            });
-          } else {
-            setState(() {
-              _isToday = true;
-            });
-          }
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(100),
+        child: Stack(
           children: [
-            ElevatedButton(
-              onPressed: () => _updateMenu('Breakfast'),
-              child: Text('Breakfast'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0E1B2A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0),
+            AppBar(
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              actions: [
+                assets.menuBarButton(context),
+              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(50),
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: assets.drawAppBarSelector(context: context, titles: ["BREAKFAST", "LUNCH", "DINNER"], selectTab: _selectTab, animation: _animation, selectedIndex: _selectedTabIndex)
                 ),
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                textStyle: TextStyle(fontSize: 18),
               ),
             ),
-            ElevatedButton(
-              onPressed: () => _updateMenu('Lunch'),
-              child: Text('Lunch'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0E1B2A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0),
+            Container(
+              margin: const EdgeInsets.all(30),
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Food Menu",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => _updateMenu('Dinner'),
-              child: Text('Dinner'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0E1B2A),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                textStyle: TextStyle(fontSize: 18),
               ),
             ),
           ],
         ),
       ),
+      drawer: assets.buildDrawer(context),
+      body: SingleChildScrollView(
+        
+      ),
     );
-  }
-
-  void _updateMenu(String mealTime) {
-    Data localData = widget.localData;
-    Assets assets = Assets(localData: localData);
-
-    setState(() {
-      _selectedMealTime = mealTime;
-      // Example data
-      if (mealTime == 'Breakfast') {
-        _menu = localData.foodMenus[0].breakFast;
-      } else if (mealTime == 'Lunch') {
-        _menu = localData.foodMenus[0].lunch;
-      } else {
-        _menu = localData.foodMenus[0].dinner;
-      }
-    });
   }
 }

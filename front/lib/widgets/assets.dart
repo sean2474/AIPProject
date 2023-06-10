@@ -1,8 +1,6 @@
 /// assets.dart
 /// This file contains the assets used in the app.
 
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:front/pages/school_store/school_store.dart';
@@ -17,6 +15,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:front/color_schemes.g.dart';
 
+List<List<dynamic>> pageList = [
+  ["DASHBOARD", Icons.dashboard], 
+  ["DAILY SCHEDULE", Icons.schedule], 
+  ["LOST AND FOUND", Icons.find_in_page], 
+  ["FOOD MENU", Icons.fastfood], 
+  ["HAWKS NEST", Icons.store], 
+  ["SPORTS", Icons.sports]
+];
+
 class Assets {
   final Widget? currentPage;
   final Data localData;
@@ -28,103 +35,85 @@ class Assets {
     return StreamBuilder<User?> (
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-        final User? currentUser = snapshot.data;
         return Drawer(
-          child: Stack(
-            children: [
-              Container(
-                child: ListView(
-                  padding: const EdgeInsets.only(top: 150), // Add padding to ListView
-                  children: [
-                    _buildDrawerItem(context, Icons.dashboard, "DASHBOARD", currentPage: currentPage),
-                    _buildDrawerItem(context, Icons.schedule, "DAILY SCHEDULE", currentPage: currentPage),
-                    _buildDrawerItem(context, Icons.find_in_page, "LOST AND FOUND", currentPage: currentPage),
-                    _buildDrawerItem(context, Icons.fastfood, "FOOD MENU", currentPage: currentPage),
-                    _buildDrawerItem(context, Icons.store, "HAWKS NEST", currentPage: currentPage),
-                    _buildDrawerItem(context, Icons.sports, "SPORTS", currentPage: currentPage),
-                  ]
-                ),
-              ),
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.only(left: 10, right: 20, top: 70),
-                  height: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          if (!Data.loggedIn) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => LoginPage(localData: localData)),
-                            );
-                          } else {
-                            FirebaseAuth.instance.signOut();
-                            localData.apiService.logout(localData);
-                            Data.loggedIn = false;
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              !Data.loggedIn ? "SIGN IN" : "SIGN OUT",
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.account_circle, size: 32),
-                          ],
-                        ),
-                      ),
-                    ],
+          child: Container(
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 70),
+            child: Column(
+              children: [
+                ListTile(
+                  onTap: () {
+                    if (!Data.loggedIn) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage(localData: localData)),
+                      );
+                    } else {
+                      FirebaseAuth.instance.signOut();
+                      localData.apiService.logout(localData);
+                      Data.loggedIn = false;
+                      Navigator.pop(context);
+                    }
+                  },
+                  leading: CircleAvatar(
+                    child: Icon(
+                      CupertinoIcons.person
+                    ),
+                  ),
+                  title: Text(
+                    !Data.loggedIn ? "SIGN IN" : "SIGN OUT",
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 40),
+                Column(
+                  children: pageList.asMap().entries.map<Widget>((item) {
+                    return Column(
+                      children: [
+                        (item.key != 0) ? Padding(
+                          padding: const EdgeInsets.only(left: 3),
+                          child: Divider(
+                            height: 1,
+                          ),
+                        ) : Container(),
+                        Stack(
+                          children: [
+                            (currentPage != null && currentPage.runtimeType == _getPageType(item.value[0])) 
+                                ? Positioned(
+                                  height: 56,
+                                  width: 288,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: lightColorScheme.background.withOpacity(0.5),
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    )
+                                  ),
+                                ) 
+                                : SizedBox(),
+                            _buildDrawerItem(context, item.value[1], item.value[0], currentPage: currentPage),
+                          ],
+                        ),
+                      ]
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
         );
       }
     );
   }
 
-  /// This function returns a button that opens the drawer.
-  /// 
-  /// [drawer: assets.build(context)] must be added to the Scaffold for this to work.
-  Widget menuBarButton(
-    BuildContext context,
-  ) {
-    return Builder(
-      builder: (BuildContext innerContext) {
-        return GestureDetector(
-          onTap: () {
-            Scaffold.of(innerContext).openDrawer();
-          },
-          child: const Padding(
-            padding: EdgeInsets.all(12),
-            child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Icon(Icons.menu)),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildDrawerItem(BuildContext context, IconData icon, String title,
       {Widget? currentPage}) {
     return ListTile(
-      leading: Icon(icon,),
-      title: Text(title,),
+      splashColor: Colors.transparent,
+      leading: SizedBox(
+        width: 34,
+        height: 34,
+        child: Icon(icon),
+      ),
+      title: Text(title),
       onTap: () {
         Navigator.pop(context);
         if (currentPage != null &&
@@ -138,10 +127,20 @@ class Assets {
             MaterialPageRoute(builder: (context) => StudentMainMenu(localData: localData)),
           );
         } else if (title == 'DAILY SCHEDULE') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DailySchedulePage(localData: localData)),
-          );
+          showDialog(
+            context: context, 
+            builder: (BuildContext context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8, 
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: DailySchedulePage(localData: localData)
+              ),
+            );
+          });
         } else if (title == 'LOST AND FOUND') {
           Navigator.push(
             context,
@@ -188,56 +187,28 @@ class Assets {
     }
   }
 
-  /// Returns a rounded button with a gradient background
+  /// This function returns a button that opens the drawer.
   /// 
-  /// [isRed] determines whether the button is red or blue
-  /// [onPressed] is the function that is called when the button is pressed
-  /// [text] is the text that is displayed on the button
-  /// [context] is the context of the page
-  Widget gradientRoundBorderButton(
-    BuildContext context, {
-    required String text,
-    required bool isRed,
-    required VoidCallback onPressed,
-  }) {
-    Color startColor, endColor;
-    if (isRed) {
-      startColor = const Color(0xffe60527);
-      endColor = const Color(0xfff24c5d);
-    } else {
-      startColor = const Color(0xff4196fd);
-      endColor = const Color(0xff3bb6e4);
-    }
-    return TextButton(
-      onPressed: onPressed,
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-      child: Ink(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [startColor, endColor],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+  /// [drawer: assets.build(context)] must be added to the Scaffold for this to work.
+  Widget menuBarButton(
+    BuildContext context,
+  ) {
+    return Builder(
+      builder: (BuildContext innerContext) {
+        return GestureDetector(
+          onTap: () {
+            Scaffold.of(innerContext).openDrawer();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(12),
+            child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Icon(Icons.menu)),
           ),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Text(
-            text,
-            style: const TextStyle(color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      )
+        );
+      },
     );
   }
-
   /// Returns a button with a border on the left side
   /// 
   /// [title] is the text to display on the button
@@ -404,25 +375,113 @@ class Assets {
     );
   }
 
-  // TODO: delete backgroundColor variable
-  CustomHeader refreshHeader({required Color indicatorColor, Color? backgroundColor}) {
+  CustomHeader refreshHeader({required Color indicatorColor}) {
     return CustomHeader(
-        builder: (BuildContext context, RefreshStatus? mode) {
-          Widget body;
-          if (mode == RefreshStatus.idle) {
-            body = Text('');
-          } else if (mode == RefreshStatus.refreshing) {
-            body = CupertinoActivityIndicator(color: indicatorColor,);
-          } else {
-            body = CupertinoActivityIndicator(color: indicatorColor,);
-          }
-          return Container(
-            padding: EdgeInsets.only(bottom: 20),
-            alignment: Alignment.bottomCenter,
-            height: 1000.0,
-            child: body,
+      builder: (BuildContext context, RefreshStatus? mode) {
+        Widget body;
+        if (mode == RefreshStatus.idle) {
+          body = Text('');
+        } else if (mode == RefreshStatus.refreshing) {
+          body = CupertinoActivityIndicator(color: indicatorColor,);
+        } else {
+          body = CupertinoActivityIndicator(color: indicatorColor,);
+        }
+        return Container(
+          padding: EdgeInsets.only(bottom: 20),
+          alignment: Alignment.bottomCenter,
+          height: 1000.0,
+          child: body,
+        );
+      },
+    );
+  }
+
+  GridView buildMainMenuGridViewBuilder() {
+    List<List<dynamic>> pageListExcludingDashBoard = pageList.sublist(1);
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1, 
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+      ), 
+      itemCount: pageListExcludingDashBoard.length,
+      itemBuilder: (context, index) => _buildPageCard(context, pageListExcludingDashBoard[index][0], pageListExcludingDashBoard[index][1]),
+    );
+  }
+ 
+  GestureDetector _buildPageCard(BuildContext context, String title, IconData icon) {
+    return GestureDetector(
+      onTap: () {
+        if (title == 'DASHBOARD') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StudentMainMenu(localData: localData)),
           );
-        },
-      );
+        } else if (title == 'DAILY SCHEDULE') {
+          showDialog(
+            context: context, 
+            builder: (BuildContext context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8, 
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: DailySchedulePage(localData: localData)
+              ),
+            );
+          });
+        } else if (title == 'LOST AND FOUND') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LostAndFoundPage(localData: localData)),
+          );
+        } else if (title == 'FOOD MENU') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FoodMenuPage(localData: localData)),
+          );
+        } else if (title == 'HAWKS NEST') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SchoolStorePage(localData: localData)),
+          );
+        } else if (title == 'SPORTS') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SportsPage(localData: localData)),
+          );
+        } else {
+          throw Exception('Invalid page type');
+        }
+      },
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 50,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

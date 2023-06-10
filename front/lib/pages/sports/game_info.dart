@@ -62,8 +62,8 @@ class GameInfoPage extends StatelessWidget {
                       infoBox(' Game Date:', ' ${DateFormat('yyyy-MM-dd hh:mm a').format(DateTime.parse(gameData.gameDate)).toString()}', 10),
                       infoBox(' Game Location:', ' ${gameData.gameLocation}', 10),
                       infoBox(' Opponent:', ' ${gameData.opponent}', 10),
-                      if (gameData.matchResult != '') infoBox(' Match Result:', ' ${gameData.matchResult}', 10),
-                      if (gameData.coachComment != '') infoBox(' Coach Comment:', ' ${gameData.coachComment}', 10),
+                      if (gameData.matchResult != 'null') infoBox(' Match Result:', ' ${gameData.matchResult}', 10),
+                      if (gameData.coachComment != 'null') infoBox(' Coach Comment:', ' ${gameData.coachComment}', 10),
                   ],
                 )
                 : Column(

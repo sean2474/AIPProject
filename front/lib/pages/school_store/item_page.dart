@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/color_schemes.g.dart';
 import 'package:front/data/school_store.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -14,7 +15,7 @@ class ItemPage extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: Colors.white,
+            color: lightColorScheme.background,
           ),
           child: Padding(
             padding: const EdgeInsets.all(10),

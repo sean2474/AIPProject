@@ -97,10 +97,8 @@ class SchoolStorePageState extends State<SchoolStorePage>
                 borderRadius: BorderRadius.circular(15),
               ),
               child: SizedBox(
-                width: MediaQuery.of(context).size.width *
-                    0.8, // Adjust the width of the modal
-                height: MediaQuery.of(context).size.height *
-                    0.5, // Adjust the height of the modal
+                width: MediaQuery.of(context).size.width * 0.8, 
+                height: MediaQuery.of(context).size.height * 0.5,
                 child: ItemPage(itemData: storeItem),
               ),
             );
