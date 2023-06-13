@@ -31,6 +31,8 @@ class Data {
 
   Settings settings;
 
+  static List<List<dynamic>> pageList = [];
+
   void sortLostAndFoundBy(String sortType) {
     switch (sortType) {
       case "date":

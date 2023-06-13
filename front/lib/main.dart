@@ -52,20 +52,23 @@ void main() async {
     home: LoadingPage(),
   ));
 
-  //String baseUrl = 'http://52.45.134.101:8082';
-  String baseUrl = 'http://127.0.0.1:8082';
+  String baseUrl = 'http://52.45.134.101:8082';
+  // String baseUrl = 'http://127.0.0.1:8082';
   debugPrint("connecting to $baseUrl...");
 
   Settings.baseUrl = baseUrl;
   Data localData = Data(dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'), apiService: ApiService(baseUrl: baseUrl));
 
   try {
-  localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
+    localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
   } on SocketException {
     debugPrint("server not running");
     rethrow;
   }
-  // localData.user = await localData.apiService.login("johnsmith@example.com", "password1");
+
+  // TODO: remove this after testing
+  localData.user = await localData.apiService.login("johnsmith@example.com", "password1");
+  localData.apiService.token = localData.user?.token;
 
   FirebaseAuth.instance.authStateChanges().listen((user) {
     if (localData.user != null && user == null) {
@@ -80,14 +83,6 @@ void main() async {
       Data.loggedIn = false;
     }
   });
-  
-  if (Data.loggedIn) {
-    if (await localData.apiService.checkAuth(localData.user)) {
-      debugPrint("user is authenticated");
-    } else {
-      debugPrint("user is not authenticated");
-    }
-  }
   
   /// endpoint connections to backend
   try {
@@ -199,7 +194,7 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
     return MaterialApp(
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       debugShowCheckedModeBanner: false,
-      home: StudentMainMenu(localData: widget.localData),
+      home: StudentMainMenuPage(localData: widget.localData),
     );
   }
 }

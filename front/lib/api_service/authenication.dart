@@ -50,7 +50,6 @@ class Authentication {
 
   static Future<void> signOut({required BuildContext context}) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
-
     try {
       await googleSignIn.signOut();
       await FirebaseAuth.instance.signOut();

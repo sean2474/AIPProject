@@ -9,27 +9,45 @@ import 'package:front/pages/daily_schedule/daily_schedule.dart';
 import 'package:front/pages/food_menu/food_menu.dart';
 import 'package:front/pages/lost_and_found/lost_and_found.dart';
 import 'package:front/pages/sports/sports.dart';
+import 'package:front/admin/edit_daily_schedule/edit_daily_schedule.dart';
+import 'package:front/admin/edit_lost_and_found/edit_lost_and_found.dart';
+import 'package:front/admin/edit_school_store/edit_school_store.dart';
 import 'package:front/data/data.dart';
 import 'package:front/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:front/color_schemes.g.dart';
 
-List<List<dynamic>> pageList = [
-  ["DASHBOARD", Icons.dashboard], 
-  ["DAILY SCHEDULE", Icons.schedule], 
-  ["LOST AND FOUND", Icons.find_in_page], 
-  ["FOOD MENU", Icons.fastfood], 
-  ["HAWKS NEST", Icons.store], 
-  ["SPORTS", Icons.sports]
-];
-
 class Assets {
   final Widget? currentPage;
   final Data localData;
   final User? user = FirebaseAuth.instance.currentUser;
+  final VoidCallback? onUserChanged; 
 
-  Assets({this.currentPage, required this.localData});
+  Assets({this.currentPage, required this.localData, this.onUserChanged}) {
+    if (localData.user?.userType == UserType.admin) {
+      Data.pageList = [
+        ["DASHBOARD", Icons.dashboard], 
+        ["DAILY SCHEDULE", Icons.schedule], 
+        ["EDIT DAILY SCHEDULE", Icons.edit], 
+        ["LOST AND FOUND", Icons.find_in_page], 
+        ["EDIT LOST AND FOUND", Icons.edit], 
+        ["FOOD MENU", Icons.fastfood], 
+        ["HAWKS NEST", Icons.store], 
+        ["EDIT SCHOOL STORE", Icons.edit],
+        ["SPORTS", Icons.sports]
+      ];
+    } else {
+      Data.pageList = [
+        ["DASHBOARD", Icons.dashboard], 
+        ["DAILY SCHEDULE", Icons.schedule], 
+        ["LOST AND FOUND", Icons.find_in_page], 
+        ["FOOD MENU", Icons.fastfood], 
+        ["HAWKS NEST", Icons.store], 
+        ["SPORTS", Icons.sports]
+      ];
+    }
+  }
   
   Widget buildDrawer(BuildContext context) {
     return StreamBuilder<User?> (
@@ -49,6 +67,7 @@ class Assets {
                       );
                     } else {
                       FirebaseAuth.instance.signOut();
+                      if (onUserChanged != null) onUserChanged!();
                       localData.apiService.logout(localData);
                       Data.loggedIn = false;
                       Navigator.pop(context);
@@ -66,7 +85,7 @@ class Assets {
                 ),
                 SizedBox(height: 40),
                 Column(
-                  children: pageList.asMap().entries.map<Widget>((item) {
+                  children: Data.pageList.asMap().entries.map<Widget>((item) {
                     return Column(
                       children: [
                         (item.key != 0) ? Padding(
@@ -116,54 +135,7 @@ class Assets {
       title: Text(title),
       onTap: () {
         Navigator.pop(context);
-        if (currentPage != null &&
-            currentPage.runtimeType == _getPageType(title)) {
-          // Do nothing if the user is already on the same page
-          return;
-        }
-        if (title == 'DASHBOARD') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => StudentMainMenu(localData: localData)),
-          );
-        } else if (title == 'DAILY SCHEDULE') {
-          showDialog(
-            context: context, 
-            builder: (BuildContext context) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8, 
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: DailySchedulePage(localData: localData)
-              ),
-            );
-          });
-        } else if (title == 'LOST AND FOUND') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => LostAndFoundPage(localData: localData)),
-          );
-        } else if (title == 'FOOD MENU') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => FoodMenuPage(localData: localData)),
-          );
-        } else if (title == 'HAWKS NEST') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SchoolStorePage(localData: localData)),
-          );
-        } else if (title == 'SPORTS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SportsPage(localData: localData)),
-          );
-        } else {
-          throw Exception('Invalid page type');
-        }
+        _pushPage(title, context);
       },
     );
   }
@@ -171,7 +143,7 @@ class Assets {
   Type _getPageType(String title) {
     switch (title) {
       case 'DASHBOARD':
-        return StudentMainMenu;
+        return StudentMainMenuState;
       case 'DAILY SCHEDULE':
         return DailySchedulePage;
       case 'LOST AND FOUND':
@@ -182,6 +154,12 @@ class Assets {
         return SchoolStorePage;
       case 'SPORTS':
         return SportsPage;
+      case 'EDIT DAILY SCHEDULE':
+        return EditDailySchedulePage;
+      case 'EDIT LOST AND FOUND':
+        return EditLostAndFoundPage;
+      case 'EDIT SCHOOL STORE':
+        return EditSchoolStorePage;
       default:
         return Null;
     }
@@ -397,7 +375,7 @@ class Assets {
   }
 
   GridView buildMainMenuGridViewBuilder() {
-    List<List<dynamic>> pageListExcludingDashBoard = pageList.sublist(1);
+    List<List<dynamic>> pageListExcludingDashBoard = Data.pageList.sublist(1);
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -415,49 +393,7 @@ class Assets {
   GestureDetector _buildPageCard(BuildContext context, String title, IconData icon) {
     return GestureDetector(
       onTap: () {
-        if (title == 'DASHBOARD') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => StudentMainMenu(localData: localData)),
-          );
-        } else if (title == 'DAILY SCHEDULE') {
-          showDialog(
-            context: context, 
-            builder: (BuildContext context) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8, 
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: DailySchedulePage(localData: localData)
-              ),
-            );
-          });
-        } else if (title == 'LOST AND FOUND') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => LostAndFoundPage(localData: localData)),
-          );
-        } else if (title == 'FOOD MENU') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => FoodMenuPage(localData: localData)),
-          );
-        } else if (title == 'HAWKS NEST') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SchoolStorePage(localData: localData)),
-          );
-        } else if (title == 'SPORTS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SportsPage(localData: localData)),
-          );
-        } else {
-          throw Exception('Invalid page type');
-        }
+        _pushPage(title, context);
       },
       child: Card(
         elevation: 5,
@@ -474,9 +410,117 @@ class Assets {
             const SizedBox(height: 10),
             Text(
               title,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _pushPage(String title, BuildContext context) {
+    if (title == 'DASHBOARD') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => StudentMainMenuPage(localData: localData)),
+      );
+    } else if (title == 'DAILY SCHEDULE') {
+      showDialog(
+        context: context, 
+        builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8, 
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: DailySchedulePage(localData: localData)
+          ),
+        );
+      });
+    } else if (title == 'LOST AND FOUND') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LostAndFoundPage(localData: localData)),
+      );
+    } else if (title == 'FOOD MENU') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FoodMenuPage(localData: localData)),
+      );
+    } else if (title == 'HAWKS NEST') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SchoolStorePage(localData: localData)),
+      );
+    } else if (title == 'SPORTS') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SportsPage(localData: localData)),
+      );
+    } else if (title == 'EDIT DAILY SCHEDULE') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EditDailySchedulePage(localData: localData)),
+      );
+    } else if (title == 'EDIT LOST AND FOUND') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EditLostAndFoundPage(localData: localData)),
+      );
+    } else if (title == 'EDIT SCHOOL STORE') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EditSchoolStorePage(localData: localData)),
+      );
+    } else {
+      throw Exception('Invalid page type');
+    }
+  }
+
+  static void pushDialogPage(BuildContext context, Widget page, {bool haveDialog = true}) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: Colors.black.withOpacity(0.5),
+        pageBuilder: (_, animation, secondaryAnimation) => Stack(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Navigator.pop(context); 
+              },
+              child: FadeTransition(
+                opacity: animation,
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+            FadeTransition(
+              opacity: animation,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: (haveDialog) ? 
+                  Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: page,
+                    ),
+                  )
+                  : SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: page,
+                    ),
               ),
             ),
           ],

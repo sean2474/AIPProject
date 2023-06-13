@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 
-class StudentMainMenu extends StatelessWidget {
+class StudentMainMenuPage extends StatefulWidget {
   final Data localData;
-  const StudentMainMenu({Key? key, required this.localData}) : super(key: key);
-  
+  const StudentMainMenuPage({Key? key, required this.localData}) : super(key: key);
+  @override
+  StudentMainMenuState createState() => StudentMainMenuState();
+}
+
+class StudentMainMenuState extends State<StudentMainMenuPage> {
   @override
   Widget build(BuildContext context) {
-    Assets assets = Assets(currentPage: StudentMainMenu(localData: localData), localData: localData,);
+    Assets assets = Assets(currentPage: StudentMainMenuPage(localData: widget.localData), localData: widget.localData, onUserChanged: () => setState(() {
+      
+    }),);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(100),
@@ -39,9 +45,8 @@ class StudentMainMenu extends StatelessWidget {
       ),
       drawer: assets.buildDrawer(context),
       body: Container(
-        padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
-        margin: const EdgeInsets.all(20),
-        child: assets.buildMainMenuGridViewBuilder()
+        padding: const EdgeInsets.only(right: 30, left: 30),
+        child: SingleChildScrollView(child: assets.buildMainMenuGridViewBuilder())
       ),
     );
   }

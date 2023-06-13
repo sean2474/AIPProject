@@ -182,22 +182,19 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                       borderRadius: BorderRadius.circular(5),
                       color: containerColor,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: playerInfos
-                      .asMap()
-                      .entries
-                      .map<Widget>((entry) {
-                        String playerInfo = entry.value;
-                        return Flexible(
-                          child: Text(
-                            playerInfo,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        );
-                      })
-                      .toList(),
+                          .asMap()
+                          .entries
+                          .map<Widget>((entry) {
+                            return Text(
+                              entry.value,
+                              style: const TextStyle(fontSize: 16),
+                            );
+                          })
+                          .toList(),
                     ),
                   );
                 })
@@ -216,7 +213,6 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: AppBar(
-              elevation: 5,
               automaticallyImplyLeading: false,
               centerTitle: false,
               actions: [

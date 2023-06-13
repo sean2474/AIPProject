@@ -89,21 +89,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
   Widget itemBox(StoreItem storeItem) {
     return InkWell(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8, 
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: ItemPage(itemData: storeItem),
-              ),
-            );
-          },
-        );
+        Assets.pushDialogPage(context, ItemPage(itemData: storeItem));
       },
       child: Card(
         elevation: 5,
@@ -115,38 +101,41 @@ class SchoolStorePageState extends State<SchoolStorePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CachedNetworkImage(
-                      imageUrl: storeItem.imagePath,
-                      height: 130,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
-                    ),
-                  ),
-                  if (storeItem.stock == 0)
-                    Container(
-                      height: 130,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.black.withOpacity(0.5),
+              Hero(
+                tag: '${storeItem.imagePath}_${storeItem.id}',
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: storeItem.imagePath,
+                        height: 130,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       ),
-                      child: Center(
-                        child: Text(
-                          'Sold Out',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    ),
+                    if (storeItem.stock == 0)
+                      Container(
+                        height: 130,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Sold Out',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 8),
               Flexible(

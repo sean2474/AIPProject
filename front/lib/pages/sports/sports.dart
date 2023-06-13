@@ -225,7 +225,6 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
     );
 
     return Scaffold(
-      backgroundColor: lightColorScheme.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: Stack(

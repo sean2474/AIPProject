@@ -1,13 +1,11 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'lost_item.dart';
+import 'lost_item_page.dart';
 
 class LostAndFoundPage extends StatefulWidget {
   final Data localData;
@@ -66,23 +64,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   Widget itemBox(LostItem data) {
     return InkWell(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width *
-                    0.8, // Adjust the width of the modal
-                height: MediaQuery.of(context).size.height *
-                    0.5, // Adjust the height of the modal
-                child: ItemPage(itemData: data),
-              ),
-            );
-          },
-        );
+        Assets.pushDialogPage(context, ItemPage(itemData: data));
       },
       child: Card(
         elevation: 5,
@@ -94,38 +76,41 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CachedNetworkImage(
-                      imageUrl: data.imageUrl,
-                      height: 130,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
-                    ),
-                  ),
-                  if (data.status == FoundStatus.returned)
-                    Container(
-                      height: 130,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.black.withOpacity(0.5),
+              Hero(
+                tag: '${data.imageUrl}_${data.id}',
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: data.imageUrl,
+                        height: 130,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       ),
-                      child: Center(
-                        child: Text(
-                          'Returned',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    ),
+                    if (data.status == FoundStatus.returned)
+                      Container(
+                        height: 130,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Returned',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -159,52 +144,94 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   }
 
   void _showOptions(BuildContext context) {
-    showCupertinoModalPopup(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => CupertinoActionSheet(
-        title: const Text('Sort Options'),
-        actions: [
-          CupertinoActionSheetAction(
-            child: const Text('Sort by Status'),
-            onPressed: () {
-              setState(() {
-                widget.localData.sortLostAndFoundBy("status");
-                widget.localData.settings.sortLostAndFoundBy = "status";
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Sort by Date'),
-            onPressed: () {
-              setState(() {
-                widget.localData.sortLostAndFoundBy("date");
-                widget.localData.settings.sortLostAndFoundBy = "date";
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Sort by Name'),
-            onPressed: () {
-              setState(() {
-                widget.localData.sortLostAndFoundBy("name");
-                widget.localData.settings.sortLostAndFoundBy = "name";
-              });
-              Navigator.pop(context);
-            },
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          isDefaultAction: true,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Cancel'),
-        ),
+      isScrollControlled: true, // makes the height of the sheet dynamic
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
       ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.32, // makes the sheet take up half of the screen height
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 10),
+                SizedBox(
+                  height: 5.0,
+                  width: 50.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.grey[300],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                const Text(
+                  'Sort Options',
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20.0),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: lightColorScheme.background,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      ListTile(
+                        title: const Text('Sort by Status'),
+                        onTap: () {
+                          setState(() {
+                            widget.localData.sortLostAndFoundBy("status");
+                            widget.localData.settings.sortLostAndFoundBy = "status";
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Divider(
+                        color: Colors.grey[200],
+                        height: 1,
+                      ),
+                      ListTile(
+                        title: const Text('Sort by Date'),
+                        onTap: () {
+                          setState(() {
+                            widget.localData.sortLostAndFoundBy("date");
+                            widget.localData.settings.sortLostAndFoundBy = "date";
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Divider(
+                        color: Colors.grey[200],
+                        height: 1,
+                      ),
+                      ListTile(
+                        title: const Text('Sort by Name'),
+                        onTap: () {
+                          setState(() {
+                            widget.localData.sortLostAndFoundBy("name");
+                            widget.localData.settings.sortLostAndFoundBy = "name";
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -7,11 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/api_service/exceptions.dart';
 import 'package:front/data/user_.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
 
 class ApiService {
   final String baseUrl;
+  String? token;
 
-  ApiService({required this.baseUrl});
+  ApiService({required this.baseUrl, this.token});
 
   Future<User_?> login(String userEmail, String password) async {
     try {
@@ -19,18 +22,16 @@ class ApiService {
         'username': userEmail,
         'password': password,
       });
-
       if (responseBody['code'] != null && responseBody['code'] == 401) {
         throw const UnauthorizedException("Invalid username or password");
       }
       Map<String, dynamic> userData = responseBody['user_data'];
-      String name = "${userData['first_name'] as String} ${userData['last_name'] as String}";
       return User_(
         id: userData['id'],
-        name: name,
+        name: "${userData['first_name'] as String} ${userData['last_name'] as String}",
         token: responseBody['token'],
         userType: UserType.admin,
-        password: userData['password'],
+        password: password,
         email: userData['email'],
       );
     } on UnauthorizedException {
@@ -38,12 +39,20 @@ class ApiService {
     }
   }
 
-  Future<bool> checkAuth(User_? user) async {
-    dynamic responseBody = await _httpRequest('GET', '$baseUrl/auth/testToken', {'token': user?.token});  
+  Future<bool> checkAuth() async {
+    dynamic responseBody = await _httpRequest('GET', '$baseUrl/auth/testToken', {'token': token ?? ''});  
     return responseBody.runtimeType == String;
   }
 
   void logout(Data? data) {
+    Data.pageList = [
+        ["DASHBOARD", Icons.dashboard], 
+        ["DAILY SCHEDULE", Icons.schedule], 
+        ["LOST AND FOUND", Icons.find_in_page], 
+        ["FOOD MENU", Icons.fastfood], 
+        ["HAWKS NEST", Icons.store], 
+        ["SPORTS", Icons.sports]
+    ];
     if (data != null) {
       data.user = null;
     }
@@ -69,7 +78,7 @@ class ApiService {
     return await _httpRequest('POST', '$baseUrl/data/daily-schedule/', {date: url});
   }
 
-  Future<dynamic> putDailySchedule(String date, Map<String, dynamic> scheduleData) async {
+  Future<dynamic> putDailySchedule(String date, Map<String, String> scheduleData) async {
     return await _httpRequest('PUT', '$baseUrl/data/daily-schedule/$date', scheduleData);
   }
 
@@ -105,12 +114,12 @@ class ApiService {
     return listOfMaps;
   }
 
-  Future<dynamic> postLostAndFound(Map<String, dynamic> lostAndFoundData) async {
-    return await _httpRequest('POST', '$baseUrl/data/lost-and-found/', lostAndFoundData);
+  Future<dynamic> postLostAndFound(Map<String, String> lostAndFoundData, File imageFile) async {
+    return await _httpRequest('POST', '$baseUrl/data/lost-and-found/', lostAndFoundData, imageFile);
   }
 
-  Future<dynamic> putLostAndFound(String id, Map<String, dynamic> lostAndFoundData) async {
-    return await _httpRequest('PUT', '$baseUrl/data/lost-and-found/image/$id', lostAndFoundData);
+  Future<dynamic> putLostAndFound(String id, Map<String, String> lostAndFoundData, File imageFile) async {
+    return await _httpRequest('PUT', '$baseUrl/data/lost-and-found/$id', lostAndFoundData, imageFile);
   }
 
   Future<dynamic> deleteLostAndFound(String id) async {
@@ -127,13 +136,12 @@ class ApiService {
     return listOfMaps;
   }
 
-  Future<dynamic> postSchoolStoreItem(Map<String, dynamic> schoolStoreItemData) async {
-    return await _httpRequest('POST', '$baseUrl/data/school-store/', schoolStoreItemData);
+  Future<dynamic> postSchoolStoreItem(Map<String, String> schoolStoreItemData, File imageFile) async {
+    return await _httpRequest('POST', '$baseUrl/data/school-store/', schoolStoreItemData, imageFile);
   }
 
-  Future<dynamic> putSchoolStoreItem(
-      String id, Map<String, dynamic> schoolStoreItemData) async {
-    return await _httpRequest('PUT', '$baseUrl/data/school-store/$id', schoolStoreItemData);
+  Future<dynamic> putSchoolStoreItem(String id, Map<String, String> schoolStoreItemData, File imageFile) async {
+    return await _httpRequest('PUT', '$baseUrl/data/school-store/$id', schoolStoreItemData, imageFile);
   }
 
   Future<dynamic> getSchoolStoreItemImage(String id) async {
@@ -144,56 +152,41 @@ class ApiService {
     return await _httpRequest('DELETE', '$baseUrl/data/school-store/$id');
   }
 
-  Future<dynamic> _httpRequest(String method, String url, [Map<String, dynamic>? data]) async {
-    HttpClient httpClient = HttpClient();
-    HttpClientRequest request;
-    HttpClientResponse response;
-    try {
-      switch (method) {
-        case 'POST':
-          request = await httpClient.postUrl(Uri.parse(url));
-          request.headers.contentType = ContentType.json;
-          request.write(json.encode(data));
-          if (data != null && data.containsKey('token')) {
-            debugPrint('token: ${data['token']}');
-            request.headers.set("Authorization", "Bearer ${data['token']}");
-          }
-          break;
-        case 'PUT':
-          request = await httpClient.putUrl(Uri.parse(url));
-          request.headers.contentType = ContentType.json;
-          request.write(json.encode(data));
-          if (data != null && data.containsKey('token')) {
-            request.headers.set("Authorization", "Bearer ${data['token']}");
-          }
-          break;
-        case 'DELETE':
-          request = await httpClient.deleteUrl(Uri.parse(url));
-          if (data != null && data.containsKey('token')) {
-            request.headers.set("Authorization", "Bearer ${data['token']}");
-          }
-          break;
-        default: // GET
-          request = await httpClient.getUrl(Uri.parse(url));
-          if (data != null && data.containsKey('token')) {
-            request.headers.set("Authorization", "Bearer ${data['token']}");
-          }
+  Future<dynamic> _httpRequest(String method, String url, [Map<String, String>? data, File? imageFile]) async {
+    var request;
+    if (method == 'PUT' || method == 'POST') {
+      if (imageFile != null) {
+        request = MultipartRequest(method, Uri.parse(url));
+        data?.forEach((key, value) {
+          request.fields[key] = value;
+        });
+        var multipartFile = await MultipartFile.fromPath(
+        'image_file', imageFile.path,
+        contentType: MediaType('image', 'jpeg'));
+        request.files.add(multipartFile);
+      } else {
+        request = Request(method, Uri.parse(url));
+        request.headers['Content-Type'] = 'application/json';
+        request.body = jsonEncode(data);
       }
-
-      // Set the 'Origin' header
-      // request.headers.set('Origin', 'https://your-origin.com');
-
-      // Set the 'Referer-Policy' header
-      // request.headers.set('Referer-Policy', 'strict-origin-when-cross-origin');
-
-      // Set any other necessary headers for authentication or API access
-      // request.headers.set('Client-data', 'your-session-token');
-
-      response = await request.close();
-      
-    } catch (e) {
-      throw Exception(e);
+    } else {
+      request = Request(method, Uri.parse(url));
     }
+    
+    if (token != null) {
+      request.headers["Authorization"] = "Bearer $token";
+    }
+
+    // Set the 'Origin' header
+    // request.headers.set('Origin', 'https://your-origin.com');
+
+    // Set the 'Referer-Policy' header
+    // request.headers.set('Referer-Policy', 'strict-origin-when-cross-origin');
+
+    // Set any other necessary headers for authentication or API access
+    // request.headers.set('Client-data', 'your-session-token');
+    final streamedResponse = await request.send();
+    Response response = await Response.fromStream(streamedResponse);
     if (response.statusCode == ResponseType.UNAUTHORIZED) {
       throw UnauthorizedException('Error ${response.statusCode}: Failed to load data');
     } else if (response.statusCode == ResponseType.BAD_REQUEST) {
@@ -208,9 +201,9 @@ class ApiService {
       throw GatewayTimeoutException('Error ${response.statusCode}: Failed to load data');
     } 
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       dynamic data;
-      String responseBody = await response.transform(utf8.decoder).join();
+      String responseBody = response.body;
       try {
         data = jsonDecode(responseBody);
       } on FormatException {

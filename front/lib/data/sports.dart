@@ -41,27 +41,13 @@ class SportsInfo {
 
     List<List<String>> roster = [];
     if (json['roster'] != null && json['roster'] != 'Empty roster') {
-      List<dynamic> proccessing = jsonDecode(json['roster']
-        .replaceAll(" '", " %")
-        .replaceAll("',", "%,")
-        .replaceAll("']", "%]")
-        .replaceAll("['", "[%")
-
-        .replaceAll(" \"", " %")
-        .replaceAll("\",", "%,")
-        .replaceAll("\"]", "%]")
-        .replaceAll("[\"", "[%")
-
-        .replaceAll("\"", "\\\"")
-        .replaceAll("\\'", "'")
-
-        .replaceAll(" %", " \"")
-        .replaceAll("%,", "\",")
-        .replaceAll("%]", "\"]")
-        .replaceAll("[%", "[\"")
-      );
-      for (List<dynamic> row in proccessing) {
-        roster.add(row.map((e) => e.toString()).toList());
+      List<dynamic> proccessing = jsonDecode(processData(json['roster'], "map"));
+      for (dynamic row in proccessing) {
+        List<String> rowList = [];
+        row.forEach((key, value) {
+          rowList.add("$key: $value");
+        });
+        roster.add(rowList);
       }
     } else {
       roster = [['name']];
@@ -71,8 +57,12 @@ class SportsInfo {
       sportsName: json['sport_name'],
       teamCategory: teamCategory,
       season: season,
-      coachNames: json['coach_name']?.split("/"),
-      coachContacts: json['coach_contact']?.split("/"),
+      coachNames: (jsonDecode(processData(json['coach_name'] == 'NULL' ? '[]' : json['coach_name'], "list")) as List<dynamic>)
+          .map((item) => item.toString())
+          .toList(),
+      coachContacts: (jsonDecode(processData(json['coach_contact'] == 'NULL' ? '[]' : json['coach_contact'], "list")) as List<dynamic>)
+          .map((item) => item.toString())
+          .toList(),
       roster: roster,
     );
   }
@@ -135,4 +125,46 @@ class GameInfo {
   String toString() {
     return 'GameInfo(id: $id, sportsName: $sportsName, teamCategory: $teamCategory, gameLocation: $gameLocation, opponent: $opponent, isHomeGame: $isHomeGame, matchResult: $matchResult, gameDate: $gameDate, coachComment: $coachComment)';
   }
+}
+
+String processData(String data, String format) {
+  if (format == "map") {
+  return data.replaceAll(" '", " %")
+    .replaceAll(" '", " %")
+    .replaceAll("',", "%,")
+    .replaceAll("'}", "%}")
+    .replaceAll("{'", "{%")
+    .replaceAll("':", "%:")
+
+    .replaceAll(" \"", " %")
+    .replaceAll("\",", "%,")
+    .replaceAll("\"}", "%}")
+    .replaceAll("{\"", "{%")
+
+    .replaceAll("\"", "\\\"")
+    .replaceAll("\\'", "'")
+
+    .replaceAll(" %", " \"")
+    .replaceAll("%,", "\",")
+    .replaceAll("%}", "\"}")
+    .replaceAll("{%", "{\"")
+    .replaceAll("%:", "\":");
+  }
+return data.replaceAll(" '", " %")
+  .replaceAll("',", "%,")
+  .replaceAll("']", "%]")
+  .replaceAll("['", "[%")
+
+  .replaceAll(" \"", " %")
+  .replaceAll("\",", "%,")
+  .replaceAll("\"]", "%]")
+  .replaceAll("[\"", "[%")
+
+  .replaceAll("\"", "\\\"")
+  .replaceAll("\\'", "'")
+
+  .replaceAll(" %", " \"")
+  .replaceAll("%,", "\",")
+  .replaceAll("%]", "\"]")
+  .replaceAll("[%", "[\"");
 }
