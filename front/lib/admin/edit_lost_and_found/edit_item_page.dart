@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:async';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
@@ -10,24 +8,34 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'uploading_snackbar.dart';
-
-class AddPage extends StatefulWidget {
+class EditItemPage extends StatefulWidget {
   final Data localData;
+  final LostItem itemData;
+  final int itemIndex;
+  final VoidCallback onEdit;
   final VoidCallback showUploadingSnackBar;
   final VoidCallback dismissSnackBar;
   final Function(bool) showUploadingResultSnackBar;
-
-  AddPage({super.key, required this.localData, required this.showUploadingSnackBar, required this.dismissSnackBar, required this.showUploadingResultSnackBar});
+  
+  EditItemPage({
+    super.key,
+    required this.localData, 
+    required this.itemData, 
+    required this.itemIndex, 
+    required this.onEdit, 
+    required this.showUploadingSnackBar, 
+    required this.dismissSnackBar, 
+    required this.showUploadingResultSnackBar
+  });
 
   @override
-  State<AddPage> createState() => _AddPageState();
+  State<EditItemPage> createState() => _EditItemPageState();
 }
 
-class _AddPageState extends State<AddPage> {
-  final TextEditingController _nameController = TextEditingController(text: " ");
-  final TextEditingController _descriptionController = TextEditingController(text: " ");
-  final TextEditingController _locationController = TextEditingController(text: " ");
+class _EditItemPageState extends State<EditItemPage> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _descriptionController;
+  late final TextEditingController _locationController;
 
   DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
@@ -41,14 +49,14 @@ class _AddPageState extends State<AddPage> {
   double screenWidth = 0;
   double screenHeight = 0;
 
+  String? _currentStatus;
+
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _descriptionFocusNode = FocusNode();
   final FocusNode _locationFocusNode = FocusNode();
 
   bool _isNameError = false;
-  bool _isTimeError = false;
   bool _isLocationError = false;
-  bool _isImageError = false;
 
   @override
   void initState() {
@@ -56,6 +64,19 @@ class _AddPageState extends State<AddPage> {
     _nameFocusNode.addListener(_handleNameFocusChange);
     _descriptionFocusNode.addListener(_handleDescriptionFocusChange);
     _locationFocusNode.addListener(_handleLocationFocusChange);
+
+    _nameController = TextEditingController(text: widget.itemData.name);
+    _descriptionController = TextEditingController(text: "${widget.itemData.description} ");
+    _locationController = TextEditingController(text: widget.itemData.locationFound);
+    _selectedDate = DateTime.tryParse(widget.itemData.dateFound);
+
+    if (widget.itemData.status == FoundStatus.lost) {
+      _currentStatus = "Lost";
+    } else if (widget.itemData.status == FoundStatus.returned) {
+      _currentStatus = "Returned";
+    } else {
+      _currentStatus = "N/A";
+    }
   }
 
   @override
@@ -66,6 +87,10 @@ class _AddPageState extends State<AddPage> {
     _descriptionFocusNode.dispose();
     _locationFocusNode.removeListener(_handleLocationFocusChange);
     _locationFocusNode.dispose();
+
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -96,53 +121,91 @@ class _AddPageState extends State<AddPage> {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
-    return GestureDetector(
-      onVerticalDragStart: (DragStartDetails details) {
-        initial = details.globalPosition.dy;
-      },
-      onVerticalDragUpdate: (DragUpdateDetails details) {
-        distance = details.globalPosition.dy - initial;
-        if (distance > 0.0) {
-          Navigator.pop(context);
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
+    return FractionallySizedBox(
+      heightFactor: 0.8, // makes the sheet take up half of the screen height
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            buildCardHero(),
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 10),
-                  SizedBox(
-                    height: 5.0,
-                    width: 50.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.grey[300],
-                      ),
-                    ),
-                  ),
-                  buildTitle(context),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      buildImageView(),
-                      buildTextField(_nameController, _nameFocusNode, "Name", 290, _isNameError),
-                    ],
-                  ),
-                  buildTextField(_locationController, _locationFocusNode,"Location", 350, _isLocationError),
-                  buildTimePicker(context, 350),
-                  buildDescriptionTextField(),
-                  buildSubmitButton(),
-                ],
+            SizedBox(height: 10),
+            SizedBox(
+              height: 5.0,
+              width: 50.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.grey[300],
+                ),
               ),
             ),
+            SizedBox(height: 10),
+            buildTitle(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildImageView(),
+                buildTextField(_nameController, _nameFocusNode, "Name", 290, _isNameError),
+              ],
+            ),
+            buildTextField(_locationController, _locationFocusNode,"Location", 350, _isLocationError),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildStatusDropdown(),
+                buildTimePicker(context, 225),
+              ]
+            ),
+            buildDescriptionTextField(),
+            buildSubmitButton(),
           ],
-        )
+        ),
+      ),
+    );
+  }
+
+  Widget buildStatusDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(
+          width: 1,
+          color: Colors.grey,
+        ),
+        color: lightColorScheme.background,
+      ),
+      width: 120,
+      height: 55,
+      margin: const EdgeInsets.only(left: 5),
+      padding: EdgeInsets.all(8),
+      child: DropdownButton(
+        value: _currentStatus,
+        items: [
+          "Lost",
+          "Returned",
+          "N/A",
+        ].map((value) => DropdownMenuItem(
+          value: value,
+          child: Text(value),
+        )).toList(),
+        onChanged: (value) {
+          setState(() {
+            if (value == "Returned") {
+              _currentStatus = "Returned";
+            } else if (value == "Lost") {
+              _currentStatus = "Lost";
+            } else {
+              _currentStatus = "N/A";
+            }
+          });
+        },
+        isExpanded: true,
+        underline: Container(),
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          fontSize: 16,
+          color: Colors.black,
+        ),
       ),
     );
   }
@@ -183,14 +246,11 @@ class _AddPageState extends State<AddPage> {
     );
   }
 
-  Hero buildCardHero() {
-    return Hero(
-      tag: "add lost and found container",
-      child: Container(
-        decoration: BoxDecoration(
-          color: lightColorScheme.background,
-          borderRadius: BorderRadius.circular(15),
-        ),
+  Container buildCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: lightColorScheme.background,
+        borderRadius: BorderRadius.circular(15),
       ),
     );
   }
@@ -201,7 +261,6 @@ class _AddPageState extends State<AddPage> {
 
     setState(() {
       _image = image;
-      _isImageError = false;
     });
   }
 
@@ -212,17 +271,24 @@ class _AddPageState extends State<AddPage> {
       onTap: pickImage,
       child: _image == null
           ? Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: (_isImageError) ? lightColorScheme.error: Colors.grey,
-                width: 2,
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 3,
+                ),
+                borderRadius: BorderRadius.circular(10),
               ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            width: width,
-            height: height,
-            child: Icon(Icons.camera_alt, size: width * 0.9, color: (_isImageError) ? lightColorScheme.error: Colors.grey,),
-          )
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: CachedNetworkImage(
+                  imageUrl: widget.itemData.imageUrl,
+                  fit: BoxFit.fill,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                )
+              ),
+            )
           : Container(
               width: width,
               height: height,
@@ -248,21 +314,18 @@ class _AddPageState extends State<AddPage> {
     return Container(
       alignment: Alignment.topCenter,
       margin: EdgeInsets.only(top: 10, bottom: 10),
-      child: Hero(
-        tag: "add lost and found title",
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Add item",
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                fontSize: 20,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Edit item",
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: 20,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -337,14 +400,14 @@ class _AddPageState extends State<AddPage> {
                 borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   width: 1,
-                  color: _isTimeError ? lightColorScheme.error : Colors.grey,
+                  color: Colors.grey,
                 )
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   width: 1,
-                  color: _isTimeError ? lightColorScheme.error : Colors.grey,
+                  color: Colors.grey,
                 )
               ),
             ),
@@ -367,42 +430,50 @@ class _AddPageState extends State<AddPage> {
       onPressed: () async {
         setState(() {
           _isNameError = _nameController.text.trim().isEmpty;
-          _isTimeError = _selectedDate == null;
           _isLocationError = _locationController.text.trim().isEmpty;
-          _isImageError = _image == null;
         });
-        if (!_isNameError && !_isLocationError && !_isTimeError && _image != null) {
+
+        int status = FoundStatus.na.index;
+        if (_currentStatus == "Lost") {
+          status = FoundStatus.lost.index;
+        } else if (_currentStatus == "Returned") {
+          status = FoundStatus.returned.index;
+        } 
+        if (!_isNameError && !_isLocationError) {
           Map<String, String> itemData = {
+            "id": "${widget.itemData.id}",
             "item_name": _nameController.text,
             "location_found": _locationController.text,
             "date_found": _selectedDate!.toString(),
-            "status": "2",
+            "status": "$status",
           };
           if (_descriptionController.text.trim().isNotEmpty) {
             itemData["description"] = _descriptionController.text.trim();
           }
           Navigator.pop(context);
           widget.showUploadingSnackBar();
+          File? imageFile = _image != null ? File(_image!.path) : null;
           var result;
           try {
-            await widget.localData.apiService.postLostAndFound(itemData, File(_image!.path));
+            result = await widget.localData.apiService.putLostAndFound(widget.itemData.id, itemData, imageFile);
           } catch (e) {
-            result = {"status": "error"};
+            debugPrint(e.toString());
           }
-          widget.showUploadingResultSnackBar(result["status"] == "success");
+          widget.showUploadingResultSnackBar(result != null && result["status"] == "success");
           widget.dismissSnackBar();
-          if (result["status"] == "success") {
-            widget.localData.lostAndFounds.add(LostItem.fromJson({
+          if (result != null && result["status"] == "success") {
+            widget.localData.lostAndFounds[widget.itemIndex] = LostItem.fromJson({
               "id": result["id"],
               "item_name": _nameController.text,
               "description": _descriptionController.text,
               "image_url": "/data/lost-and-found/image/${result["id"]}",
               "location_found": _locationController.text,
               "date_found": _selectedDate!.toString(),
-              "status": 2,
+              "status": status,
               "submitter_id": widget.localData.user?.id,
-            }));
+            });
           }
+          widget.onEdit();
         }
       },
       child: Text("Submit"),

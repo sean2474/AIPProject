@@ -57,13 +57,33 @@ void main() async {
   debugPrint("connecting to $baseUrl...");
 
   Settings.baseUrl = baseUrl;
-  Data localData = Data(dailySchedules: [], foodMenus: [], lostAndFounds: [], storeItems: [], sportsInfo: [], gameInfo: [], settings: Settings(recentGamesToShow: 3, upcomingGamesToShow: 3, starredSports: '', sortLostAndFoundBy: 'date'), apiService: ApiService(baseUrl: baseUrl));
+  Data localData = Data(
+    dailySchedules: [], 
+    foodMenus: [], 
+    lostAndFounds: [], 
+    storeItems: [], 
+    sportsInfo: [], 
+    gameInfo: [], 
+    settings: Settings(
+      recentGamesToShow: await getRecentGamesToShow(),
+      upcomingGamesToShow: await getUpcomingGamesToShow(), 
+      starredSports: (await getStarredSports()).join(' '), 
+      sortLostAndFoundBy: await getSortLostAndFoundBy() ?? 'date',
+      showReturnedItem: await getShowReturnedItemsInLostAndFound(),
+    ), 
+    apiService: ApiService(
+      baseUrl: baseUrl
+      )
+    );
 
-  try {
-    localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
-  } on SocketException {
-    debugPrint("server not running");
-    rethrow;
+  while (true) {
+    try {
+      localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
+      break;
+    } on Exception catch (e) {
+      debugPrint("server not running");
+    }
+    await Future.delayed(Duration(microseconds: 10));
   }
 
   // TODO: remove this after testing

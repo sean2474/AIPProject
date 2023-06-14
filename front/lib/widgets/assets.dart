@@ -1,17 +1,23 @@
 /// assets.dart
 /// This file contains the assets used in the app.
 
+import 'dart:ffi';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:front/data/lost_item.dart';
+import 'package:front/data/school_store.dart';
+import 'package:front/pages/lost_and_found/lost_item_page.dart';
 import 'package:front/pages/school_store/school_store.dart';
 import 'package:front/pages/main_menu/main_menu.dart';
 import 'package:front/pages/daily_schedule/daily_schedule.dart';
 import 'package:front/pages/food_menu/food_menu.dart';
 import 'package:front/pages/lost_and_found/lost_and_found.dart';
 import 'package:front/pages/sports/sports.dart';
-import 'package:front/admin/edit_daily_schedule/edit_daily_schedule.dart';
-import 'package:front/admin/edit_lost_and_found/edit_lost_and_found.dart';
-import 'package:front/admin/edit_school_store/edit_school_store.dart';
+import 'package:front/admin/edit_daily_schedule/daily_schedule_edit.dart';
+import 'package:front/admin/edit_lost_and_found/lost_and_found_edit.dart';
+import 'package:front/admin/edit_school_store/school_store_edit.dart';
 import 'package:front/data/data.dart';
 import 'package:front/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -173,16 +179,12 @@ class Assets {
   ) {
     return Builder(
       builder: (BuildContext innerContext) {
-        return GestureDetector(
-          onTap: () {
+        return IconButton(
+          onPressed: () {
             Scaffold.of(innerContext).openDrawer();
           },
-          child: const Padding(
-            padding: EdgeInsets.all(12),
-            child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Icon(Icons.menu)),
-          ),
+          padding: EdgeInsets.zero,
+          icon: Icon(Icons.menu),
         );
       },
     );
@@ -483,7 +485,7 @@ class Assets {
     }
   }
 
-  static void pushDialogPage(BuildContext context, Widget page, {bool haveDialog = true}) {
+  void pushDialogPage(BuildContext context, Widget page, {bool haveDialog = true}) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -524,6 +526,177 @@ class Assets {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget lostItemBox(LostItem data, BuildContext context, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Hero(
+                tag: '${data.imageUrl}_${data.id}',
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: data.imageUrl,
+                        height: 130,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      ),
+                    ),
+                    if (data.status == FoundStatus.returned)
+                      Container(
+                        height: 130,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Returned',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                data.name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "status: ${statusToString(data.status)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget storeItemBox(StoreItem storeItem, BuildContext context, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Hero(
+                tag: '${storeItem.imagePath}_${storeItem.id}',
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: storeItem.imagePath,
+                        height: 130,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      ),
+                    ),
+                    if (storeItem.stock == 0)
+                      Container(
+                        height: 130,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Sold Out',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Text(
+                    storeItem.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '\$${storeItem.price}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green[700],
+                    ),
+                  ),
+                  Text(
+                    'Stock: ${storeItem.stock}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

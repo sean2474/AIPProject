@@ -18,7 +18,7 @@ class ApiService {
 
   Future<User_?> login(String userEmail, String password) async {
     try {
-      Map<String, dynamic> responseBody = await _httpRequest('POST', '$baseUrl/auth/login', {
+      Map<String, dynamic> responseBody = await _httpRequest('POST', '$baseUrl/auth/login', data: {
         'username': userEmail,
         'password': password,
       });
@@ -40,7 +40,7 @@ class ApiService {
   }
 
   Future<bool> checkAuth() async {
-    dynamic responseBody = await _httpRequest('GET', '$baseUrl/auth/testToken', {'token': token ?? ''});  
+    dynamic responseBody = await _httpRequest('GET', '$baseUrl/auth/testToken', data: {'token': token ?? ''});  
     return responseBody.runtimeType == String;
   }
 
@@ -75,11 +75,11 @@ class ApiService {
   }
 
   Future<dynamic> postDailySchedule(String date, String url) async {
-    return await _httpRequest('POST', '$baseUrl/data/daily-schedule/', {date: url});
+    return await _httpRequest('POST', '$baseUrl/data/daily-schedule/', data: {date: url});
   }
 
   Future<dynamic> putDailySchedule(String date, Map<String, String> scheduleData) async {
-    return await _httpRequest('PUT', '$baseUrl/data/daily-schedule/$date', scheduleData);
+    return await _httpRequest('PUT', '$baseUrl/data/daily-schedule/$date', data: scheduleData);
   }
 
   Future<dynamic> deleteDailySchedule(String date) async {
@@ -115,15 +115,15 @@ class ApiService {
   }
 
   Future<dynamic> postLostAndFound(Map<String, String> lostAndFoundData, File imageFile) async {
-    return await _httpRequest('POST', '$baseUrl/data/lost-and-found/', lostAndFoundData, imageFile);
+    return await _httpRequest('POST', '$baseUrl/data/lost-and-found/', data: lostAndFoundData, imageFile: imageFile);
   }
 
-  Future<dynamic> putLostAndFound(String id, Map<String, String> lostAndFoundData, File imageFile) async {
-    return await _httpRequest('PUT', '$baseUrl/data/lost-and-found/$id', lostAndFoundData, imageFile);
+  Future<dynamic> putLostAndFound(int id, Map<String, String> lostAndFoundData, File? imageFile) async {
+    return await _httpRequest('PUT', '$baseUrl/data/lost-and-found/image/$id', data: lostAndFoundData, imageFile: imageFile, contentType: "multipart/form-data");
   }
 
   Future<dynamic> deleteLostAndFound(String id) async {
-    return await _httpRequest('DELETE', '$baseUrl/data/lost-and-found/$id');
+    return await _httpRequest('DELETE', '$baseUrl/lost-and-found/$id');
   }
 
   Future<dynamic> getLostAndFoundItemImage(String id) async {
@@ -137,11 +137,11 @@ class ApiService {
   }
 
   Future<dynamic> postSchoolStoreItem(Map<String, String> schoolStoreItemData, File imageFile) async {
-    return await _httpRequest('POST', '$baseUrl/data/school-store/', schoolStoreItemData, imageFile);
+    return await _httpRequest('POST', '$baseUrl/data/school-store/', data: schoolStoreItemData, imageFile: imageFile);
   }
 
   Future<dynamic> putSchoolStoreItem(String id, Map<String, String> schoolStoreItemData, File imageFile) async {
-    return await _httpRequest('PUT', '$baseUrl/data/school-store/$id', schoolStoreItemData, imageFile);
+    return await _httpRequest('PUT', '$baseUrl/data/school-store/$id', data: schoolStoreItemData, imageFile: imageFile);
   }
 
   Future<dynamic> getSchoolStoreItemImage(String id) async {
@@ -152,18 +152,25 @@ class ApiService {
     return await _httpRequest('DELETE', '$baseUrl/data/school-store/$id');
   }
 
-  Future<dynamic> _httpRequest(String method, String url, [Map<String, String>? data, File? imageFile]) async {
+  Future<dynamic> _httpRequest(String method, String url, {Map<String, String>? data, File? imageFile, String? contentType}) async {
+    if (contentType == "application/json" && imageFile != null) {
+      throw BadRequestException('Error: Cannot upload image with application/json content type');
+    }
     var request;
     if (method == 'PUT' || method == 'POST') {
-      if (imageFile != null) {
+      if (contentType == "multipart/form-data" || imageFile != null) {
         request = MultipartRequest(method, Uri.parse(url));
         data?.forEach((key, value) {
           request.fields[key] = value;
         });
-        var multipartFile = await MultipartFile.fromPath(
-        'image_file', imageFile.path,
-        contentType: MediaType('image', 'jpeg'));
-        request.files.add(multipartFile);
+        var multipartFile;
+        if (imageFile != null) {
+          multipartFile = await MultipartFile.fromPath(
+            'image_file', imageFile.path,
+            contentType: MediaType('image', 'jpeg')
+          );
+          request.files.add(multipartFile);
+        }
       } else {
         request = Request(method, Uri.parse(url));
         request.headers['Content-Type'] = 'application/json';

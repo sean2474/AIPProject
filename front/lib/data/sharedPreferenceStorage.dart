@@ -9,6 +9,7 @@ class SharedPreferenceKeys {
   static const String numbersOfUpcomingGamesResultToShow = 'numbersOfUpcomingGamesResultToShow';
   static const String starredSports = 'starredSports';
   static const String sortLostAndFoundBy = 'sortLostAndFoundBy';
+  static const String showReturnedItemsInLostAndFound = 'showReturnedItemsInLostAndFound';
 }
 
 Future<void> saveValue(String key, String value) async {
@@ -52,6 +53,19 @@ Future<int> getRecentGamesToShow() async {
 Future<int> getUpcomingGamesToShow() async {
   int upcomingGames = int.parse(await readValue(SharedPreferenceKeys.numbersOfUpcomingGamesResultToShow) ?? '3');
   return upcomingGames;
+}
+
+Future<bool> getShowReturnedItemsInLostAndFound() async {
+  String? show = await readValue(SharedPreferenceKeys.showReturnedItemsInLostAndFound);
+  if (show == null) {
+    return false;
+  } else {
+    return show == 'true';
+  }
+}
+
+Future<void> saveShowReturnedItemsInLostAndFound(bool show) async {
+  saveValue(SharedPreferenceKeys.showReturnedItemsInLostAndFound, show.toString());
 }
 
 Future<void> saveStarredSports(List<String> sports) async {

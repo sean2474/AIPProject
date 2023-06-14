@@ -27,6 +27,12 @@ class LostItem {
   }
 
   factory LostItem.fromJson(Map<String, dynamic> json) {
+    FoundStatus status = FoundStatus.na;
+    if (json['status'] == 0) {
+      status = FoundStatus.returned;
+    } else if (json['status'] == 1) {
+      status = FoundStatus.lost;
+    }
     return LostItem(
       id: json['id'],
       name: json['item_name'],
@@ -34,7 +40,7 @@ class LostItem {
       imageUrl: "${Settings.baseUrl}${json['image_url']}",
       locationFound: json['location_found'],
       dateFound: json['date_found'],
-      status: json['status'] == null ? FoundStatus.na : FoundStatus.values[json['status'] - 1],
+      status: status,
       founderId: json['submitter_id'],
     );
   }

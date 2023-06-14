@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
+import 'package:front/pages/sports/method.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/lost_item.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'lost_item_page.dart';
+import 'show_modal.dart';
 
 class LostAndFoundPage extends StatefulWidget {
   final Data localData;
@@ -22,6 +23,10 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   List<LostItem> selectedItem(List<LostItem> items, String keyWord) {
+    if (!widget.localData.settings.showReturnedItem) {
+      items = items.where((element) => element.status != FoundStatus.returned).toList();
+    }
+
     if (keyWord == "") {
       return items;
     }
@@ -61,89 +66,77 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
     super.dispose();
   }
 
-  Widget itemBox(LostItem data) {
-    return InkWell(
-      onTap: () {
-        Assets.pushDialogPage(context, ItemPage(itemData: data));
-      },
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: '${data.imageUrl}_${data.id}',
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl: data.imageUrl,
-                        height: 130,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                      ),
-                    ),
-                    if (data.status == FoundStatus.returned)
-                      Container(
-                        height: 130,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Returned',
-                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                data.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      "status: ${statusToString(data.status)}",
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+  void _showSetting(BuildContext context) {
+    showModalBottomSheet(
+      context: context, 
+      isScrollControlled: true, // makes the height of the sheet dynamic
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.37, // makes the sheet take up half of the screen height
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 10),
+                SizedBox(
+                  height: 5.0,
+                  width: 50.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.grey[300],
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 10),
+                const Text(
+                  'Settings',
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20.0),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: lightColorScheme.background,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SettingModal(
+                        key: ValueKey<bool>(widget.localData.settings.showReturnedItem),
+                        showReturnedItem: widget.localData.settings.showReturnedItem,
+                        onSwitchChange: (value) {
+                          setState(() {
+                            widget.localData.settings.showReturnedItem = value;
+                          });
+                        },
+                      ),
+                      Divider(
+                        color: Colors.grey[200],
+                        height: 1,
+                      ),
+                      ListTile(
+                        title: const Text('Sort Options'),
+                        onTap: () {
+                          _showSortOptions(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 
-  void _showOptions(BuildContext context) {
+  void _showSortOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // makes the height of the sheet dynamic
@@ -152,7 +145,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
       ),
       builder: (BuildContext context) {
         return FractionallySizedBox(
-          heightFactor: 0.32, // makes the sheet take up half of the screen height
+          heightFactor: 0.37, // makes the sheet take up half of the screen height
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
@@ -232,7 +225,6 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     Assets assets = Assets(currentPage: LostAndFoundPage(localData: widget.localData), localData: widget.localData,);
@@ -252,6 +244,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
           ),
         ),
         actions: [
+          IconButton(onPressed: () => _showSetting(context), icon: Icon(Icons.settings), alignment: Alignment.topRight,),
           assets.menuBarButton(context),
         ],
         bottom: PreferredSize(
@@ -288,44 +281,6 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    _showOptions(context);
-                  },
-                  child: Row(
-                    children: [
-                      Column(
-                        children: [
-                          const Text(
-                            "Sorted by",
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            widget.localData.settings.sortLostAndFoundBy,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(3),
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          color: Colors.transparent,
-                          child: const Icon(
-                            Icons.sort,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
               ],
             ),
           ),
@@ -340,7 +295,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
           controller: _refreshController,
           header: assets.refreshHeader(indicatorColor: Colors.grey,),
           onRefresh: () => Future.delayed(const Duration(milliseconds: 500), () async {
-            widget.localData.lostAndFounds = LostItem.transformData(await widget.localData.apiService.getLostAndFound());
+            widget.localData.lostAndFounds = selectedItem(LostItem.transformData(await widget.localData.apiService.getLostAndFound()), _searchText);
             setState(() {});
             _refreshController.refreshCompleted();
           }),
@@ -356,7 +311,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
             itemCount: selectedItem(widget.localData.lostAndFounds, _searchText).length,
             itemBuilder: (context, index) {
               LostItem item = selectedItem(widget.localData.lostAndFounds, _searchText)[index];
-              return itemBox(item);
+              return assets.lostItemBox(item, context, () => assets.pushDialogPage(context, ItemPage(itemData: item)));
             },
           ),
         ),

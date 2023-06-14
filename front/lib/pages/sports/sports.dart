@@ -233,8 +233,8 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
-                GestureDetector(
-                  onTap: () {
+                IconButton(
+                  onPressed: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -259,7 +259,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
                       },
                     );
                   },
-                  child: const Icon(Icons.settings)
+                  icon: const Icon(Icons.settings)
                 ),
                 assets.menuBarButton(context),
               ],

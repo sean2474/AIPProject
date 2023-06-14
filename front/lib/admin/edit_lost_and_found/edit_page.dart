@@ -1,66 +1,155 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
-import 'package:front/data/lost_item.dart';
-import 'package:intl/intl.dart';
+import 'package:front/widgets/assets.dart';
+import 'edit_item_page.dart';
+import 'uploading_snackbar.dart';
 
-String statusToString(FoundStatus status) {
-  switch (status) {
-    case FoundStatus.lost:
-      return "Lost";
-    case FoundStatus.returned:
-      return "Returned";
-    default: 
-      return "N/A";
-  }
+class EditPage extends StatefulWidget {
+  final Data localData;
+
+  EditPage({super.key, required this.localData});
+
+  @override
+  State<EditPage> createState() => _EditPageState();
 }
 
-class EditPage extends StatelessWidget {
-  final List<LostItem> itemDataList;
+class _EditPageState extends State<EditPage> {
+  bool isAddPageHidden = false;
 
-  const EditPage({Key? key, required this.itemDataList}) : super(key: key);
-  // TODO: text fields - name, description, location, date
-  // TODO: submit button
+  double initial = 0.0;
+  double distance = 0.0;
+
+  double screenWidth = 0;
+  double screenHeight = 0;
+
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
   @override
   Widget build(BuildContext context) {
-    DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
-    return Stack(
-      children: [
-        Hero(
-          tag: "edit lost and found container",
-          child: Container(
-            decoration: BoxDecoration(
-              color: lightColorScheme.background,
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              alignment: Alignment.topCenter,
-              margin: EdgeInsets.only(top: 20),
-              child: Hero(
-                tag: "edit lost and found title",
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+
+    Assets assets = Assets(currentPage: EditPage(localData: widget.localData), localData: widget.localData,);
+    UploadingSnackbar uploadingSnackbar = UploadingSnackbar(context, _scaffoldMessengerKey, "uploading");
+
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: GestureDetector(
+        onVerticalDragStart: (DragStartDetails details) {
+          initial = details.globalPosition.dy;
+        },
+        onVerticalDragUpdate: (DragUpdateDetails details) {
+          distance = details.globalPosition.dy - initial;
+          if (distance > 0.0) {
+            Navigator.pop(context);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: !isAddPageHidden 
+            ? Stack(
+              children: [
+                buildCardHero(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      "Edit item",
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 5.0,
+                      width: 50.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.grey[300],
+                        ),
                       ),
                     ),
-                  ]
+                    buildTitle(context),
+                  ],
                 ),
-              ),
+                Padding(
+                  padding: EdgeInsets.only(top: 70),
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2 / 2.5, 
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    itemCount: widget.localData.lostAndFounds.length,
+                    itemBuilder: (context, index) {
+                      widget.localData.sortLostAndFoundBy("status");
+                      return assets.lostItemBox(widget.localData.lostAndFounds[index], context, () {
+                        showModalBottomSheet(
+                          context: context, 
+                          isScrollControlled: true, // makes the height of the sheet dynamic
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
+                          ),
+                          builder: (BuildContext context) {
+                            return EditItemPage(
+                              localData: widget.localData, 
+                              itemData: widget.localData.lostAndFounds[index], 
+                              itemIndex: index,
+                              onEdit: () {
+                                setState(() {});
+                              },
+                              showUploadingSnackBar: uploadingSnackbar.showUploading,
+                              dismissSnackBar: uploadingSnackbar.dismiss,
+                              showUploadingResultSnackBar: uploadingSnackbar.showUploadingResult,
+                            );
+                          },
+                        );
+                      });
+                    },
+                  ),
+                ),
+              ],
             )
+            : SizedBox(),
+        ),
+      ),
+    );
+  }
+
+  Hero buildCardHero() {
+    return Hero(
+      tag: "edit lost and found container",
+      child: Container(
+        decoration: BoxDecoration(
+          color: lightColorScheme.background,
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+    );
+  }
+
+  Container buildTitle(BuildContext context) {
+    return Container(
+      alignment: Alignment.topCenter,
+      margin: EdgeInsets.only(top: 10, bottom: 10),
+      child: Hero(
+        tag: "edit lost and found title",
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Edit item",
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
