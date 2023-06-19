@@ -241,7 +241,7 @@ func GetFoodMenu(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-// GetFoodMenuByDate @Summary Get the food menu for a specific date
+// GetFoodMenuByDate @Summary	 Get the food menu for a specific date
 // @Description Retrieves the breakfast, lunch, and dinner menu for a specific date from the database
 // @Tags FoodMenu
 // @Accept  json
@@ -293,6 +293,74 @@ func GetFoodMenuByDate(w http.ResponseWriter, r *http.Request) {
 
 	// Convert the FoodMenu struct to a JSON object
 	jsonData, err := json.Marshal(foodMenu)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set the response headers
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	// Write the response
+	w.Write(jsonData)
+}
+
+// GetAllFoodMenus @Summary Get all the food menus from the database
+// @Description Retrieves all the breakfast, lunch, and dinner menus from the database
+// @Tags FoodMenu
+// @Accept json
+// @Produce json
+// @Success 200 {object} restTypes.AllMenuResponse
+// @Failure 500 {string} Internal Server Error
+// @Router /data/food-menu/all [get]
+func GetAllFoodMenus(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("sqlite3", "database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Query the database to get all food menus
+	query := "SELECT date, breakfast, lunch, dinner FROM FoodMenu"
+	rows, err := db.Query(query)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	// Create a slice to store all food menus
+	var foodMenus restTypes.AllMenuResponse
+
+	// Iterate over the rows and extract the values
+	for rows.Next() {
+		var date, breakfast, lunch, dinner string
+		err := rows.Scan(&date, &breakfast, &lunch, &dinner)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// Create a FoodMenu struct for each row
+		foodMenu := databaseTypes.FoodMenu{
+			Date:      date,
+			Breakfast: breakfast,
+			Lunch:     lunch,
+			Dinner:    dinner,
+		}
+		foodMenus.Items = append(foodMenus.Items, foodMenu)
+		// Append the food menu to the slice
+		//foodMenus = append(foodMenus, foodMenu)
+	}
+
+	if err := rows.Err(); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Convert the foodMenus slice to a JSON object
+	jsonData, err := json.Marshal(foodMenus)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return

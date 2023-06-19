@@ -443,6 +443,34 @@ const docTemplate = `{
                 }
             }
         },
+        "/data/food-menu/all": {
+            "get": {
+                "description": "Retrieves all the breakfast, lunch, and dinner menus from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FoodMenu"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restTypes.AllMenuResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/data/food-menu/{date}": {
             "get": {
                 "description": "Retrieves the breakfast, lunch, and dinner menu for a specific date from the database",
@@ -1500,6 +1528,17 @@ const docTemplate = `{
             "properties": {
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "restTypes.AllMenuResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/databaseTypes.FoodMenu"
+                    }
                 }
             }
         },

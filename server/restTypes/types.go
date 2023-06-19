@@ -74,6 +74,10 @@ type DeleteResponse struct {
 	Message string `json:"message"`
 }
 
+type AllMenuResponse struct {
+	Items []databaseTypes.FoodMenu `json:"items"`
+}
+
 type LostAndFoundResponse struct {
 	Items []databaseTypes.LostAndFound `json:"items"`
 }
