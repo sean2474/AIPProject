@@ -5,22 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/school_store.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'item_page.dart';
 
 String itemTypeToString(ItemType type) {
   switch (type) {
     case ItemType.food:
-      return 'food';
+      return 'Food';
     case ItemType.drink:
-      return 'drink';
+      return 'Drink';
     case ItemType.goods:
-      return 'goods';
-    case ItemType.other:
-      return 'other';
+      return 'Goods';
+    case ItemType.others:
+      return 'Others';
     default:
-      return 'na';
+      return 'N/A';
   }
 }
 

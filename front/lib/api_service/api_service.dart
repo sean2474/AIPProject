@@ -88,7 +88,8 @@ class ApiService {
 
   // food menu
   Future<List<Map<String, dynamic>>> getFoodMenu() async {
-    dynamic data = await _httpRequest('GET', '$baseUrl/data/food-menu/');
+    dynamic data = await _httpRequest('GET', '$baseUrl/data/food-menu/all');
+
     if (data['list'] == null) {
       return [Map<String, dynamic>.from(data)];
     }
@@ -123,7 +124,7 @@ class ApiService {
   }
 
   Future<dynamic> deleteLostAndFound(String id) async {
-    return await _httpRequest('DELETE', '$baseUrl/lost-and-found/$id');
+    return await _httpRequest('DELETE', '$baseUrl/data/lost-and-found/$id');
   }
 
   Future<dynamic> getLostAndFoundItemImage(String id) async {
@@ -140,8 +141,8 @@ class ApiService {
     return await _httpRequest('POST', '$baseUrl/data/school-store/', data: schoolStoreItemData, imageFile: imageFile);
   }
 
-  Future<dynamic> putSchoolStoreItem(String id, Map<String, String> schoolStoreItemData, File imageFile) async {
-    return await _httpRequest('PUT', '$baseUrl/data/school-store/$id', data: schoolStoreItemData, imageFile: imageFile);
+  Future<dynamic> putSchoolStoreItem(int id, Map<String, String> schoolStoreItemData, File? imageFile) async {
+    return await _httpRequest('PUT', '$baseUrl/data/school-store/$id', data: schoolStoreItemData, imageFile: imageFile, contentType: "multipart/form-data");
   }
 
   Future<dynamic> getSchoolStoreItemImage(String id) async {

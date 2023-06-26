@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
 
-getSportsIcon(String sportsName, Color iconColor, double size) {
+getSportsIcon(String sportsName, double size, {Color? iconColor}) {
+  sportsName = sportsName.toLowerCase().replaceAll(" ", "_");
   Widget icon;
   switch (sportsName) {
     case "football":
@@ -50,7 +51,7 @@ getSportsIcon(String sportsName, Color iconColor, double size) {
   return icon;
 }
 
-String getCategoryToString(TeamCategory category) {
+String getSportsCategoryToString(TeamCategory category) {
   // enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
   switch (category) {
     case TeamCategory.fifth:
@@ -76,7 +77,7 @@ String getCategoryToString(TeamCategory category) {
   }
 }
 
-TeamCategory getStringToCategory(String category) {
+TeamCategory getStringToSportsCategory(String category) {
   // enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
   switch (category) {
     case 'Fifth':

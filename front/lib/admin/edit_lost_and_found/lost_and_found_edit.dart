@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
-import 'package:front/admin/edit_lost_and_found/uploading_snackbar.dart';
+import 'package:front/widgets/uploading_snackbar.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'edit_page.dart';

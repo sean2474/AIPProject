@@ -151,6 +151,13 @@ definitions:
       status:
         type: string
     type: object
+  restTypes.AllMenuResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/databaseTypes.FoodMenu'
+        type: array
+    type: object
   restTypes.DeleteResponse:
     properties:
       message:
@@ -672,6 +679,24 @@ paths:
       security:
       - Bearer: []
       summary: Update a food menu
+      tags:
+      - FoodMenu
+  /data/food-menu/all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all the breakfast, lunch, and dinner menus from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.AllMenuResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       tags:
       - FoodMenu
   /data/games/:

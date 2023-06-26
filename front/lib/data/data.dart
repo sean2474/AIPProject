@@ -7,7 +7,7 @@ import 'school_store.dart';
 import 'user_.dart';
 import 'settings.dart';
 
-enum ItemType { food, drink, goods, other, na }
+enum ItemType { food, drink, goods, others, na }
 enum FoundStatus { returned, lost, na }
 enum TeamCategory { varsity, jv, vb, thirds, thirdsBlue, thirdsRed, fourth, fifth, na }
 enum Season { fall, winter, spring, na }
@@ -17,7 +17,7 @@ class Data {
   User_? user;
   static bool loggedIn = false;
   List<DailySchedule> dailySchedules;
-  List<FoodMenu> foodMenus;
+  Map<String, FoodMenu> foodMenus;
   List<LostItem> lostAndFounds;
   List<StoreItem> storeItems;
   List<SportsInfo> sportsInfo;
@@ -28,6 +28,11 @@ class Data {
   Settings settings;
 
   static List<List<dynamic>> pageList = [];
+
+  void sortStoreItem() {
+    storeItems.sort((a, b) => a.itemType.toString().compareTo(b.itemType.toString()));
+    storeItems.sort((a, b) => a.name.compareTo(b.name));
+  }
 
   void sortLostAndFoundBy(String sortType) {
     switch (sortType) {

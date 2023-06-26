@@ -142,6 +142,11 @@ func FoodMenuByHandler(w http.ResponseWriter, r *http.Request) {
 		break
 	case "GET":
 		dateStr := strings.TrimPrefix(r.URL.Path, "/data/food-menu/")
+		fmt.Println(dateStr)
+		if dateStr == "all" {
+			food.GetAllFoodMenus(w, r)
+			break
+		}
 		if dateStr != "" {
 			food.GetFoodMenuByDate(w, r)
 			break

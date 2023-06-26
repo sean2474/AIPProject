@@ -625,13 +625,13 @@ class Assets {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
-                tag: '${storeItem.imagePath}_${storeItem.id}',
+                tag: '${storeItem.imageUrl}_${storeItem.id}',
                 child: Stack(
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
-                        imageUrl: storeItem.imagePath,
+                        imageUrl: storeItem.imageUrl,
                         height: 130,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -699,6 +699,26 @@ class Assets {
           ),
         ),
       ),
+    );
+  }
+
+  static Widget buttomSheetModalTopline() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: 10),
+        SizedBox(
+          height: 5.0,
+          width: 50.0,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.grey[300],
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+      ],
     );
   }
 }

@@ -1,7 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
@@ -9,8 +5,6 @@ import 'package:front/data/lost_item.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'uploading_snackbar.dart';
 
 class AddPage extends StatefulWidget {
   final Data localData;
@@ -385,7 +379,7 @@ class _AddPageState extends State<AddPage> {
           widget.showUploadingSnackBar();
           var result;
           try {
-            await widget.localData.apiService.postLostAndFound(itemData, File(_image!.path));
+            result = await widget.localData.apiService.postLostAndFound(itemData, File(_image!.path));
           } catch (e) {
             result = {"status": "error"};
           }

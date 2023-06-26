@@ -87,7 +87,7 @@ func GetSportsData(w http.ResponseWriter, r *http.Request) {
 func GetSportsGameData(w http.ResponseWriter, r *http.Request) {
 
 	// Connect to the database
-	db, err := sql.Open("sqlite3", "database.db")
+	db, err := sql.Open("sqlite3", "database.db?parseTime=true")
 	if err != nil {
 		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -96,7 +96,7 @@ func GetSportsGameData(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	// Query the SportsGames table to get the data
-	rows, err := db.Query("SELECT SportsGames.id, SportsGames.sport_name, SportsGames.category, SportsGames.game_location, SportsGames.opponent_school, SportsGames.home_or_away, SportsGames.match_result, SportsGames.coach_comment, SportsGames.game_schedule FROM SportsGames")
+	rows, err := db.Query("SELECT SportsGames.id, SportsGames.sport_name, SportsGames.category, SportsGames.game_location, SportsGames.opponent_school, SportsGames.home_or_away, SportsGames.match_result, SportsGames.coach_comment, strftime(SportsGames.game_schedule) FROM SportsGames")
 	if err != nil {
 		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -110,7 +110,7 @@ func GetSportsGameData(w http.ResponseWriter, r *http.Request) {
 	// Loop through the rows and add the data to the slice
 	for rows.Next() {
 		var sportsGameData databaseTypes.SportsGame
-		var gameSchedule time.Time
+		var gameSchedule string
 		err := rows.Scan(&sportsGameData.ID, &sportsGameData.SportName, &sportsGameData.Category, &sportsGameData.GameLocation,
 			&sportsGameData.OpponentSchool, &sportsGameData.HomeOrAway, &sportsGameData.MatchResult, &sportsGameData.CoachComment,
 			&gameSchedule)
@@ -119,9 +119,16 @@ func GetSportsGameData(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		fmt.Println(gameSchedule)
+		layout := "2006-01-02 03:04 PM"
 
+		t, err := time.Parse(layout, gameSchedule)
+		if err != nil {
+			fmt.Println("Error parsing time:", err)
+			return
+		}
 		// Format the game schedule as a string
-		sportsGameData.GameSchedule = gameSchedule
+		sportsGameData.GameSchedule = t
 
 		// Add the sportsGameData struct to the slice
 		sportsGameDataList.List = append(sportsGameDataList.List, sportsGameData)

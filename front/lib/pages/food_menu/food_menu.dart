@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
+import 'package:front/pages/food_menu/food_menu_view.dart';
 import 'package:front/widgets/assets.dart';
 
 class FoodMenuPage extends StatefulWidget {
@@ -86,8 +87,14 @@ class FoodMenuPageState extends State<FoodMenuPage>
         ),
       ),
       drawer: assets.buildDrawer(context),
-      body: SingleChildScrollView(
-        
+      body: PageView.builder(
+        itemCount: widget.localData.foodMenus.length,
+        itemBuilder: (context, index) { 
+          return FoodMenuViewPage(
+            foodMenu: widget.localData.foodMenus.values.toList()[index], 
+            mealType: _selectedTabIndex,
+          );
+        },
       ),
     );
   }

@@ -76,23 +76,12 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
       builder: (BuildContext context) {
         return FractionallySizedBox(
           heightFactor: 0.37, // makes the sheet take up half of the screen height
-          child: Container(
+          child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 10),
-                SizedBox(
-                  height: 5.0,
-                  width: 50.0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
+                Assets.buttomSheetModalTopline(),
                 const Text(
                   'Settings',
                   style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),

@@ -6,8 +6,6 @@ import 'package:front/widgets/assets.dart';
 import 'method.dart';
 import 'package:front/color_schemes.g.dart';
 
-
-// TODO: change roster from row to column 
 // check https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/varsityfootball in mobile view
 class SportsInfoPage extends StatefulWidget {
   final List<SportsInfo> sportsData;
@@ -79,7 +77,7 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     List<String> informations = ['Matches', 'Coaches', 'Roster'];
-    List<String> teamCategories = widget.sportsData.map((e) => getCategoryToString(e.teamCategory)).toList();
+    List<String> teamCategories = widget.sportsData.map((e) => getSportsCategoryToString(e.teamCategory)).toList();
 
     Widget getInformationContent(int index) {
       Color containerColor = lightColorScheme.secondaryContainer;
@@ -174,6 +172,11 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                 .entries
                 .map<Widget>((entry) {
                   List<String> playerInfos = entry.value;
+                  for (int i = 0; i < playerInfos.length; i++) {
+                    if (playerInfos[i].contains("#")) {
+                      playerInfos[i] = playerInfos[i].replaceAll(":", "");
+                    }
+                  }
                   return Container(
                     margin: const EdgeInsets.only(top: 5),
                     padding: const EdgeInsets.all(10),
@@ -205,29 +208,28 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
       }
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(15),
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: AppBar(
-              automaticallyImplyLeading: false,
-              centerTitle: false,
-              actions: [
-                Container(
-                  margin: EdgeInsets.only(right: 10, top: 10),
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(
-                      Icons.close,
-                      size: 30,
-                    ),
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(100),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 10, top: 10),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 25,
                   ),
-                )
-              ],
-              title: Container(
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: getSportsIcon(widget.sportsData[0].sportsName, 25),
+              ),
+              Container(
                 margin: EdgeInsets.only(top: 20, bottom: 10, left: 10),
                 child: Text(
                   widget.sportsData[0].sportsName,
@@ -237,64 +239,64 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
                   ),
                 ),
               ),
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(40),
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 10, top: 15),
-                  child: Assets(localData: widget.localData,).drawAppBarSelector(context: context, titles: teamCategories, selectTab: _selectTab, animation: _animation, selectedIndex: _selectedCategoryIndex)
-                ),
-              ),
+            ],
+          ),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(40),
+            child: Container(
+              margin: EdgeInsets.only(bottom: 10, top: 15),
+              child: Assets(localData: widget.localData,).drawAppBarSelector(context: context, titles: teamCategories, selectTab: _selectTab, animation: _animation, selectedIndex: _selectedCategoryIndex)
             ),
           ),
         ),
-        body: Container(
-          margin: EdgeInsets.symmetric(horizontal: 10),
-          child: SingleChildScrollView( // Add SingleChildScrollView here
-            child: Column(
-              children: informations.asMap().entries.map<Widget>((entry) {
-                int index = entry.key;
-                String information = entry.value;
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (_expandedIndex == index) {
-                            _expandedIndex = -1;
-                          } else {
-                            _expandedIndex = index;
-                          }
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 10),
-                        padding: EdgeInsets.all(16.0),
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 0.5,
-                            ),
+      ),
+      body: Container(
+        margin: EdgeInsets.symmetric(horizontal: 10),
+        child: SingleChildScrollView( // Add SingleChildScrollView here
+          child: Column(
+            children: informations.asMap().entries.map<Widget>((entry) {
+              int index = entry.key;
+              String information = entry.value;
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_expandedIndex == index) {
+                          _expandedIndex = -1;
+                        } else {
+                          _expandedIndex = index;
+                        }
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.all(16.0),
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 0.5,
                           ),
                         ),
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          information,
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                        ),
+                      ),
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        information,
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    getSlidingAnimation(
-                      index,
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        child: getInformationContent(index),
-                      ),
-                    )
-                  ],
-                );
-              }).toList(),
-            ),
+                  ),
+                  getSlidingAnimation(
+                    index,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: getInformationContent(index),
+                    ),
+                  )
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),

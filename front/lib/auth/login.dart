@@ -210,12 +210,14 @@ class LoginPageState extends State<LoginPage> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              Spacer(),
                               Image.asset(
                                 'assets/google_login_icon/g-logo.png',
                                 width: 36,
                               ),
-                              const SizedBox(width: 24,),
+                              Spacer(),
                               Text(
                                 'SIGN IN WITH GOOGLE',
                                 style: TextStyle(
@@ -224,6 +226,7 @@ class LoginPageState extends State<LoginPage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
+                              Spacer()
                             ],
                           ),
                         ),

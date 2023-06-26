@@ -1,9 +1,36 @@
+import 'dart:convert';
+
+class Food {
+  String name;
+  String ingredients;
+  String group;
+
+  Food({
+    required this.name, 
+    required this.ingredients, 
+    required this.group,
+  });
+
+  factory Food.fromJson(Map<String, dynamic> json) {
+    return Food(
+      name: json['name'],
+      ingredients: json['ingredients'],
+      group: json['group'],
+    );
+  }
+
+  @override
+  String toString() { 
+    return name;
+  }
+}
+
 class FoodMenu {
   int id;
   String date;
-  String breakFast;
-  String lunch;
-  String dinner;
+  Map<String, List<Food>> breakFast;
+  Map<String, List<Food>> lunch;
+  Map<String, List<Food>> dinner;
 
   FoodMenu({
     required this.id, 
@@ -13,18 +40,37 @@ class FoodMenu {
     required this.dinner
   });
 
-  static List<FoodMenu> transformData(List<dynamic> data) {
-    return data.map((json) => FoodMenu.fromJson(json)).toList();
+  static Map<String, FoodMenu> transformData(List<dynamic> data) {  
+    data = data[0]['items'];
+    Map<String, FoodMenu> foodMenu = {};
+    for (int i = 0; i < data.length; i++) {
+      foodMenu[data[i]['date']] = FoodMenu.fromJson(data[i]);
+    }
+    return foodMenu;
   }
 
   factory FoodMenu.fromJson(Map<String, dynamic> json) {
     return FoodMenu(
       id: json['id'],
       date: json['date'],
-      breakFast: json['breakfast'],
-      lunch: json['lunch'],
-      dinner: json['dinner'],
+      breakFast: _parseFood(json['breakfast']),
+      lunch: _parseFood(json['lunch']),
+      dinner: _parseFood(json['dinner']),
     );
+  }
+
+  static Map<String, List<Food>> _parseFood(dynamic data) {
+    if (data is String) {
+      data = jsonDecode(data);
+    }
+    Map<String, List<Food>> menu = {};
+    for (var food in data) {
+      menu[food['group']] = [];
+    }
+    for (var food in data) {
+      menu[food['group']]!.add(Food.fromJson(food));
+    }
+    return menu;
   }
 
   @override

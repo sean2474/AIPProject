@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
@@ -6,7 +5,7 @@ import 'package:front/data/data.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:front/pages/lost_and_found/lost_item_page.dart';
 import 'package:front/widgets/assets.dart';
-import 'uploading_snackbar.dart';
+import 'package:front/widgets/uploading_snackbar.dart';
 
 class DeletePage extends StatefulWidget {
   final Data localData;
@@ -239,12 +238,14 @@ class _DeletePageState extends State<DeletePage> {
                         } catch (e) {
                           result = {"status": "fail"};
                         }
-                        uploadingSnackbar.showUploadingResult(result["status"] == "success");
+                        uploadingSnackbar.showUploadingResult(result["status"] == "Item deleted successfully");
                         uploadingSnackbar.dismiss();
-                        if (result == "success") {
+                        if (result["status"] == "Item deleted successfully") {
                           setState(() {
                             widget.localData.lostAndFounds.removeWhere((element) => element.id == itemToDelete.id);
                           });
+                        } else {
+                          debugPrint(result.toString());
                         }
                       },
                     ),

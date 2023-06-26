@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
@@ -122,9 +121,13 @@ class _EditItemPageState extends State<EditItemPage> {
     screenHeight = MediaQuery.of(context).size.height;
 
     return FractionallySizedBox(
-      heightFactor: 0.8, // makes the sheet take up half of the screen height
+      heightFactor: 0.8, 
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
+        decoration: BoxDecoration(
+          color: lightColorScheme.background,
+          borderRadius: BorderRadius.circular(15),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -374,6 +377,7 @@ class _EditItemPageState extends State<EditItemPage> {
             lastDate: DateTime.now(),
           );
           if (pickedDate != null && pickedDate != _selectedDate) {
+            // ignore: use_build_context_synchronously
             final TimeOfDay? pickedTime = await showTimePicker(
               context: context,
               initialTime: TimeOfDay.now(),

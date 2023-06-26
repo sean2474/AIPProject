@@ -14,6 +14,8 @@ class Authentication {
       final GoogleSignInAccount? googleSignInAccount =
           await googleSignIn.signIn();
 
+      print(googleSignInAccount?.email);
+
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
             await googleSignInAccount.authentication;

@@ -1,6 +1,6 @@
 /// sports.dart
 
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -114,7 +114,7 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
     // Filter the game data based on the getStarredGames flag
     List<GameInfo> filteredGameData = getStarredGames
       ? gameData.where((game) {
-          String key = '${game.sportsName.toLowerCase().replaceAll(" ", "_")}_${getCategoryToString(game.teamCategory).toLowerCase()}';
+          String key = '${game.sportsName.toLowerCase().replaceAll(" ", "_")}_${getSportsCategoryToString(game.teamCategory)}';
           return starredSportsSet.contains(key);
         }).toList()
       : gameData;
@@ -154,7 +154,6 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
     ]);
   }
 
-  // TODO: game date is weird
   ListView buildGamesList(List<GameInfo> gamesList, Assets assets) {
     return ListView.builder(
       key: ValueKey<int>(_selectedTabIndex),
@@ -162,7 +161,8 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        String title = gamesList[index].sportsName == 'N/A' ? 'N/A' : '${gamesList[index].sportsName.trim()} - ${getCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}';
+        PageController pageController = PageController(initialPage: index);
+        String title = gamesList[index].sportsName == 'N/A' ? 'N/A' : '${gamesList[index].sportsName.trim()} - ${getSportsCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}';
         String? text = gamesList[index].sportsName == 'N/A' ? null : '${DateFormat('yyyy-MM-dd').format(DateTime.parse(gamesList[index].gameDate)).toString()}, ${gamesList[index].gameLocation}${gamesList[index].matchResult == '' ? '' : ', ${gamesList[index].matchResult}'}';
         Color borderColor = gamesList[index].sportsName == 'N/A' ? Colors.grey : gamesList[index].matchResult == '' ? lightColorScheme.onSecondaryContainer : lightColorScheme.secondary;
         return assets.boxButton(
@@ -171,17 +171,20 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
           borderColor: borderColor, 
           text: text,
           onTap: () => {
-            showDialog(
+            showModalBottomSheet(
               context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              barrierColor: Colors.black.withOpacity(0.9),
               builder: (BuildContext context) {
-                return Dialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8, 
-                    height: MediaQuery.of(context).size.height * 0.6, 
-                    child: GameInfoPage(gameData: gamesList[index]),
+                return FractionallySizedBox(
+                  heightFactor: 0.95,
+                  child: PageView.builder(
+                    controller: pageController,
+                    itemCount: gamesList.length,
+                    itemBuilder: (context, index) {
+                      return GameInfoPage(gameData: gamesList[index]);
+                    },
                   ),
                 );
               },
@@ -235,25 +238,24 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
               actions: [
                 IconButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
+                    showModalBottomSheet(
+                      context: context, 
+                      isScrollControlled: true, 
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
+                      ),
                       builder: (BuildContext context) {
-                        return Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.6, 
-                            child: SettingPage(
-                              sportsList: sportsList,
-                              localData: localData,
-                              onDialogClosed: () {
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  setState(() {});
-                                });
-                              },
-                            ),
+                        return FractionallySizedBox(
+                          heightFactor: 0.35,
+                          child: SettingPage(
+                            sportsList: sportsList,
+                            localData: localData,
+                            onDialogClosed: () {
+                              setState(() { });
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                setState(() {});
+                              });
+                            },
                           ),
                         );
                       },
@@ -332,13 +334,10 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
                 margin: const EdgeInsets.only(top: 0, left: 0, right: 0,),
                 padding: const EdgeInsets.only(bottom: 10),
                 height: 50,
-                child: assets.drawAppBarSelector(context: context, titles: ["STARRED", "ALL"], selectTab: _selectTab, animation:_animation, selectedIndex: _selectedTabIndex) 
+                child: assets.drawAppBarSelector(context: context, titles: ["FAVORITES", "ALL"], selectTab: _selectTab, animation:_animation, selectedIndex: _selectedTabIndex) 
               ),
               Container(
                 margin: const EdgeInsets.only(top: 40,),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF7F6FB),
-                ),
                 child: Column(
                   children: [
                     AnimatedSwitcher(
@@ -388,26 +387,17 @@ class SportsPageState extends State<SportsPage> with SingleTickerProviderStateMi
                           });
                           return sportsInfoBox(
                             sports: sportsCategoryList[0],
-                            child: getSportsIcon(sportsName, iconColor, size),
+                            child: getSportsIcon(sportsName, iconColor: iconColor, size),
                             onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: MediaQuery.of(context).size.height * 0.6,
-                                      child: SportsInfoPage(
-                                        sportsData: sportsCategoryList,
-                                        gameData: gameInfo,
-                                        localData: localData,
-                                      ),
-                                    ),
-                                  );
-                                },
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>
+                                  SportsInfoPage(
+                                    sportsData: sportsCategoryList,
+                                    gameData: gameInfo,
+                                    localData: localData,
+                                  ),
+                                ),
                               );
                             },
                           );

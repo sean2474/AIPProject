@@ -6,7 +6,7 @@ class StoreItem {
   String name;
   ItemType itemType;
   String description;
-  String imagePath;
+  String imageUrl;
   double price;
   int stock;
   String dateAdded;
@@ -16,7 +16,7 @@ class StoreItem {
     required this.name, 
     required this.itemType, 
     required this.description, 
-    required this.imagePath, 
+    required this.imageUrl, 
     required this.price, 
     required this.stock, 
     required this.dateAdded
@@ -34,8 +34,8 @@ class StoreItem {
       id: json['ID'],
       name: json['Product_Name'],
       itemType: json['Category'] == null ? ItemType.na : ItemType.values[json['Category']],
-      description: json['Description'],
-      imagePath: "${Settings.baseUrl}/data/school-store/image/${json['ID']}",
+      description: json['Description'] ?? '',
+      imageUrl: "${Settings.baseUrl}/data/school-store/image/${json['ID']}",
       price: json['Price'].toDouble(),
       stock: json['Stock'],
       dateAdded: json['Date_Added'],

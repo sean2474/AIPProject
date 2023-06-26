@@ -23,13 +23,13 @@ class ItemPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Hero(
-                  tag: '${itemData.imagePath}_${itemData.id}',
+                  tag: '${itemData.imageUrl}_${itemData.id}',
                   child: Stack(
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: CachedNetworkImage(
-                          imageUrl: itemData.imagePath,
+                          imageUrl: itemData.imageUrl,
                           height: 150,
                           width: double.infinity,
                           fit: BoxFit.cover,

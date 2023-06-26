@@ -1,13 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'edit_item_page.dart';
-import 'uploading_snackbar.dart';
+import 'package:front/widgets/uploading_snackbar.dart';
 
 class EditPage extends StatefulWidget {
   final Data localData;

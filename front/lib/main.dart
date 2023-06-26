@@ -1,15 +1,6 @@
 /// main.dart
 
 /*
- running in emulator
- flutter run --no-sound-null-safety
- 
- running in my iphone ...
- flutter run -d [device id] --no-sound-null-safety
- 
- checking for connected devices
- flutter devices
- 
  if github commiting not working, try:
  1. move to ~/Desktop/AIPProject/.git/refs/remotes/origin
  2. remove all files in remotes
@@ -20,7 +11,6 @@
  if there is error, uncomment it, or try flutter clean and flutter pub get
 */
 
-import 'dart:io';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -52,14 +42,13 @@ void main() async {
     home: LoadingPage(),
   ));
 
-  String baseUrl = 'http://52.45.134.101:8082';
-  // String baseUrl = 'http://127.0.0.1:8082';
+  String baseUrl = 'http://35.169.229.180:8082';
   debugPrint("connecting to $baseUrl...");
 
   Settings.baseUrl = baseUrl;
   Data localData = Data(
     dailySchedules: [], 
-    foodMenus: [], 
+    foodMenus: {}, 
     lostAndFounds: [], 
     storeItems: [], 
     sportsInfo: [], 
@@ -80,9 +69,7 @@ void main() async {
     try {
       localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
       break;
-    } on Exception catch (e) {
-      debugPrint("server not running");
-    }
+    } on Exception catch (e) { }
     await Future.delayed(Duration(microseconds: 10));
   }
 
@@ -132,6 +119,7 @@ void main() async {
   } on NotFoundException {
     debugPrint("page not found on food menu");
   }
+
   try {
     localData.lostAndFounds = LostItem.transformData(await localData.apiService.getLostAndFound());
   } on NoSuchMethodError {
