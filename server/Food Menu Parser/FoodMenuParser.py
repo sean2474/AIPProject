@@ -85,7 +85,8 @@ class FoodMenuParser:
         dishes = []
         dict_with_food_type = {}
         for dish_information in menu_items[1:]:
-            if (g := self.__extract_group_from_json(dish_information)) != "N/A":
+            g = self.__extract_group_from_json(dish_information)
+            if g != "N/A":
                 dict_with_food_type[dish_information['menu_id']] = g
 
         for dish_information in menu_items[1:]:
