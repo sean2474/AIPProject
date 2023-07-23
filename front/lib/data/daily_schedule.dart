@@ -1,20 +1,55 @@
+import 'dart:collection';
+import 'package:flutter/material.dart';
+
 class DailySchedule {
-  String date;
-  String url;
+  String startTime;
+  String endTime;
+  String title;
+  bool isRequired;
+  String location;
+  String description;
+  Color color;
+  HashSet<int> resource;
 
   DailySchedule({
-    required this.date, 
-    required this.url,
+    required this.startTime,
+    required this.endTime,
+    required this.title,
+    required this.isRequired,
+    required this.location,
+    required this.description,
+    required this.color,
+    required this.resource
   });
 
-  static List<DailySchedule> transformData(List<Map<String, dynamic>> data) {
-    return data.map((json) => DailySchedule.fromJson(json)).toList();
+  static Map<String, List<DailySchedule>> transformData(Map<String, dynamic> data) {
+    Map<String, List<DailySchedule>> dailySchedules = {};
+    data.forEach((key, values) {
+      List<DailySchedule> dailySchedule = [];
+      for (dynamic value in values) {
+        dailySchedule.add(DailySchedule.fromJson(value));
+      }
+      dailySchedules[key] = dailySchedule;
+    });
+    return dailySchedules;
   }
   
   factory DailySchedule.fromJson(Map<String, dynamic> json) {
-      return DailySchedule(
-        date: json['date'],
-        url: json['url'],
-      );
-    }
+    return DailySchedule(
+      startTime: json["start"].toString().split("T")[1],
+      endTime: json["end"].toString().split("T")[1],
+      title: json["title"],
+      // check after actual endpoint connect
+      description: json["description"],
+      isRequired: false, // json["isClass"],
+      color: Color(int.parse("0xFF${json["color"].substring(1, 7)}")), // , 
+      resource: HashSet<int>()..addAll(json["resource"]),
+      location: json["location"],
+    );
   }
+    
+  @override
+  String toString() {
+    return title;
+  }
+}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
-import 'package:front/pages/sports/method.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -66,7 +65,11 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
     super.dispose();
   }
 
-  void _showSetting(BuildContext context) {
+  static void showSetting(BuildContext context, {
+    required Data localData,
+    required Function(bool) onSwitchChange,
+    required Function(String) onSortChange,
+  }) {
     showModalBottomSheet(
       context: context, 
       isScrollControlled: true, // makes the height of the sheet dynamic
@@ -96,13 +99,9 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SettingModal(
-                        key: ValueKey<bool>(widget.localData.settings.showReturnedItem),
-                        showReturnedItem: widget.localData.settings.showReturnedItem,
-                        onSwitchChange: (value) {
-                          setState(() {
-                            widget.localData.settings.showReturnedItem = value;
-                          });
-                        },
+                        key: ValueKey<bool>(localData.settings.showReturnedItem),
+                        showReturnedItem: localData.settings.showReturnedItem,
+                        onSwitchChange: onSwitchChange
                       ),
                       Divider(
                         color: Colors.grey[200],
@@ -111,7 +110,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                       ListTile(
                         title: const Text('Sort Options'),
                         onTap: () {
-                          _showSortOptions(context);
+                          _showSortOptions(context, onSortChange: onSortChange);
                         },
                       ),
                     ],
@@ -125,7 +124,9 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
     );
   }
 
-  void _showSortOptions(BuildContext context) {
+  static void _showSortOptions(BuildContext context, {
+    required Function(String) onSortChange,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // makes the height of the sheet dynamic
@@ -167,13 +168,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                     children: <Widget>[
                       ListTile(
                         title: const Text('Sort by Status'),
-                        onTap: () {
-                          setState(() {
-                            widget.localData.sortLostAndFoundBy("status");
-                            widget.localData.settings.sortLostAndFoundBy = "status";
-                          });
-                          Navigator.pop(context);
-                        },
+                        onTap: onSortChange("status"),
                       ),
                       Divider(
                         color: Colors.grey[200],
@@ -181,13 +176,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                       ),
                       ListTile(
                         title: const Text('Sort by Date'),
-                        onTap: () {
-                          setState(() {
-                            widget.localData.sortLostAndFoundBy("date");
-                            widget.localData.settings.sortLostAndFoundBy = "date";
-                          });
-                          Navigator.pop(context);
-                        },
+                        onTap: onSortChange("date"),
                       ),
                       Divider(
                         color: Colors.grey[200],
@@ -195,13 +184,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                       ),
                       ListTile(
                         title: const Text('Sort by Name'),
-                        onTap: () {
-                          setState(() {
-                            widget.localData.sortLostAndFoundBy("name");
-                            widget.localData.settings.sortLostAndFoundBy = "name";
-                          });
-                          Navigator.pop(context);
-                        },
+                        onTap: onSortChange('name'),
                       ),
                     ],
                   ),
@@ -218,64 +201,49 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   Widget build(BuildContext context) {
     Assets assets = Assets(currentPage: LostAndFoundPage(localData: widget.localData), localData: widget.localData,);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        title: Container(
-          margin: const EdgeInsets.only(left: 10),
-          child: const Text(
-            "Lost and Found",
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(onPressed: () => _showSetting(context), icon: Icon(Icons.settings), alignment: Alignment.topRight,),
-          assets.menuBarButton(context),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: TextField(
-                      showCursor: false,
-                      onChanged: (value) {
-                        setState(() {
-                          _searchText = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Search items',
-                        contentPadding: const EdgeInsets.all(8.0),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: AppBar(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: TextField(
+                        showCursor: false,
+                        onChanged: (value) {
+                          setState(() {
+                            _searchText = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: 'Search items',
+                          contentPadding: const EdgeInsets.all(8.0),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-      drawer: assets.buildDrawer(context),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: SmartRefresher(

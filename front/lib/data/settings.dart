@@ -4,6 +4,7 @@ class Settings {
   String starredSports;
   String sortLostAndFoundBy;
   bool showReturnedItem;
+  bool isDailyScheduleTimelineMode;
   static String baseUrl = '';
   
   Settings({
@@ -12,5 +13,6 @@ class Settings {
     required this.starredSports, 
     required this.sortLostAndFoundBy, 
     required this.showReturnedItem,
+    required this.isDailyScheduleTimelineMode,
   });
 }

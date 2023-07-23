@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/school_store.dart';
-import 'package:front/pages/lost_and_found/lost_item_page.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/widgets/uploading_snackbar.dart';
 

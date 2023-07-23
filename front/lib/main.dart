@@ -21,7 +21,7 @@ import 'package:front/data/lost_item.dart';
 import 'package:front/data/school_store.dart';
 import 'package:front/data/sports.dart';
 import 'package:front/loading/loading.dart';
-import 'package:front/pages/main_menu/main_menu.dart';
+import 'package:front/main_menu/main_menu.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:front/data/food_menu.dart';
 import 'firebase_options.dart';
@@ -47,7 +47,7 @@ void main() async {
 
   Settings.baseUrl = baseUrl;
   Data localData = Data(
-    dailySchedules: [], 
+    dailySchedules: {}, 
     foodMenus: {}, 
     lostAndFounds: [], 
     storeItems: [], 
@@ -59,6 +59,7 @@ void main() async {
       starredSports: (await getStarredSports()).join(' '), 
       sortLostAndFoundBy: await getSortLostAndFoundBy() ?? 'date',
       showReturnedItem: await getShowReturnedItemsInLostAndFound(),
+      isDailyScheduleTimelineMode: await getisDailyScheduleTimelineMode(),
     ), 
     apiService: ApiService(
       baseUrl: baseUrl
@@ -69,7 +70,8 @@ void main() async {
     try {
       localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
       break;
-    } on Exception catch (e) { }
+    // ignore: empty_catches
+    } on Exception { }
     await Future.delayed(Duration(microseconds: 10));
   }
 
@@ -83,6 +85,7 @@ void main() async {
       Data.loggedIn = true;
     } else if (user != null) {
       debugPrint("signed in with google");
+      print(user.uid);
       localData.user = User_(id: 0, token: user.uid, userType: UserType.student, name: '', password: '', email: user.email ?? '');
       Data.loggedIn = true;
     } else {
@@ -149,7 +152,6 @@ void main() async {
   }
 
   localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
-  localData.sportsInfo.sort((a, b) => a.sportsName.compareTo(b.sportsName));
 
   localData.settings.recentGamesToShow = await getRecentGamesToShow();
   localData.settings.upcomingGamesToShow = await getUpcomingGamesToShow();
@@ -202,7 +204,7 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
     return MaterialApp(
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       debugShowCheckedModeBanner: false,
-      home: StudentMainMenuPage(localData: widget.localData),
+      home: MainMenuPage(localData: widget.localData),
     );
   }
 }

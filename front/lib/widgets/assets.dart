@@ -1,16 +1,15 @@
 /// assets.dart
 /// This file contains the assets used in the app.
 
-import 'dart:ffi';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:front/data/school_store.dart';
+import 'package:front/main_menu/main_menu.dart';
+import 'package:front/pages/games/games.dart';
 import 'package:front/pages/lost_and_found/lost_item_page.dart';
 import 'package:front/pages/school_store/school_store.dart';
-import 'package:front/pages/main_menu/main_menu.dart';
 import 'package:front/pages/daily_schedule/daily_schedule.dart';
 import 'package:front/pages/food_menu/food_menu.dart';
 import 'package:front/pages/lost_and_found/lost_and_found.dart';
@@ -29,11 +28,11 @@ class Assets {
   final Data localData;
   final User? user = FirebaseAuth.instance.currentUser;
   final VoidCallback? onUserChanged; 
+  final VoidCallback? onPageChange;
 
-  Assets({this.currentPage, required this.localData, this.onUserChanged}) {
+  Assets({this.currentPage, required this.localData, this.onUserChanged, this.onPageChange}) {
     if (localData.user?.userType == UserType.admin) {
       Data.pageList = [
-        ["DASHBOARD", Icons.dashboard], 
         ["DAILY SCHEDULE", Icons.schedule], 
         ["EDIT DAILY SCHEDULE", Icons.edit], 
         ["LOST AND FOUND", Icons.find_in_page], 
@@ -41,16 +40,17 @@ class Assets {
         ["FOOD MENU", Icons.fastfood], 
         ["HAWKS NEST", Icons.store], 
         ["EDIT SCHOOL STORE", Icons.edit],
-        ["SPORTS", Icons.sports]
+        ["SPORTS", Icons.sports],
+        ["GAMES", Icons.directions_run_outlined],
       ];
     } else {
       Data.pageList = [
-        ["DASHBOARD", Icons.dashboard], 
         ["DAILY SCHEDULE", Icons.schedule], 
         ["LOST AND FOUND", Icons.find_in_page], 
         ["FOOD MENU", Icons.fastfood], 
         ["HAWKS NEST", Icons.store], 
-        ["SPORTS", Icons.sports]
+        ["SPORTS", Icons.sports],
+        ["GAMES", Icons.directions_run_outlined],
       ];
     }
   }
@@ -148,8 +148,6 @@ class Assets {
 
   Type _getPageType(String title) {
     switch (title) {
-      case 'DASHBOARD':
-        return StudentMainMenuState;
       case 'DAILY SCHEDULE':
         return DailySchedulePage;
       case 'LOST AND FOUND':
@@ -189,100 +187,7 @@ class Assets {
       },
     );
   }
-  /// Returns a button with a border on the left side
-  /// 
-  /// [title] is the text to display on the button
-  /// [borderColor] is the color of the border on the left side
-  /// [onTap] is the function to call when the button is pressed
-  /// [iconNextToArrow] is the icon to display next to the arrow
-  /// [text] is the text to display under the title
-  /// [margin] is the margin around the button
-  Widget boxButton(
-    BuildContext context, {
-    required String title,
-    required Color borderColor,
-    required VoidCallback onTap,
-    Icon? iconNextToArrow,
-    String? text,
-    EdgeInsets? margin = const EdgeInsets.only(left: 10, top: 20),
-  }) {
-  return Container(
-    margin: margin,
-    padding: const EdgeInsets.all(0),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border(
-        left: BorderSide(width: 4, color: borderColor),
-      ),
-    ),
-    child: GestureDetector(
-        onTap: onTap,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: Container(
-            margin:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  height: 35,
-                  child: text == null
-                      ? Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: SingleChildScrollView(
-                                child: Text(
-                                  title,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Text(
-                              text,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Color(0xffa1a8b5),
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-                iconNextToArrow == null
-                  ? const Icon(
-                      Icons.arrow_circle_right_outlined,
-                      size: 30,
-                    )
-                  : Row(
-                      children: [
-                        iconNextToArrow,
-                        const Icon(
-                          Icons.arrow_circle_right_outlined,
-                          size: 30,
-                        ),
-                      ],
-                    ),
-              ],
-            ),
-          ),
-        )
-      )
-    );
-  }
-
+  
   /// Returns a [Widget] that displays a [text] button that calls [onTap] when pressed. 
   Widget textButton(
     BuildContext context, {
@@ -425,63 +330,31 @@ class Assets {
   }
 
   void _pushPage(String title, BuildContext context) {
-    if (title == 'DASHBOARD') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => StudentMainMenuPage(localData: localData)),
-      );
-    } else if (title == 'DAILY SCHEDULE') {
-      showDialog(
-        context: context, 
-        builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8, 
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: DailySchedulePage(localData: localData)
-          ),
-        );
-      });
+    if (title == 'DAILY SCHEDULE') {
+      MainMenuPageState.pageToDisplay = DailySchedulePage(localData: localData);
     } else if (title == 'LOST AND FOUND') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LostAndFoundPage(localData: localData)),
-      );
+      MainMenuPageState.pageToDisplay = LostAndFoundPage(localData: localData);
     } else if (title == 'FOOD MENU') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => FoodMenuPage(localData: localData)),
-      );
+      MainMenuPageState.pageToDisplay = FoodMenuPage(localData: localData);
     } else if (title == 'HAWKS NEST') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SchoolStorePage(localData: localData)),
-      );
+      MainMenuPageState.pageToDisplay = SchoolStorePage(localData: localData);
     } else if (title == 'SPORTS') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SportsPage(localData: localData)),
-      );
+      MainMenuPageState.pageToDisplay = SportsPage(localData: localData);
+    } else if (title == 'GAMES') {
+      MainMenuPageState.pageToDisplay = GamePage(localData: localData);
     } else if (title == 'EDIT DAILY SCHEDULE') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => EditDailySchedulePage(localData: localData)),
-      );
+      MainMenuPageState.pageToDisplay = EditDailySchedulePage(localData: localData);
     } else if (title == 'EDIT LOST AND FOUND') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => EditLostAndFoundPage(localData: localData)),
-      );
+      MainMenuPageState.pageToDisplay = EditLostAndFoundPage(localData: localData);
     } else if (title == 'EDIT SCHOOL STORE') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => EditSchoolStorePage(localData: localData)),
-      );
+      MainMenuPageState.pageToDisplay = EditSchoolStorePage(localData: localData);
     } else {
       throw Exception('Invalid page type');
+    }
+    if (onPageChange != null) {
+      onPageChange!();
+    } else {
+      throw Exception('onPageChange is null');
     }
   }
 
@@ -532,12 +405,27 @@ class Assets {
   }
 
   Widget lostItemBox(LostItem data, BuildContext context, VoidCallback onTap) {
+
     return InkWell(
       onTap: onTap,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
+          color: lightColorScheme.secondaryContainer,
+          boxShadow: [
+            BoxShadow(
+              offset: Offset(-4, -4),
+              blurRadius: 10,
+              spreadRadius: 1,
+            ),
+            BoxShadow(
+              color: Colors.grey[400]!,
+              offset: Offset(4, 4),
+              blurRadius: 10,
+              spreadRadius: 1,
+            ),
+          ]
         ),
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -719,6 +607,31 @@ class Assets {
         ),
         SizedBox(height: 10),
       ],
+    );
+  }
+
+  Widget buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      elevation: 3,
+      items: const <BottomNavigationBarItem> [
+        BottomNavigationBarItem(
+          label: " ",
+          icon: Icon(Icons.calendar_today_outlined),
+          activeIcon: Icon(Icons.calendar_today_rounded),
+        ),
+        BottomNavigationBarItem(
+          label: " ",
+          icon: Icon(Icons.fastfood_outlined),
+          activeIcon: Icon(Icons.fastfood_rounded)
+        ),
+        BottomNavigationBarItem(
+          label: " ",
+          icon: Icon(Icons.directions_run_outlined),
+          activeIcon: Icon(Icons.directions_run_rounded)
+        ),
+      ]
     );
   }
 }

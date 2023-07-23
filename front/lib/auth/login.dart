@@ -180,6 +180,7 @@ class LoginPageState extends State<LoginPage> {
                             style: TextStyle(
                               color: lightColorScheme.secondary,
                               fontSize: 15,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -192,7 +193,8 @@ class LoginPageState extends State<LoginPage> {
                         FirebaseAuth.instance.authStateChanges().listen((User? user) {
                           if (user != null) {
                             widget.localData.user = User_(id: 0, token: user.uid, userType: UserType.student, name: '', password: '', email: user.email ?? '');
-                            Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
+                            debugPrint("google login success");
+                            Navigator.pop(context);
                           } 
                         });
                       },

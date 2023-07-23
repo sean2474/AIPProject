@@ -59,19 +59,459 @@ class ApiService {
   }
 
   // daily schedule
-  Future<List<Map<String, dynamic>>> getDailySchedule() async {
+  Future<Map<String, dynamic>> getDailySchedule() async {
     // dynamic result = await _httpRequest('GET', '$baseUrl/data/daily-schedule');
     // if (result is Map<String, dynamic>) {
     //   return [Map<String, dynamic>.from(result)];
     // }
     // return List<Map<String, dynamic>>.from(result);
-    List<Map<String, String>> widgets = [
-      {'url': 'www.naver.com', 'date': '2021-10-01'},
-      {'url': 'www.google.com', 'date': '2021-10-02'},
-      {'url': 'www.bing.com', 'date': '2021-10-03'},
-    ];
-
-    return widgets;
+    dynamic data = {
+      "2023-04-19": [
+        {
+          "start": "2023-06-23T06:30",
+          "end": "2023-06-23T07:10",
+          "title": "Yoga",
+          "description": "In Tiernan Room",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": false,
+          "location": "Tiernan Room"
+        },
+        {
+          "start": "2023-06-23T07:30",
+          "end": "2023-06-23T08:30",
+          "title": "Breakfast",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T08:45",
+          "end": "2023-06-23T09:10",
+          "title": "All School COMPASS for Freshman and Sophomore",
+          "description": "Brown (Mr. Field), VESPERS DRESS",
+          "resource": [1, 2],
+          "color": "#ff0000",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T08:45",
+          "end": "2023-06-23T09:10",
+          "title": "All School COMPASS for Junior and Senior",
+          "description": "Chaple, VESPERS DRESS",
+          "resource": [3, 4],
+          "color": "#ff0000",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T09:10",
+          "end": "2023-06-23T10:10",
+          "title": "Block C",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T10:20",
+          "end": "2023-06-23T11:15",
+          "title": "Block D",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T11:25",
+          "end": "2023-06-23T12:20",
+          "title": "Block E",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T11:45",
+          "end": "2023-06-23T13:00",
+          "title": "Buffet Lunch",
+          "description": "Menu: Chicken. If you have E period free, please come early.",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T12:30",
+          "end": "2023-06-23T17:30",
+          "title": "Afternoon Activities",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T14:30",
+          "end": "2023-06-23T15:30",
+          "title": "Snack in Refactory",
+          "description": "Please be neat.",
+          "resource": [1, 2, 3, 4],
+          "color": "#8000FF",
+          "isRequired": false,
+          "location": "Refactory"
+        },
+        {
+          "start": "2023-06-23T14:15",
+          "end": "2023-06-23T14:45",
+          "title": "JV GOLF vs Salisbury",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#999928",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T15:00",
+          "end": "2023-06-23T16:30",
+          "title": "VARS Baseball vs Kingswood",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#999928",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T15:00",
+          "end": "2023-06-23T16:30",
+          "title": "VARS Lacrosse vs Berkshine",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#999928",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T17:00",
+          "end": "2023-06-23T18:30",
+          "title": "Buffet Dinner",
+          "description": "Smart casual. Menu: Chicken.",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T18:00",
+          "end": "2023-06-23T19:30",
+          "title": "Special Olympics Soccer",
+          "description": "JV Soccer field",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "JV Soccer field"
+        },
+        {
+          "start": "2023-06-23T18:00",
+          "end": "2023-06-23T18:45",
+          "title": "Investment Club",
+          "description": "Meets in the LC",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "LC"
+        },
+        {
+          "start": "2023-06-23T18:45",
+          "end": "2023-06-23T19:45",
+          "title": "Network Club",
+          "description": "Meets in the Office bla bla",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "Office"
+        },
+        {
+          "start": "2023-06-23T18:45",
+          "end": "2023-06-23T19:45",
+          "title": "Applied Math Club",
+          "description": "Ele 31",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "Ele 31"
+        },
+        {
+          "start": "2023-06-23T18:45",
+          "end": "2023-06-23T19:45",
+          "title": "Community time",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T19:45",
+          "end": "2023-06-23T21:30",
+          "title": "Study Hall",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#20C420",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T21:30",
+          "end": "2023-06-23T22:30",
+          "title": "McDonald's",
+          "description": "For sale in the Hawk's Nest",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T22:30",
+          "end": "2023-06-23T22:45",
+          "title": "Dorm Check",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#FF5300",
+          "isRequired": false,
+          "location": ""
+        }
+      ],
+      "2023-04-20": [
+        {
+          "start": "2023-06-23T06:30",
+          "end": "2023-06-23T07:10",
+          "title": "Yoga",
+          "description": "In Tiernan Room",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": false,
+          "location": "Tiernan Room"
+        },
+        {
+          "start": "2023-06-23T07:30",
+          "end": "2023-06-23T08:30",
+          "title": "Breakfast",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T08:45",
+          "end": "2023-06-23T09:10",
+          "title": "All School COMPASS for Freshman and Sophomore",
+          "description": "Brown (Mr. Field), VESPERS DRESS",
+          "resource": [1, 2],
+          "color": "#ff0000",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T08:45",
+          "end": "2023-06-23T09:10",
+          "title": "All School COMPASS for Junior and Senior",
+          "description": "Chaple, VESPERS DRESS",
+          "resource": [3, 4],
+          "color": "#ff0000",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T09:10",
+          "end": "2023-06-23T10:10",
+          "title": "Block C",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T10:20",
+          "end": "2023-06-23T11:15",
+          "title": "Block D",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T11:25",
+          "end": "2023-06-23T12:20",
+          "title": "Block E",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T11:45",
+          "end": "2023-06-23T13:00",
+          "title": "Buffet Lunch",
+          "description": "Menu: Chicken. If you have E period free, please come early.",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T12:30",
+          "end": "2023-06-23T17:30",
+          "title": "Afternoon Activities",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#67B767",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T14:30",
+          "end": "2023-06-23T15:30",
+          "title": "Snack in Refactory",
+          "description": "Please be neat.",
+          "resource": [1, 2, 3, 4],
+          "color": "#8000FF",
+          "isRequired": false,
+          "location": "Refactory"
+        },
+        {
+          "start": "2023-06-23T14:15",
+          "end": "2023-06-23T14:45",
+          "title": "JV GOLF vs Salisbury",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#999928",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T15:00",
+          "end": "2023-06-23T16:30",
+          "title": "VARS Baseball vs Kingswood",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#999928",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T15:00",
+          "end": "2023-06-23T16:30",
+          "title": "VARS Lacrosse vs Berkshine",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#999928",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T17:00",
+          "end": "2023-06-23T18:30",
+          "title": "Buffet Dinner",
+          "description": "Smart casual. Menu: Chicken.",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T18:00",
+          "end": "2023-06-23T19:30",
+          "title": "Special Olympics Soccer",
+          "description": "JV Soccer field",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "JV Soccer field"
+        },
+        {
+          "start": "2023-06-23T18:00",
+          "end": "2023-06-23T18:45",
+          "title": "Investment Club",
+          "description": "Meets in the LC",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "LC"
+        },
+        {
+          "start": "2023-06-23T18:45",
+          "end": "2023-06-23T19:45",
+          "title": "Network Club",
+          "description": "Meets in the Office bla bla",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "Office"
+        },
+        {
+          "start": "2023-06-23T18:45",
+          "end": "2023-06-23T19:45",
+          "title": "Applied Math Club",
+          "description": "Ele 31",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": false,
+          "location": "Ele 31"
+        },
+        {
+          "start": "2023-06-23T18:45",
+          "end": "2023-06-23T19:45",
+          "title": "Community time",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#658FB9",
+          "isRequired": true,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T19:45",
+          "end": "2023-06-23T21:30",
+          "title": "Study Hall",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#20C420",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T21:30",
+          "end": "2023-06-23T22:30",
+          "title": "McDonald's",
+          "description": "For sale in the Hawk's Nest",
+          "resource": [1, 2, 3, 4],
+          "color": "#3232BF",
+          "isRequired": false,
+          "location": ""
+        },
+        {
+          "start": "2023-06-23T22:30",
+          "end": "2023-06-23T22:45",
+          "title": "Dorm Check",
+          "description": "",
+          "resource": [1, 2, 3, 4],
+          "color": "#FF5300",
+          "isRequired": false,
+          "location": ""
+        }
+      ],
+    };
+    return data;
   }
 
   Future<dynamic> postDailySchedule(String date, String url) async {

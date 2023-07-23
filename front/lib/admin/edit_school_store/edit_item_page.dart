@@ -53,7 +53,6 @@ class _EditItemPageState extends State<EditItemPage> {
   bool _isNameError = false;
   bool _isPriceError = false;
   bool _isStockError = false;
-  bool _isImageError = false;
 
   String _currentCategory = "Food";
 
@@ -216,7 +215,6 @@ class _EditItemPageState extends State<EditItemPage> {
 
     setState(() {
       _image = image;
-      _isImageError = false;
     });
   }
 
@@ -360,15 +358,15 @@ class _EditItemPageState extends State<EditItemPage> {
           widget.showUploadingResultSnackBar(result["status"] == "success");
           widget.dismissSnackBar();
           if (result["status"] == "success") {
-            widget.localData.storeItems.add(StoreItem.fromJson({
+            widget.localData.storeItems[widget.itemIndex] = StoreItem.fromJson({
               "ID": result["id"],
               "Product_Name": _nameController.text,
-              "Price": _priceController.text.trim(),
-              "Stock": _stockController.text.trim(),
+              "Price": double.parse(_priceController.text.trim()),
+              "Stock": int.parse(_stockController.text.trim()),
               "Category": category,
               "Description": _descriptionController.text.trim(),
               "Date_Added": "0001-01-01T00:00:00Z",
-            }));
+            });
           }
         }
       },

@@ -90,70 +90,44 @@ class SchoolStorePageState extends State<SchoolStorePage>
   Widget build(BuildContext context) {
     Assets assets = Assets(currentPage: SchoolStorePage(localData: widget.localData), localData: widget.localData,);
     List<StoreItem> items = getItemsOfType(ItemType.values[_selectedTabIndex]);
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: Stack(
-          children: [
-            AppBar(
-              elevation: 0,
-              automaticallyImplyLeading: false,
-              actions: [
-                assets.menuBarButton(context),
-              ],
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(50),
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: assets.drawAppBarSelector(context: context, titles: ["FOOD", "DRINK", "GOODS", "OTHER"], selectTab: _selectTab, animation: _animation, selectedIndex: _selectedTabIndex)
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(30),
-              child: const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Hawks Nest",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
+
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: assets.drawAppBarSelector(context: context, titles: ["FOOD", "DRINK", "GOODS", "OTHER"], selectTab: _selectTab, animation: _animation, selectedIndex: _selectedTabIndex)
         ),
-      ),
-      drawer: assets.buildDrawer(context),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: SmartRefresher(
-          enablePullUp: false,
-          enablePullDown: true,
-          header: assets.refreshHeader(indicatorColor: Colors.grey,),
-          controller: _refreshController,
-          onRefresh: () => Future.delayed(const Duration(milliseconds: 500), () async {
-            widget.localData.storeItems = StoreItem.transformData(await widget.localData.apiService.getSchoolStoreItems());
-            setState(() {});
-            _refreshController.refreshCompleted();
-          }),
-          child: GridView.builder(
-            key: ValueKey<int>(_selectedTabIndex),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 2 / 2.5, 
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: SmartRefresher(
+              enablePullUp: false,
+              enablePullDown: true,
+              header: assets.refreshHeader(indicatorColor: Colors.grey,),
+              controller: _refreshController,
+              onRefresh: () => Future.delayed(const Duration(milliseconds: 500), () async {
+                widget.localData.storeItems = StoreItem.transformData(await widget.localData.apiService.getSchoolStoreItems());
+                setState(() {});
+                _refreshController.refreshCompleted();
+              }),
+              child: GridView.builder(
+                key: ValueKey<int>(_selectedTabIndex),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 2 / 2.5, 
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                padding: const EdgeInsets.all(10),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return assets.storeItemBox(items[index], context, () => assets.pushDialogPage(context, ItemPage(itemData: items[index])));
+                },
+              ),
             ),
-            padding: const EdgeInsets.all(10),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return assets.storeItemBox(items[index], context, () => assets.pushDialogPage(context, ItemPage(itemData: items[index])));
-            },
           ),
         ),
-      ),
+      ],
     );
   }
 }

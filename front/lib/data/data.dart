@@ -16,7 +16,7 @@ enum UserType { student, teacher, parent, admin }
 class Data {
   User_? user;
   static bool loggedIn = false;
-  List<DailySchedule> dailySchedules;
+  Map<String, List<DailySchedule>> dailySchedules;
   Map<String, FoodMenu> foodMenus;
   List<LostItem> lostAndFounds;
   List<StoreItem> storeItems;

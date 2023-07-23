@@ -30,7 +30,7 @@ class ItemPage extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: lightColorScheme.background,
+            color: lightColorScheme.secondaryContainer,
           ),
           child: Padding(
             padding: const EdgeInsets.all(10),

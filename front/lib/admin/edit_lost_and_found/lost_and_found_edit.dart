@@ -25,67 +25,32 @@ class EditLostAndFoundPageState extends State<EditLostAndFoundPage>
     Assets assets = Assets(currentPage: EditLostAndFoundPage(localData: widget.localData), localData: widget.localData,);
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
-          child: Stack(
-            children: [
-              AppBar(
-                elevation: 0,
-                automaticallyImplyLeading: false,
-                actions: [
-                  assets.menuBarButton(context),
-                ],
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(50),
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(30),
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Edit Lost and Found",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        drawer: assets.buildDrawer(context),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildEditCard("Add item", const Icon(Icons.add), "add lost and found", () {
-              assets.pushDialogPage(context, AddPage(
-                  localData: widget.localData, 
-                  showUploadingSnackBar: uploadingSnackbar.showUploading, 
-                  dismissSnackBar: uploadingSnackbar.dismiss,
-                  showUploadingResultSnackBar: uploadingSnackbar.showUploadingResult,
-                ), 
-                haveDialog: false
-              );
-            }),
-            buildEditCard("Edit item", const Icon(Icons.edit), "edit lost and found", () {
-              assets.pushDialogPage(context, EditPage(
-                localData: widget.localData
-              ), haveDialog: false);
-            }),
-            buildEditCard("Delete item", const Icon(Icons.delete), "delete lost and found", () {
-              assets.pushDialogPage(context, DeletePage(
-                localData: widget.localData,
-              ), haveDialog: false);
-            }),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 20),
+          buildEditCard("Add item", const Icon(Icons.add), "add lost and found", () {
+            assets.pushDialogPage(context, AddPage(
+                localData: widget.localData, 
+                showUploadingSnackBar: uploadingSnackbar.showUploading, 
+                dismissSnackBar: uploadingSnackbar.dismiss,
+                showUploadingResultSnackBar: uploadingSnackbar.showUploadingResult,
+              ), 
+              haveDialog: false
+            );
+          }),
+          buildEditCard("Edit item", const Icon(Icons.edit), "edit lost and found", () {
+            assets.pushDialogPage(context, EditPage(
+              localData: widget.localData
+            ), haveDialog: false);
+          }),
+          buildEditCard("Delete item", const Icon(Icons.delete), "delete lost and found", () {
+            assets.pushDialogPage(context, DeletePage(
+              localData: widget.localData,
+            ), haveDialog: false);
+          }),
+        ],
       ),
     );
   }

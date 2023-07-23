@@ -10,6 +10,7 @@ class SharedPreferenceKeys {
   static const String starredSports = 'starredSports';
   static const String sortLostAndFoundBy = 'sortLostAndFoundBy';
   static const String showReturnedItemsInLostAndFound = 'showReturnedItemsInLostAndFound';
+  static const String isDailyScheduleTimelineMode = 'isDailyScheduleTimelineMode';
 }
 
 Future<void> saveValue(String key, String value) async {
@@ -34,15 +35,20 @@ Future<void> saveSortLostAndFoundBy(String sort) async {
   saveValue(SharedPreferenceKeys.sortLostAndFoundBy, sort);
 }
 
-Future<String?> getSortLostAndFoundBy() async {
-  return await readValue(SharedPreferenceKeys.sortLostAndFoundBy);
+Future<void> saveShowReturnedItemsInLostAndFound(bool show) async {
+  saveValue(SharedPreferenceKeys.showReturnedItemsInLostAndFound, show.toString());
 }
 
-Future<void> saveSettings(Settings settings) async {
-  saveRecentGamesToShow(settings.recentGamesToShow);
-  saveUpcomingGamesToShow(settings.upcomingGamesToShow);
-  saveStarredSports(settings.starredSports.split(" "));
-  saveSortLostAndFoundBy(settings.sortLostAndFoundBy);
+Future<void> saveStarredSports(List<String> sports) async {
+  saveValue(SharedPreferenceKeys.starredSports, sports.join(' '));
+}
+
+Future<void> saveisDailyScheduleTimelineMode(bool isDailyScheduleTimelineMode) async {
+  saveValue(SharedPreferenceKeys.isDailyScheduleTimelineMode, isDailyScheduleTimelineMode.toString());
+}
+
+Future<String?> getSortLostAndFoundBy() async {
+  return await readValue(SharedPreferenceKeys.sortLostAndFoundBy);
 }
 
 Future<int> getRecentGamesToShow() async {
@@ -64,12 +70,21 @@ Future<bool> getShowReturnedItemsInLostAndFound() async {
   }
 }
 
-Future<void> saveShowReturnedItemsInLostAndFound(bool show) async {
-  saveValue(SharedPreferenceKeys.showReturnedItemsInLostAndFound, show.toString());
+Future<bool> getisDailyScheduleTimelineMode() async {
+  String? isDailyScheduleTimelineMode = await readValue(SharedPreferenceKeys.isDailyScheduleTimelineMode);
+  if (isDailyScheduleTimelineMode == null) {
+    return false;
+  } else {
+    return isDailyScheduleTimelineMode == 'true';
+  }
 }
 
-Future<void> saveStarredSports(List<String> sports) async {
-  saveValue(SharedPreferenceKeys.starredSports, sports.join(' '));
+Future<String?> getUsername() async {
+  return await readValue(SharedPreferenceKeys.username);
+}
+
+Future<String?> getUserPassword() async {
+  return await readValue(SharedPreferenceKeys.userPassword);
 }
 
 Future<List<String>> getStarredSports() async {
@@ -86,10 +101,10 @@ Future<void> saveUser(User_ user) async {
   saveValue(SharedPreferenceKeys.userPassword, user.password);
 }
 
-Future<String?> getUsername() async {
-  return await readValue(SharedPreferenceKeys.username);
-}
-
-Future<String?> getUserPassword() async {
-  return await readValue(SharedPreferenceKeys.userPassword);
+Future<void> saveSettings(Settings settings) async {
+  saveRecentGamesToShow(settings.recentGamesToShow);
+  saveUpcomingGamesToShow(settings.upcomingGamesToShow);
+  saveStarredSports(settings.starredSports.split(" "));
+  saveSortLostAndFoundBy(settings.sortLostAndFoundBy);
+  saveisDailyScheduleTimelineMode(settings.isDailyScheduleTimelineMode);
 }

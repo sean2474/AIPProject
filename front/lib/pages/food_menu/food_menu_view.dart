@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
-
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/food_menu.dart';
@@ -10,7 +8,11 @@ class FoodMenuViewPage extends StatefulWidget {
   final FoodMenu foodMenu;
   final int mealType;
 
-  const FoodMenuViewPage({Key? key, required this.foodMenu, required this.mealType}) : super(key: key);
+  const FoodMenuViewPage({
+    Key? key, 
+    required this.foodMenu, 
+    required this.mealType,
+  }) : super(key: key);
 
   @override
   FoodMenuViewPageState createState() => FoodMenuViewPageState();
@@ -27,40 +29,11 @@ class FoodMenuViewPageState extends State<FoodMenuViewPage> {
     } else if (widget.mealType == MealType.dinner.index) {
       menuToShow = widget.foodMenu.dinner;
     }
+
     return  Container(
       margin: EdgeInsets.only(top: 10, left: 20, right: 20),
       child: Column(
         children: [
-          // TODO: add date picker work
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.foodMenu.date,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  showDatePicker(
-                    context: context, 
-                    initialDate: DateTime.now(), 
-                    firstDate: DateTime.now().subtract(Duration(days: 30)), 
-                    lastDate: DateTime.now().add(Duration(days: 30)),
-                  ).then((value) {
-                    if (value != null) {
-                      setState(() {
-                        widget.foodMenu.date = value.toString().substring(0, 10);
-                      });
-                    }
-                  });
-                }, 
-                icon: Icon(Icons.calendar_today_rounded),
-              ),
-            ],
-          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -116,7 +89,8 @@ class FoodMenuViewPageState extends State<FoodMenuViewPage> {
                         },
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                      )
+                      ),
+                      SizedBox(height: 15),
                     ]
                   );
                 }).toList(),

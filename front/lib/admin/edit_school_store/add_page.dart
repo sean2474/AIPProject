@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
-import 'package:front/data/lost_item.dart';
 import 'package:front/data/school_store.dart';
 import 'dart:io';
-import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPage extends StatefulWidget {

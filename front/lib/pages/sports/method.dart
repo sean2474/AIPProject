@@ -45,7 +45,7 @@ getSportsIcon(String sportsName, double size, {Color? iconColor}) {
       icon = Icon(Icons.sports_tennis, color: iconColor, size: size);
       break;
     default:
-      icon = Icon(Icons.sports, color: iconColor, size: size);
+      icon = Icon(Icons.directions_run_outlined, color: iconColor, size: size);
       break;
   }
   return icon;
