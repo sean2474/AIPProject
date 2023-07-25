@@ -8,13 +8,13 @@ import 'package:front/data/lost_item.dart';
 import 'package:front/data/school_store.dart';
 import 'package:front/main_menu/main_menu.dart';
 import 'package:front/pages/games/games.dart';
+import 'package:front/pages/home/home.dart';
 import 'package:front/pages/lost_and_found/lost_item_page.dart';
 import 'package:front/pages/school_store/school_store.dart';
 import 'package:front/pages/daily_schedule/daily_schedule.dart';
 import 'package:front/pages/food_menu/food_menu.dart';
 import 'package:front/pages/lost_and_found/lost_and_found.dart';
 import 'package:front/pages/sports/sports.dart';
-import 'package:front/admin/edit_daily_schedule/daily_schedule_edit.dart';
 import 'package:front/admin/edit_lost_and_found/lost_and_found_edit.dart';
 import 'package:front/admin/edit_school_store/school_store_edit.dart';
 import 'package:front/data/data.dart';
@@ -33,18 +33,19 @@ class Assets {
   Assets({this.currentPage, required this.localData, this.onUserChanged, this.onPageChange}) {
     if (localData.user?.userType == UserType.admin) {
       Data.pageList = [
-        ["DAILY SCHEDULE", Icons.schedule], 
-        ["EDIT DAILY SCHEDULE", Icons.edit], 
+        ["HOME", Icons.home],
+        ["DAILY SCHEDULE", Icons.calendar_today], 
         ["LOST AND FOUND", Icons.find_in_page], 
-        ["EDIT LOST AND FOUND", Icons.edit], 
         ["FOOD MENU", Icons.fastfood], 
         ["HAWKS NEST", Icons.store], 
-        ["EDIT SCHOOL STORE", Icons.edit],
         ["SPORTS", Icons.sports],
         ["GAMES", Icons.directions_run_outlined],
+        ["EDIT LOST AND FOUND", Icons.edit], 
+        ["EDIT SCHOOL STORE", Icons.edit],
       ];
     } else {
       Data.pageList = [
+        ["HOME", Icons.home],
         ["DAILY SCHEDULE", Icons.schedule], 
         ["LOST AND FOUND", Icons.find_in_page], 
         ["FOOD MENU", Icons.fastfood], 
@@ -148,6 +149,8 @@ class Assets {
 
   Type _getPageType(String title) {
     switch (title) {
+      case 'HOME':
+        return HomePage;
       case 'DAILY SCHEDULE':
         return DailySchedulePage;
       case 'LOST AND FOUND':
@@ -158,8 +161,8 @@ class Assets {
         return SchoolStorePage;
       case 'SPORTS':
         return SportsPage;
-      case 'EDIT DAILY SCHEDULE':
-        return EditDailySchedulePage;
+      case 'GAMES':
+        return GamePage;
       case 'EDIT LOST AND FOUND':
         return EditLostAndFoundPage;
       case 'EDIT SCHOOL STORE':
@@ -330,24 +333,24 @@ class Assets {
   }
 
   void _pushPage(String title, BuildContext context) {
-    if (title == 'DAILY SCHEDULE') {
-      MainMenuPageState.pageToDisplay = DailySchedulePage(localData: localData);
-    } else if (title == 'LOST AND FOUND') {
-      MainMenuPageState.pageToDisplay = LostAndFoundPage(localData: localData);
+    if (title == 'HOME') {
+      MainMenuPageState.pageIndex = 0;
+    } else if (title == 'DAILY SCHEDULE') {
+      MainMenuPageState.pageIndex = 1;
     } else if (title == 'FOOD MENU') {
-      MainMenuPageState.pageToDisplay = FoodMenuPage(localData: localData);
-    } else if (title == 'HAWKS NEST') {
-      MainMenuPageState.pageToDisplay = SchoolStorePage(localData: localData);
-    } else if (title == 'SPORTS') {
-      MainMenuPageState.pageToDisplay = SportsPage(localData: localData);
+      MainMenuPageState.pageIndex = 2;
     } else if (title == 'GAMES') {
-      MainMenuPageState.pageToDisplay = GamePage(localData: localData);
-    } else if (title == 'EDIT DAILY SCHEDULE') {
-      MainMenuPageState.pageToDisplay = EditDailySchedulePage(localData: localData);
+      MainMenuPageState.pageIndex = 3;
+    } else if (title == 'SPORTS') {
+      MainMenuPageState.pageIndex = 4;
+    } else if (title == 'LOST AND FOUND') {
+      MainMenuPageState.pageIndex = 5;
+    } else if (title == 'HAWKS NEST') {
+      MainMenuPageState.pageIndex = 6;
     } else if (title == 'EDIT LOST AND FOUND') {
-      MainMenuPageState.pageToDisplay = EditLostAndFoundPage(localData: localData);
+      MainMenuPageState.pageIndex = 7;
     } else if (title == 'EDIT SCHOOL STORE') {
-      MainMenuPageState.pageToDisplay = EditSchoolStorePage(localData: localData);
+      MainMenuPageState.pageIndex = 8;
     } else {
       throw Exception('Invalid page type');
     }
@@ -415,6 +418,7 @@ class Assets {
           color: lightColorScheme.secondaryContainer,
           boxShadow: [
             BoxShadow(
+              color: Colors.white,
               offset: Offset(-4, -4),
               blurRadius: 10,
               spreadRadius: 1,

@@ -1,7 +1,5 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
-import 'package:front/admin/edit_daily_schedule/daily_schedule_edit.dart';
 import 'package:front/admin/edit_lost_and_found/lost_and_found_edit.dart';
 import 'package:front/admin/edit_school_store/school_store_edit.dart';
 import 'package:front/color_schemes.g.dart';
@@ -11,6 +9,7 @@ import 'package:front/pages/daily_schedule/daily_schedule.dart';
 import 'package:front/pages/food_menu/food_menu.dart';
 import 'package:front/pages/games/games.dart';
 import 'package:front/pages/games/settings.dart';
+import 'package:front/pages/home/home.dart';
 import 'package:front/pages/lost_and_found/lost_and_found.dart';
 import 'package:front/pages/school_store/school_store.dart';
 import 'package:front/pages/sports/sports.dart';
@@ -25,14 +24,26 @@ class MainMenuPage extends StatefulWidget {
 }
 
 class MainMenuPageState extends State<MainMenuPage> {
-
-  static late StatefulWidget pageToDisplay;
   late HashMap<Type, Widget> settingButton;
+  static late List<StatefulWidget> pages;
+  static int pageIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    pageToDisplay = DailySchedulePage(localData: widget.localData);
+
+    pages = [
+      HomePage(localData: widget.localData), 
+      DailySchedulePage(localData: widget.localData), 
+      FoodMenuPage(localData: widget.localData), 
+      GamePage(localData: widget.localData),
+      SportsPage(localData: widget.localData),
+      LostAndFoundPage(localData: widget.localData),
+      SchoolStorePage(localData: widget.localData),
+      EditLostAndFoundPage(localData: widget.localData),
+      EditSchoolStorePage(localData: widget.localData),
+    ];
+
     HashSet<String> sportsList = HashSet()..addAll(widget.localData.sportsInfo.map((e) => e.sportsName));
     settingButton = HashMap()..addAll({
       GamePage: IconButton(
@@ -51,7 +62,6 @@ class MainMenuPageState extends State<MainMenuPage> {
                   localData: widget.localData,
                   onDialogClosed: () {
                     setState(() {
-                      pageToDisplay = GamePage(localData: widget.localData);
                      });
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       setState(() {});
@@ -70,14 +80,12 @@ class MainMenuPageState extends State<MainMenuPage> {
           onSwitchChange: (value) {
             setState(() {
               widget.localData.settings.showReturnedItem = value;
-              pageToDisplay = LostAndFoundPage(localData: widget.localData);
             });
           },
           onSortChange: (sortOrder) {
             setState(() {
               widget.localData.settings.sortLostAndFoundBy = sortOrder;
               widget.localData.sortLostAndFoundBy(sortOrder);
-              pageToDisplay = LostAndFoundPage(localData: widget.localData);
             });
             Navigator.pop(context);
           }
@@ -91,6 +99,7 @@ class MainMenuPageState extends State<MainMenuPage> {
   @override
   Widget build(BuildContext context) {
     HashMap<Type, String> pageTitles = HashMap()..addAll({
+      HomePage: "Home",
       DailySchedulePage: "Daily Schedule",
       FoodMenuPage: "Food Menu",
       GamePage: "Game Info",
@@ -98,7 +107,6 @@ class MainMenuPageState extends State<MainMenuPage> {
       LostAndFoundPage: "Lost and Found",
       SchoolStorePage: "Hawks Nest",
       EditLostAndFoundPage: "Edit Lost and Found",
-      EditDailySchedulePage: "Edit Daily Schedule",
       EditSchoolStorePage: "Edit School Store",
     });
 
@@ -119,7 +127,7 @@ class MainMenuPageState extends State<MainMenuPage> {
         title: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            pageTitles[pageToDisplay.runtimeType] ?? "Daily Schedule",
+            pageTitles[pages[pageIndex].runtimeType] ?? "Daily Schedule",
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,
@@ -127,57 +135,88 @@ class MainMenuPageState extends State<MainMenuPage> {
           ),
         ),
         actions: [
-          settingButton[pageToDisplay.runtimeType] ?? Container(),
+          settingButton[pages[pageIndex].runtimeType] ?? Container(),
           assets.menuBarButton(context),
         ],
       ),
-      body: pageToDisplay,
+      body: pages[pageIndex],
       drawer: assets.buildDrawer(context),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.transparent,
-        elevation: 0,
-        child: Container(
-          height: 50,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 0,
-                blurRadius: 3,
-                offset: Offset(0, 3),
-              )
-            ],
-            borderRadius: BorderRadius.all(Radius.circular(29)),
-            color: lightColorScheme.secondaryContainer,
+      bottomNavigationBar: Container(
+        width: double.infinity,
+        height: 80,
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey.shade300,
+              width: 1,
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    pageToDisplay = DailySchedulePage(localData: widget.localData);
-                  });
-                },
-                icon: Icon(Icons.calendar_today_outlined, color: pageToDisplay.runtimeType == DailySchedulePage ? lightColorScheme.primary : Colors.black,),
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    pageToDisplay = FoodMenuPage(localData: widget.localData);
-                  });
-                },
-                icon: Icon(Icons.fastfood_outlined, color: pageToDisplay.runtimeType == FoodMenuPage ? lightColorScheme.primary : Colors.black,),
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    pageToDisplay = GamePage(localData: widget.localData);
-                  });
-                },
-                icon: Icon(Icons.directions_run_outlined, color: pageToDisplay.runtimeType == GamePage ? lightColorScheme.primary : Colors.black,),
-              ),
-            ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            NoSplashCustomBarItem(
+              icon: Icons.home_outlined,
+              activeIcon: Icons.home,
+              isActive: pageIndex == 0,
+              onTap: () => setState(() { pageIndex = 0; }),
+              size: 32,
+            ),
+            NoSplashCustomBarItem(
+              icon: Icons.calendar_today_outlined,
+              activeIcon: Icons.calendar_today,
+              isActive: pageIndex == 1,
+              onTap: () => setState(() { pageIndex = 1; }),
+            ),
+            NoSplashCustomBarItem(
+              icon: Icons.fastfood_outlined,
+              activeIcon: Icons.fastfood,
+              isActive: pageIndex == 2,
+              onTap: () => setState(() { pageIndex = 2; }),
+            ),
+            NoSplashCustomBarItem(
+              icon: Icons.directions_run_outlined,
+              activeIcon: Icons.directions_run,
+              isActive: pageIndex == 3,
+              onTap: () => setState(() { pageIndex = 3; }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NoSplashCustomBarItem extends StatelessWidget {
+  final IconData icon;
+  final IconData activeIcon;
+  final bool isActive;
+  final VoidCallback onTap;
+  final double? size;
+
+  const NoSplashCustomBarItem({
+    Key? key,
+    required this.icon,
+    required this.activeIcon,
+    this.isActive = false,
+    required this.onTap,
+    this.size,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: Padding(
+          padding: EdgeInsets.only(left: 35, right: 35, bottom: 30, top: 10),
+          child: Icon(
+            isActive ? activeIcon : icon, 
+            color: isActive ? lightColorScheme.primary : Colors.black,
+            size: size ?? 28,
           ),
         ),
       ),

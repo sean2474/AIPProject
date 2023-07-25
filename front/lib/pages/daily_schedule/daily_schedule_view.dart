@@ -55,30 +55,20 @@ class DailyScheduleViewPageState extends State<DailyScheduleViewPage> {
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    color: schedule.color,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white,
-                        offset: Offset(-4, -4),
-                        blurRadius: 5,
-                        spreadRadius: 1,
-                      ),
-                      BoxShadow(
-                        color: Colors.grey.shade500,
-                        offset: Offset(4, 4),
-                        blurRadius: 5,
-                        spreadRadius: 1,
-                      ),
-                    ],
+                    color: schedule.color.withAlpha(50),
+                    border: Border.all(
+                      color: schedule.color,
+                      width: 2,
+                    ),
                   ),
                   child: ListTile(
-                    title: Text(schedule.title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-                    subtitle: Text(schedule.location, style: TextStyle(fontSize: 10, color: Colors.white)),
+                    title: Text(schedule.title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.grey.shade800)),
+                    subtitle: Text(schedule.location, style: TextStyle(fontSize: 12, color: Colors.grey.shade800)),
                     trailing: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(schedule.startTime, style: TextStyle(fontSize: 12, color: Colors.white)),
-                        Text(schedule.endTime, style: TextStyle(fontSize: 12, color: Colors.white)),
+                        Text(schedule.startTime, style: TextStyle(fontSize: 14, color: Colors.grey.shade800)),
+                        Text(schedule.endTime, style: TextStyle(fontSize: 14, color: Colors.grey.shade800)),
                       ]
                     ),
                   ),
@@ -106,10 +96,18 @@ class _TimeLineItem extends StatelessWidget {
       height: 75,
       margin: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             flex: 1,
-            child: Text(time, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+            child: Text(
+              time, 
+              style: TextStyle(
+                fontSize: 12, 
+                fontWeight: FontWeight.bold, 
+                color: Colors.grey
+              ),
+            ),
           ),
           Expanded(
             flex: 9,
@@ -122,23 +120,13 @@ class _TimeLineItem extends StatelessWidget {
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: schedule.color,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white,
-                          offset: Offset(-4, -4),
-                          blurRadius: 5,
-                          spreadRadius: 1,
-                        ),
-                        BoxShadow(
-                          color: Colors.grey.shade500,
-                          offset: Offset(4, 4),
-                          blurRadius: 5,
-                          spreadRadius: 1,
-                        ),
-                      ],
+                      color: schedule.color.withAlpha(50),
+                      border: Border.all(
+                        color: schedule.color,
+                        width: 2,
+                      ),
                     ),
-                    child: Text(schedule.title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                    child: Text(schedule.title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey.shade800)),
                   ),
                 );
               }).toList(),
