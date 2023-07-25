@@ -508,6 +508,108 @@ paths:
       summary: Update the daily schedule for a specific date
       tags:
       - DailySchedule
+  /data/daily-schedule/image:
+    delete:
+      description: Deletes the daily schedule image for a specific date from the database
+      parameters:
+      - description: The date for which to delete the daily schedule image in the
+          format 'YYYY-MM-DD'. If not provided, the current date is used.
+        in: query
+        name: date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      tags:
+      - DailySchedule
+    get:
+      consumes:
+      - '*/*'
+      parameters:
+      - description: The date for which to retrieve the daily schedule image in the
+          format 'YYYY-MM-DD'. If not provided, the current date is used.
+        in: query
+        name: date
+        type: string
+      produces:
+      - image/*
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get the image file for the daily schedule of the specified date or
+        the current date
+      tags:
+      - DailySchedule
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads the daily schedule image for the provided date to the database
+      parameters:
+      - description: The daily schedule image file
+        in: formData
+        name: image
+        required: true
+        type: file
+      - description: 'The date for which the image is uploaded (format: 2006-01-02)'
+        in: formData
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/restTypes.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      tags:
+      - DailySchedule
   /data/food-menu/:
     get:
       consumes:

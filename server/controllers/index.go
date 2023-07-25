@@ -159,6 +159,28 @@ func FoodMenuByHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ScheduleImageHandler handles the image requests for the daily schedule.
+func ScheduleImageHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Method)
+	switch r.Method {
+	case "GET":
+		dailySchedule.GetDailyImage(w, r)
+	case "POST":
+		if !authService.IsAuth(w, r) {
+			return
+		}
+		dailySchedule.PostDailyImage(w, r)
+	case "DELETE":
+		if !authService.IsAuth(w, r) {
+			return
+		}
+		dailySchedule.DeleteDailyImage(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+}
+
 func ScheduleHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
