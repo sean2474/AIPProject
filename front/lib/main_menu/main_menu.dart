@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:front/admin/edit_lost_and_found/lost_and_found_edit.dart';
 import 'package:front/admin/edit_school_store/school_store_edit.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/sports.dart';
 import 'package:front/pages/daily_schedule/daily_schedule.dart';
@@ -16,88 +15,35 @@ import 'package:front/pages/sports/sports.dart';
 import 'package:front/widgets/assets.dart';
 
 class MainMenuPage extends StatefulWidget {
-  final Data localData;
-  const MainMenuPage({Key? key, required this.localData}) : super(key: key);
+  const MainMenuPage({Key? key}) : super(key: key);
 
   @override
   MainMenuPageState createState() => MainMenuPageState();
 }
 
 class MainMenuPageState extends State<MainMenuPage> {
+  late ColorScheme colorScheme;
   late HashMap<Type, Widget> settingButton;
-  static late List<StatefulWidget> pages;
-  static int pageIndex = 0;
+  static late StatefulWidget pageToDisplay;
 
   @override
   void initState() {
     super.initState();
+    pageToDisplay = HomePage();
+  }
 
-    pages = [
-      HomePage(localData: widget.localData), 
-      DailySchedulePage(localData: widget.localData), 
-      FoodMenuPage(localData: widget.localData), 
-      GamePage(localData: widget.localData),
-      SportsPage(localData: widget.localData),
-      LostAndFoundPage(localData: widget.localData),
-      SchoolStorePage(localData: widget.localData),
-      EditLostAndFoundPage(localData: widget.localData),
-      EditSchoolStorePage(localData: widget.localData),
-    ];
-
-    HashSet<String> sportsList = HashSet()..addAll(widget.localData.sportsInfo.map((e) => e.sportsName));
-    settingButton = HashMap()..addAll({
-      GamePage: IconButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context, 
-            isScrollControlled: true, 
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
-            ),
-            builder: (BuildContext context) {
-              return FractionallySizedBox(
-                heightFactor: 0.35,
-                child: SettingPage(
-                  sportsList: sportsList.toList(),
-                  localData: widget.localData,
-                  onDialogClosed: () {
-                    setState(() {
-                     });
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {});
-                    });
-                  },
-                ),
-              );
-            },
-          );
-        },
-        icon: const Icon(Icons.settings)
-      ),
-      LostAndFoundPage: IconButton(onPressed: () => LostAndFoundPageState.showSetting(
-          context,
-          localData: widget.localData,
-          onSwitchChange: (value) {
-            setState(() {
-              widget.localData.settings.showReturnedItem = value;
-            });
-          },
-          onSortChange: (sortOrder) {
-            setState(() {
-              widget.localData.settings.sortLostAndFoundBy = sortOrder;
-              widget.localData.sortLostAndFoundBy(sortOrder);
-            });
-            Navigator.pop(context);
-          }
-        ), 
-        icon: Icon(Icons.settings), 
-        alignment: Alignment.topRight,
-      ),
+  void changeDailyScheduleMode() {
+    setState(() {
+      Data.settings.isDailyScheduleTimelineMode = !Data.settings.isDailyScheduleTimelineMode;
+      pageToDisplay = DailySchedulePage();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
+    HashSet<String> sportsList = HashSet()..addAll(Data.sportsInfo.map((e) => e.sportsName));
+
     HashMap<Type, String> pageTitles = HashMap()..addAll({
       HomePage: "Home",
       DailySchedulePage: "Daily Schedule",
@@ -111,14 +57,50 @@ class MainMenuPageState extends State<MainMenuPage> {
     });
 
     Map<String, bool> sportsListMap = {};
-    for(SportsInfo sports in widget.localData.sportsInfo) {
+    for(SportsInfo sports in Data.sportsInfo) {
       sportsListMap[sports.sportsName] = true;
     }
+
     Assets assets = Assets(
-      localData: widget.localData, 
-      currentPage: MainMenuPage(localData: widget.localData,), 
+      currentPage: MainMenuPage(), 
       onPageChange: () => setState(() {})
     );
+
+    settingButton = HashMap()..addAll({
+      HomePage: IconButton(
+        icon: Icon(Icons.settings),
+        onPressed: () => HomePageState.showSetting(context),
+      ),
+      DailySchedulePage: dailyScheduleSetting(),
+      GamePage: IconButton(
+        onPressed: () {
+          gamePageSetting(context, sportsList);
+        },
+        icon: const Icon(Icons.settings)
+      ),
+      LostAndFoundPage: IconButton(
+        onPressed: () => LostAndFoundPageState.showSetting(
+          context,
+          onSwitchChange: (value) {
+            setState(() {
+              Data.settings.showReturnedItem = value;
+              pageToDisplay = LostAndFoundPage();
+            });
+          },
+          onSortChange: (sortOrder) {
+            setState(() {
+              Data.settings.sortLostAndFoundBy = sortOrder;
+              Data.sortLostAndFoundBy(sortOrder);
+              pageToDisplay = LostAndFoundPage();
+            });
+            Navigator.pop(context);
+          }
+        ), 
+        icon: Icon(Icons.settings), 
+        alignment: Alignment.topRight,
+      ),
+    });
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -127,7 +109,7 @@ class MainMenuPageState extends State<MainMenuPage> {
         title: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            pageTitles[pages[pageIndex].runtimeType] ?? "Daily Schedule",
+            pageTitles[pageToDisplay.runtimeType] ?? "Daily Schedule",
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,
@@ -135,11 +117,11 @@ class MainMenuPageState extends State<MainMenuPage> {
           ),
         ),
         actions: [
-          settingButton[pages[pageIndex].runtimeType] ?? Container(),
+          settingButton[pageToDisplay.runtimeType] ?? Container(),
           assets.menuBarButton(context),
         ],
       ),
-      body: pages[pageIndex],
+      body: pageToDisplay,
       drawer: assets.buildDrawer(context),
       bottomNavigationBar: Container(
         width: double.infinity,
@@ -148,7 +130,9 @@ class MainMenuPageState extends State<MainMenuPage> {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: Colors.grey.shade300,
+              color: Theme.of(context).brightness == Brightness.light 
+                ? Colors.grey.shade300 
+                : const Color.fromARGB(255, 41, 39, 39),
               width: 1,
             ),
           ),
@@ -159,30 +143,86 @@ class MainMenuPageState extends State<MainMenuPage> {
             NoSplashCustomBarItem(
               icon: Icons.home_outlined,
               activeIcon: Icons.home,
-              isActive: pageIndex == 0,
-              onTap: () => setState(() { pageIndex = 0; }),
+              isActive: pageToDisplay.runtimeType == HomePage,
+              onTap: () => setState(() { pageToDisplay = HomePage(); }),
               size: 32,
             ),
             NoSplashCustomBarItem(
               icon: Icons.calendar_today_outlined,
               activeIcon: Icons.calendar_today,
-              isActive: pageIndex == 1,
-              onTap: () => setState(() { pageIndex = 1; }),
+              isActive: pageToDisplay.runtimeType == DailySchedulePage,
+              onTap: () => setState(() { pageToDisplay = DailySchedulePage(); }),
             ),
             NoSplashCustomBarItem(
               icon: Icons.fastfood_outlined,
               activeIcon: Icons.fastfood,
-              isActive: pageIndex == 2,
-              onTap: () => setState(() { pageIndex = 2; }),
+              isActive: pageToDisplay.runtimeType == FoodMenuPage,
+              onTap: () => setState(() { pageToDisplay = FoodMenuPage(); }),
             ),
             NoSplashCustomBarItem(
               icon: Icons.directions_run_outlined,
               activeIcon: Icons.directions_run,
-              isActive: pageIndex == 3,
-              onTap: () => setState(() { pageIndex = 3; }),
+              isActive: pageToDisplay.runtimeType == GamePage,
+              onTap: () => setState(() { pageToDisplay = GamePage(); }),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> gamePageSetting(BuildContext context, HashSet<String> sportsList) {
+    return showModalBottomSheet(
+      context: context, 
+      isScrollControlled: true, 
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.35,
+          child: SettingPage(
+            sportsList: sportsList.toList(),
+            onDialogClosed: () {
+              setState(() {
+                pageToDisplay = GamePage();                      
+                });
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {});
+              });
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Container dailyScheduleSetting() {
+    return Container(
+      width: 30,
+      height: 30,
+      margin: EdgeInsets.only(right: 10),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: Data.settings.isDailyScheduleTimelineMode 
+          ? colorScheme.primary 
+          : Colors.transparent,
+      ),
+      child: IconButton(
+        icon: Data.settings.isDailyScheduleTimelineMode 
+          ? Icon(
+            Icons.view_timeline_rounded,
+            color: colorScheme.primaryContainer,
+          ) 
+          : Icon(
+            Icons.view_timeline_outlined,
+            size: 28,
+          ),
+        padding: EdgeInsets.zero,
+        onPressed: changeDailyScheduleMode,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
       ),
     );
   }
@@ -206,6 +246,7 @@ class NoSplashCustomBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -215,7 +256,7 @@ class NoSplashCustomBarItem extends StatelessWidget {
           padding: EdgeInsets.only(left: 35, right: 35, bottom: 30, top: 10),
           child: Icon(
             isActive ? activeIcon : icon, 
-            color: isActive ? lightColorScheme.primary : Colors.black,
+            color: isActive ? colorScheme.primary : colorScheme.secondary,
             size: size ?? 28,
           ),
         ),

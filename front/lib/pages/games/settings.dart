@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'games_to_display.dart';
 import 'favorite_sports_setting.dart';
@@ -7,10 +6,9 @@ import 'package:front/widgets/assets.dart';
 
 class SettingPage extends StatefulWidget {
   final List<String> sportsList;
-  final Data localData;
   final VoidCallback onDialogClosed;
 
-  const SettingPage({Key? key, required this.sportsList, required this.localData, required this.onDialogClosed }) : super(key: key);
+  const SettingPage({Key? key, required this.sportsList, required this.onDialogClosed }) : super(key: key);
 
   @override
   SettingPageState createState() => SettingPageState();
@@ -21,12 +19,13 @@ class SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Assets.buttomSheetModalTopline(),
+          Assets().buttomSheetModalTopline(),
           const Text(
             'Settings',
             style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -35,7 +34,7 @@ class SettingPageState extends State<SettingPage> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
-              color: lightColorScheme.background,
+              color: colorScheme.background,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,11 +53,11 @@ class SettingPageState extends State<SettingPage> {
                         return FractionallySizedBox(
                           heightFactor: 0.35,
                           child: GamesToDisplayPage(
-                            gamesToDisplay: widget.localData.settings.upcomingGamesToShow,
+                            gamesToDisplay: Data.settings.upcomingGamesToShow,
                             text: 'Upcoming Games To Display',
                             onChange: (value) {
                               setState(() {
-                                widget.localData.settings.upcomingGamesToShow = value;
+                                Data.settings.upcomingGamesToShow = value;
                               });
                               widget.onDialogClosed();
                             },
@@ -86,11 +85,11 @@ class SettingPageState extends State<SettingPage> {
                         return FractionallySizedBox(
                           heightFactor: 0.35,
                           child: GamesToDisplayPage(
-                            gamesToDisplay: widget.localData.settings.recentGamesToShow,
+                            gamesToDisplay: Data.settings.recentGamesToShow,
                             text: 'Recent Games To Display',
                             onChange: (value) {
                               setState(() {
-                                widget.localData.settings.recentGamesToShow = value;
+                                Data.settings.recentGamesToShow = value;
                               });
                               widget.onDialogClosed();
                             },
@@ -118,12 +117,11 @@ class SettingPageState extends State<SettingPage> {
                         return FractionallySizedBox(
                           heightFactor: 0.8,
                           child: StarredSportsSettingPage(
-                            localData: widget.localData,
                             sportsList: widget.sportsList,
                             onDialogClosed: widget.onDialogClosed,
                             onChange: (value) {
                               setState(() {
-                                widget.localData.settings.starredSports = value;
+                                Data.settings.starredSports = value;
                               });
                               widget.onDialogClosed();
                             },

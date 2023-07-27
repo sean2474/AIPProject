@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:front/data/sports.dart';
 import 'package:intl/intl.dart';
 import '../sports/method.dart';
-import 'package:front/color_schemes.g.dart';
 
 class GameInfoPage extends StatelessWidget {
   final GameInfo gameData;
@@ -41,10 +40,10 @@ class GameInfoPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
-                  infoBox(' Game Date:', gameDate, 10),
-                  infoBox(' Game Location:', gameLocation, 10),
-                  infoBox(' Opponent:', opponent, 10),
-                  if (gameData.matchResult != '') infoBox(' Match Result:', matchResult, 10),
+                  infoBox(context, ' Game Date:', gameDate, 10),
+                  infoBox(context, ' Game Location:', gameLocation, 10),
+                  infoBox(context, ' Opponent:', opponent, 10),
+                  if (gameData.matchResult != '') infoBox(context, ' Match Result:', matchResult, 10),
               ],
             )
           ),
@@ -53,7 +52,8 @@ class GameInfoPage extends StatelessWidget {
     );
   }
 
-  Widget infoBox(String title, String info, int topMargin) {
+  Widget infoBox(BuildContext context, String title, String info, int topMargin) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Container(
       margin: EdgeInsets.only(top: topMargin.toDouble()),
       child: Column(
@@ -68,7 +68,7 @@ class GameInfoPage extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: lightColorScheme.secondaryContainer
+              color: colorScheme.secondaryContainer
             ),
             child: Padding(
               padding: const EdgeInsets.all(10),

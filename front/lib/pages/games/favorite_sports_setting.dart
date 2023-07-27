@@ -7,25 +7,26 @@ import 'package:front/pages/sports/method.dart';
 
 class StarredSportsSettingPage extends StatefulWidget {
   final Function(String) onChange;
-  final Data localData;
   final List<String> sportsList;
   final VoidCallback? onDialogClosed;
-  StarredSportsSettingPage({super.key, required, required this.onChange, required this.localData, required this.sportsList, required this.onDialogClosed});
+  StarredSportsSettingPage({super.key, required, required this.onChange, required this.sportsList, required this.onDialogClosed});
 
   @override
   StarredSportsSettingPageState createState() => StarredSportsSettingPageState();
 }
 
 class StarredSportsSettingPageState extends State<StarredSportsSettingPage> {
+  late ColorScheme colorScheme;
   Map<String, bool> selectedCards = {};
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Assets.buttomSheetModalTopline(),
+          Assets().buttomSheetModalTopline(),
           Text(
             'Favorite Sports',
             style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold,),
@@ -52,7 +53,7 @@ class StarredSportsSettingPageState extends State<StarredSportsSettingPage> {
                         final String sports1 = widget.sportsList[i];
                         final String sports1Name = sports1.toLowerCase().replaceAll(' ', '_');
                         bool allSelected1 = true;
-                        List<SportsInfo> sportsCategoryList1 = widget.localData.sportsInfo.where((element) => element.sportsName == sports1).toList();
+                        List<SportsInfo> sportsCategoryList1 = Data.sportsInfo.where((element) => element.sportsName == sports1).toList();
                         for (SportsInfo element in sportsCategoryList1) {
                           String categoryString = getSportsCategoryToString(element.teamCategory);
                           if (selectedCards['${sports1Name}_$categoryString'] == null || selectedCards['${sports1Name}_$categoryString'] == false) {
@@ -78,7 +79,7 @@ class StarredSportsSettingPageState extends State<StarredSportsSettingPage> {
                         final String sports2 = widget.sportsList[i + 1];
                         final String sports2Name = sports2.toLowerCase().replaceAll(' ', '_');
                         bool allSelected2 = true;
-                        List<SportsInfo> sportsCategoryList2 = widget.localData.sportsInfo.where((element) => element.sportsName == sports2).toList();
+                        List<SportsInfo> sportsCategoryList2 = Data.sportsInfo.where((element) => element.sportsName == sports2).toList();
           
                         for (SportsInfo element in sportsCategoryList2) {
                           String categoryString = getSportsCategoryToString(element.teamCategory);
@@ -111,7 +112,7 @@ class StarredSportsSettingPageState extends State<StarredSportsSettingPage> {
   @override
   void initState() {
     super.initState();
-    selectedCards = widget.localData.settings.starredSports.split(" ").asMap().map((key, value) => MapEntry(value, true));
+    selectedCards = Data.settings.starredSports.split(" ").asMap().map((key, value) => MapEntry(value, true));
   }
 
   @override
@@ -123,7 +124,7 @@ class StarredSportsSettingPageState extends State<StarredSportsSettingPage> {
         starredSports += '${sportsName.replaceAll(" ", "_")} ';
       }
     }
-    widget.localData.settings.starredSports = starredSports;
+    Data.settings.starredSports = starredSports;
 
     if (widget.onDialogClosed != null) {
       widget.onDialogClosed!();
@@ -158,7 +159,7 @@ class StarredSportsSettingPageState extends State<StarredSportsSettingPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                getSportsIcon(sportsName, iconColor: lightColorScheme.secondary, 30),
+                getSportsIcon(sportsName, iconColor: colorScheme.secondary, 30),
                 Text(
                   " $sports",
                   style: TextStyle(

@@ -42,51 +42,57 @@ class UploadingSnackbar {
 
   void showUploadingResult(bool isSuccessful) {
     if (isSuccessful) {
-      _scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
-        backgroundColor: Colors.green,
-        content: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
-              Text(
-                "success", 
-                textAlign: TextAlign.center, 
-                style: TextStyle(
-                  fontSize: 15, 
-                  color: Colors.white,
+      _scaffoldMessengerKey.currentState!.showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.green,
+          content: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Text(
+                  "success", 
+                  textAlign: TextAlign.center, 
+                  style: TextStyle(
+                    fontSize: 15, 
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              Icon(Icons.check_circle_outline, color: Colors.white),
-            ],
-          )
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: StadiumBorder(),
-        width: MediaQuery.of(context).size.width * 0.35, 
-      ));
+                Icon(Icons.check_circle_outline, color: Colors.white),
+              ],
+            )
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: StadiumBorder(),
+          width: MediaQuery.of(context).size.width * 0.35, 
+        )
+      );
     } else { 
-      _scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
-        backgroundColor: lightColorScheme.error,
-        content: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                "failed",  // changed to "failed"
-                textAlign: TextAlign.center, 
-                style: TextStyle(
-                  fontSize: 15, 
-                  color: lightColorScheme.onError,
+      _scaffoldMessengerKey.currentState!.showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          backgroundColor: lightColorScheme.error,
+          content: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  "failed",  // changed to "failed"
+                  textAlign: TextAlign.center, 
+                  style: TextStyle(
+                    fontSize: 15, 
+                    color: lightColorScheme.onError,
+                  ),
                 ),
-              ),
-              Icon(Icons.error_outline, color: lightColorScheme.onError), // change to an error icon
-            ],
-          )
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: StadiumBorder(),
-        width: MediaQuery.of(context).size.width * 0.35,  
-      ));
+                Icon(Icons.error_outline, color: lightColorScheme.onError), // change to an error icon
+              ],
+            )
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: StadiumBorder(),
+          width: MediaQuery.of(context).size.width * 0.35,  
+        )
+      );
     }
   }
 }

@@ -24,8 +24,7 @@ String itemTypeToString(ItemType type) {
 }
 
 class SchoolStorePage extends StatefulWidget {
-  final Data localData;
-  const SchoolStorePage({Key? key, required this.localData}) : super(key: key);
+  const SchoolStorePage({Key? key}) : super(key: key);
 
   @override
   SchoolStorePageState createState() => SchoolStorePageState();
@@ -67,7 +66,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
 
   int itemCounter(ItemType itemType) {
     int counter = 0;
-    for (var item in widget.localData.storeItems) {
+    for (var item in Data.storeItems) {
       if (item.itemType == itemType) {
         counter++;
       }
@@ -77,7 +76,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
 
   List<StoreItem> getItemsOfType(ItemType itemType) {
     List<StoreItem> items = [];
-    for (var item in widget.localData.storeItems) {
+    for (var item in Data.storeItems) {
       if (item.itemType == itemType) {
         items.add(item);
       }
@@ -88,7 +87,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
 
   @override
   Widget build(BuildContext context) {
-    Assets assets = Assets(currentPage: SchoolStorePage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: SchoolStorePage());
     List<StoreItem> items = getItemsOfType(ItemType.values[_selectedTabIndex]);
 
     return Column(
@@ -106,7 +105,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
               header: assets.refreshHeader(indicatorColor: Colors.grey,),
               controller: _refreshController,
               onRefresh: () => Future.delayed(const Duration(milliseconds: 500), () async {
-                widget.localData.storeItems = StoreItem.transformData(await widget.localData.apiService.getSchoolStoreItems());
+                Data.storeItems = StoreItem.transformData(await Data.apiService.getSchoolStoreItems());
                 setState(() {});
                 _refreshController.refreshCompleted();
               }),

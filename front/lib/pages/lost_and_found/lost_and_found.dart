@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'lost_item_page.dart';
-import 'show_modal.dart';
+import 'switch.dart';
 
 class LostAndFoundPage extends StatefulWidget {
-  final Data localData;
-  const LostAndFoundPage({Key? key, required this.localData}) : super(key: key);
+  const LostAndFoundPage({Key? key}) : super(key: key);
 
   @override
   LostAndFoundPageState createState() => LostAndFoundPageState();
@@ -22,7 +20,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   List<LostItem> selectedItem(List<LostItem> items, String keyWord) {
-    if (!widget.localData.settings.showReturnedItem) {
+    if (!Data.settings.showReturnedItem) {
       items = items.where((element) => element.status != FoundStatus.returned).toList();
     }
 
@@ -66,10 +64,10 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   }
 
   static void showSetting(BuildContext context, {
-    required Data localData,
     required Function(bool) onSwitchChange,
     required Function(String) onSortChange,
   }) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context, 
       isScrollControlled: true, // makes the height of the sheet dynamic
@@ -84,7 +82,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Assets.buttomSheetModalTopline(),
+                Assets().buttomSheetModalTopline(),
                 const Text(
                   'Settings',
                   style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -93,14 +91,14 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),
-                    color: lightColorScheme.background,
+                    color: colorScheme.background,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SettingModal(
-                        key: ValueKey<bool>(localData.settings.showReturnedItem),
-                        showReturnedItem: localData.settings.showReturnedItem,
+                        key: ValueKey<bool>(Data.settings.showReturnedItem),
+                        showReturnedItem: Data.settings.showReturnedItem,
                         onSwitchChange: onSwitchChange
                       ),
                       Divider(
@@ -127,6 +125,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   static void _showSortOptions(BuildContext context, {
     required Function(String) onSortChange,
   }) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // makes the height of the sheet dynamic
@@ -161,7 +160,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15.0),
-                    color: lightColorScheme.background,
+                    color: colorScheme.background,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +198,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
 
   @override
   Widget build(BuildContext context) {
-    Assets assets = Assets(currentPage: LostAndFoundPage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: LostAndFoundPage());
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -252,7 +251,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
           controller: _refreshController,
           header: assets.refreshHeader(indicatorColor: Colors.grey,),
           onRefresh: () => Future.delayed(const Duration(milliseconds: 500), () async {
-            widget.localData.lostAndFounds = selectedItem(LostItem.transformData(await widget.localData.apiService.getLostAndFound()), _searchText);
+            Data.lostAndFounds = selectedItem(LostItem.transformData(await Data.apiService.getLostAndFound()), _searchText);
             setState(() {});
             _refreshController.refreshCompleted();
           }),
@@ -265,9 +264,9 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
               mainAxisSpacing: 10,
             ),
             padding: const EdgeInsets.all(10),
-            itemCount: selectedItem(widget.localData.lostAndFounds, _searchText).length,
+            itemCount: selectedItem(Data.lostAndFounds, _searchText).length,
             itemBuilder: (context, index) {
-              LostItem item = selectedItem(widget.localData.lostAndFounds, _searchText)[index];
+              LostItem item = selectedItem(Data.lostAndFounds, _searchText)[index];
               return assets.lostItemBox(item, context, () => assets.pushDialogPage(context, ItemPage(itemData: item)));
             },
           ),

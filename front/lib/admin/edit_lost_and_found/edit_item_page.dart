@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditItemPage extends StatefulWidget {
-  final Data localData;
   final LostItem itemData;
   final int itemIndex;
   final VoidCallback onEdit;
@@ -18,7 +17,6 @@ class EditItemPage extends StatefulWidget {
   
   EditItemPage({
     super.key,
-    required this.localData, 
     required this.itemData, 
     required this.itemIndex, 
     required this.onEdit, 
@@ -32,6 +30,8 @@ class EditItemPage extends StatefulWidget {
 }
 
 class _EditItemPageState extends State<EditItemPage> {
+  late ColorScheme colorScheme;
+
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _locationController;
@@ -60,6 +60,7 @@ class _EditItemPageState extends State<EditItemPage> {
   @override
   void initState() {
     super.initState();
+
     _nameFocusNode.addListener(_handleNameFocusChange);
     _descriptionFocusNode.addListener(_handleDescriptionFocusChange);
     _locationFocusNode.addListener(_handleLocationFocusChange);
@@ -117,6 +118,7 @@ class _EditItemPageState extends State<EditItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
@@ -125,7 +127,7 @@ class _EditItemPageState extends State<EditItemPage> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
@@ -175,7 +177,7 @@ class _EditItemPageState extends State<EditItemPage> {
           width: 1,
           color: Colors.grey,
         ),
-        color: lightColorScheme.background,
+        color: colorScheme.background,
       ),
       width: 120,
       height: 55,
@@ -207,7 +209,6 @@ class _EditItemPageState extends State<EditItemPage> {
         style: TextStyle(
           fontWeight: FontWeight.normal,
           fontSize: 16,
-          color: Colors.black,
         ),
       ),
     );
@@ -252,7 +253,7 @@ class _EditItemPageState extends State<EditItemPage> {
   Container buildCard() {
     return Container(
       decoration: BoxDecoration(
-        color: lightColorScheme.background,
+        color: colorScheme.background,
         borderRadius: BorderRadius.circular(15),
       ),
     );
@@ -324,7 +325,6 @@ class _EditItemPageState extends State<EditItemPage> {
             "Edit item",
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
               fontSize: 20,
-              color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -349,14 +349,14 @@ class _EditItemPageState extends State<EditItemPage> {
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? colorScheme.error : Colors.grey,
             )
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? colorScheme.error : Colors.grey,
             )
           ),
         ),
@@ -459,14 +459,14 @@ class _EditItemPageState extends State<EditItemPage> {
           File? imageFile = _image != null ? File(_image!.path) : null;
           var result;
           try {
-            result = await widget.localData.apiService.putLostAndFound(widget.itemData.id, itemData, imageFile);
+            result = await Data.apiService.putLostAndFound(widget.itemData.id, itemData, imageFile);
           } catch (e) {
             debugPrint(e.toString());
           }
           widget.showUploadingResultSnackBar(result != null && result["status"] == "success");
           widget.dismissSnackBar();
           if (result != null && result["status"] == "success") {
-            widget.localData.lostAndFounds[widget.itemIndex] = LostItem.fromJson({
+            Data.lostAndFounds[widget.itemIndex] = LostItem.fromJson({
               "id": result["id"],
               "item_name": _nameController.text,
               "description": _descriptionController.text,
@@ -474,7 +474,7 @@ class _EditItemPageState extends State<EditItemPage> {
               "location_found": _locationController.text,
               "date_found": _selectedDate!.toString(),
               "status": status,
-              "submitter_id": widget.localData.user?.id,
+              "submitter_id": Data.user?.id,
             });
           }
           widget.onEdit();

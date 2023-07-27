@@ -6,15 +6,14 @@ import 'edit_item_page.dart';
 import 'package:front/widgets/uploading_snackbar.dart';
 
 class EditPage extends StatefulWidget {
-  final Data localData;
-
-  EditPage({super.key, required this.localData});
+  EditPage({super.key});
 
   @override
   State<EditPage> createState() => _EditPageState();
 }
 
 class _EditPageState extends State<EditPage> {
+  late ColorScheme colorScheme;
   bool isAddPageHidden = false;
 
   double initial = 0.0;
@@ -27,10 +26,11 @@ class _EditPageState extends State<EditPage> {
 
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
-    Assets assets = Assets(currentPage: EditPage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: EditPage());
     UploadingSnackbar uploadingSnackbar = UploadingSnackbar(context, _scaffoldMessengerKey, "uploading");
 
     return ScaffoldMessenger(
@@ -78,10 +78,10 @@ class _EditPageState extends State<EditPage> {
                       mainAxisSpacing: 10,
                     ),
                     padding: const EdgeInsets.all(10),
-                    itemCount: widget.localData.storeItems.length,
+                    itemCount: Data.storeItems.length,
                     itemBuilder: (context, index) {
-                      widget.localData.sortLostAndFoundBy("status");
-                      return assets.storeItemBox(widget.localData.storeItems[index], context, () {
+                      Data.sortLostAndFoundBy("status");
+                      return assets.storeItemBox(Data.storeItems[index], context, () {
                         showModalBottomSheet(
                           context: context, 
                           isScrollControlled: true, // makes the height of the sheet dynamic
@@ -90,8 +90,7 @@ class _EditPageState extends State<EditPage> {
                           ),
                           builder: (BuildContext context) {
                             return EditItemPage(
-                              localData: widget.localData, 
-                              itemData: widget.localData.storeItems[index], 
+                              itemData: Data.storeItems[index], 
                               itemIndex: index,
                               onEdit: () {
                                 setState(() {});
@@ -119,7 +118,7 @@ class _EditPageState extends State<EditPage> {
       tag: "edit school store container",
       child: Container(
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
       ),
@@ -139,7 +138,6 @@ class _EditPageState extends State<EditPage> {
               "Edit item",
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontSize: 20,
-                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),

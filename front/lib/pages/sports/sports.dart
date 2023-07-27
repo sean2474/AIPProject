@@ -9,17 +9,16 @@ import 'package:front/widgets/assets.dart';
 import 'package:front/data/sports.dart';
 import 'method.dart';
 import 'sports_info.dart';
-import 'package:front/color_schemes.g.dart';
 
 class SportsPage extends StatefulWidget {
-  final Data localData;
-  const SportsPage({Key? key, required this.localData}) : super(key: key);
+  const SportsPage({Key? key}) : super(key: key);
   @override
   SportsPageState createState() => SportsPageState();
 }
 
 class SportsPageState extends State<SportsPage> {
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  late ColorScheme colorScheme;
 
   final GameInfo naGame = GameInfo(
     id: -1,
@@ -66,15 +65,13 @@ class SportsPageState extends State<SportsPage> {
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
-    Data localData = widget.localData;
+    colorScheme = Theme.of(context).colorScheme;
     Size screen = MediaQuery.of(context).size;
-    Assets assets = Assets(currentPage: SportsPage(localData: localData), localData: localData);
-    List<SportsInfo> sportsInfo = localData.sportsInfo;
-    List<GameInfo> gameInfo = localData.gameInfo;
+    Assets assets = Assets(currentPage: SportsPage());
+    List<SportsInfo> sportsInfo = Data.sportsInfo;
+    List<GameInfo> gameInfo = Data.gameInfo;
     Map<String, bool> sportsListMap = {};
     
     for(SportsInfo sports in sportsInfo) {
@@ -91,7 +88,7 @@ class SportsPageState extends State<SportsPage> {
       onRefresh: () => Future.delayed(const Duration(milliseconds: 0), () async {
         String errorMessage = '';
         try {
-          widget.localData.sportsInfo = SportsInfo.transformData(await widget.localData.apiService.getSports());
+          Data.sportsInfo = SportsInfo.transformData(await Data.apiService.getSports());
         } catch (e) {
           if (errorMessage != '') {
             errorMessage = '$errorMessage\n';
@@ -143,7 +140,7 @@ class SportsPageState extends State<SportsPage> {
                   itemCount: sportsList.length,
                   itemBuilder: (context, index) {
                     final String sportsName = sportsList[index].toLowerCase().replaceAll(' ', '_');
-                    Color iconColor = lightColorScheme.secondary;
+                    Color iconColor = colorScheme.secondary;
                     const double size = 80;
                     List<SportsInfo> sportsCategoryList = [];
                     sportsCategoryList = sportsInfo.where((element) => element.sportsName == sportsList[index]).toList();
@@ -162,7 +159,6 @@ class SportsPageState extends State<SportsPage> {
                             SportsInfoPage(
                               sportsData: sportsCategoryList,
                               gameData: gameInfo,
-                              localData: localData,
                             ),
                           ),
                         );

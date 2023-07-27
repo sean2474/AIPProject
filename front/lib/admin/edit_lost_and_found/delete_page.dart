@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:front/pages/lost_and_found/lost_item_page.dart';
@@ -8,15 +7,15 @@ import 'package:front/widgets/assets.dart';
 import 'package:front/widgets/uploading_snackbar.dart';
 
 class DeletePage extends StatefulWidget {
-  final Data localData;
-
-  DeletePage({super.key, required this.localData});
+  DeletePage({super.key});
 
   @override
   State<DeletePage> createState() => _DeletePageState();
 }
 
 class _DeletePageState extends State<DeletePage> {
+  late ColorScheme colorScheme;
+  
   double initial = 0.0;
   double distance = 0.0;
 
@@ -26,11 +25,16 @@ class _DeletePageState extends State<DeletePage> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
-    Assets assets = Assets(currentPage: DeletePage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: DeletePage());
     UploadingSnackbar uploadingSnackbar = UploadingSnackbar(context, _scaffoldMessengerKey, "deleting", icon: Icons.delete_rounded);
 
     return ScaffoldMessenger(
@@ -77,11 +81,11 @@ class _DeletePageState extends State<DeletePage> {
                     mainAxisSpacing: 10,
                   ),
                   padding: const EdgeInsets.all(10),
-                  itemCount: widget.localData.lostAndFounds.length,
+                  itemCount: Data.lostAndFounds.length,
                   itemBuilder: (context, index) {
-                    widget.localData.sortLostAndFoundBy("status");
-                    return assets.lostItemBox(widget.localData.lostAndFounds[index], context, () {
-                      showDeleteCheckBox(widget.localData.lostAndFounds[index], uploadingSnackbar);
+                    Data.sortLostAndFoundBy("status");
+                    return assets.lostItemBox(Data.lostAndFounds[index], context, () {
+                      showDeleteCheckBox(Data.lostAndFounds[index], uploadingSnackbar);
                     });
                   },
                 ),
@@ -98,7 +102,7 @@ class _DeletePageState extends State<DeletePage> {
       tag: "delete lost and found container",
       child: Container(
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
       ),
@@ -118,7 +122,6 @@ class _DeletePageState extends State<DeletePage> {
               "Delete item",
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontSize: 20,
-                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -135,7 +138,7 @@ class _DeletePageState extends State<DeletePage> {
         return Dialog(
           child: Container(
             decoration: BoxDecoration(
-              color: lightColorScheme.background,
+              color: colorScheme.background,
               borderRadius: BorderRadius.circular(15),
             ),
             width: MediaQuery.of(context).size.width * 0.5,
@@ -147,7 +150,7 @@ class _DeletePageState extends State<DeletePage> {
                   padding: EdgeInsets.all(25),
                   child: Text(
                     "Are you sure you want to delete this item?", 
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15), 
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), 
                     textAlign: TextAlign.center
                   ),
                 ),
@@ -234,7 +237,7 @@ class _DeletePageState extends State<DeletePage> {
 
                         var result;
                         try {
-                          result = await widget.localData.apiService.deleteLostAndFound("${itemToDelete.id}");
+                          result = await Data.apiService.deleteLostAndFound("${itemToDelete.id}");
                         } catch (e) {
                           result = {"status": "fail"};
                         }
@@ -242,7 +245,7 @@ class _DeletePageState extends State<DeletePage> {
                         uploadingSnackbar.dismiss();
                         if (result["status"] == "Item deleted successfully") {
                           setState(() {
-                            widget.localData.lostAndFounds.removeWhere((element) => element.id == itemToDelete.id);
+                            Data.lostAndFounds.removeWhere((element) => element.id == itemToDelete.id);
                           });
                         } else {
                           debugPrint(result.toString());
@@ -253,7 +256,7 @@ class _DeletePageState extends State<DeletePage> {
                   ],
                 ),
                 ListTile(
-                  title: Text("Cancel", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
+                  title: Text("Cancel", textAlign: TextAlign.center),
                   onTap: () {
                     Navigator.pop(context);
                   },

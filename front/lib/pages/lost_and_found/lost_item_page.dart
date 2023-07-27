@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:intl/intl.dart';
@@ -24,13 +23,14 @@ class ItemPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
     return Stack(
       children: [
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: lightColorScheme.secondaryContainer,
+            color: colorScheme.secondaryContainer,
           ),
           child: Padding(
             padding: const EdgeInsets.all(10),

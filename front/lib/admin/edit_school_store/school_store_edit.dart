@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:front/widgets/uploading_snackbar.dart';
-import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'edit_page.dart';
 import 'add_page.dart';
 import 'delete_page.dart';
 
 class EditSchoolStorePage extends StatefulWidget {
-  final Data localData;
-  const EditSchoolStorePage({Key? key, required this.localData}) : super(key: key);
+  const EditSchoolStorePage({Key? key}) : super(key: key);
 
   @override
   EditSchoolStorePageState createState() => EditSchoolStorePageState();
@@ -22,7 +20,7 @@ class EditSchoolStorePageState extends State<EditSchoolStorePage>
   @override
   Widget build(BuildContext context) {
     UploadingSnackbar uploadingSnackbar = UploadingSnackbar(context, _scaffoldMessengerKey, "uploading");
-    Assets assets = Assets(currentPage: EditSchoolStorePage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: EditSchoolStorePage());
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
       child: Column(
@@ -32,7 +30,6 @@ class EditSchoolStorePageState extends State<EditSchoolStorePage>
           SizedBox(height: 20),
           buildEditCard("Add item", const Icon(Icons.add), "add school store", () {
             assets.pushDialogPage(context, AddPage(
-                localData: widget.localData, 
                 showUploadingSnackBar: uploadingSnackbar.showUploading, 
                 dismissSnackBar: uploadingSnackbar.dismiss,
                 showUploadingResultSnackBar: uploadingSnackbar.showUploadingResult,
@@ -42,12 +39,10 @@ class EditSchoolStorePageState extends State<EditSchoolStorePage>
           }),
           buildEditCard("Edit item", const Icon(Icons.edit), "edit school store", () {
             assets.pushDialogPage(context, EditPage(
-              localData: widget.localData
             ), haveDialog: false);
           }),
           buildEditCard("Delete item", const Icon(Icons.delete), "delete school store", () {
             assets.pushDialogPage(context, DeletePage(
-              localData: widget.localData,
             ), haveDialog: false);
           }),
         ],
@@ -84,7 +79,6 @@ class EditSchoolStorePageState extends State<EditSchoolStorePage>
                       title,
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         fontSize: 20,
-                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

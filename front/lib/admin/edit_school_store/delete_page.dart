@@ -1,22 +1,21 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/school_store.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/widgets/uploading_snackbar.dart';
 
 class DeletePage extends StatefulWidget {
-  final Data localData;
-
-  DeletePage({super.key, required this.localData});
+  DeletePage({super.key});
 
   @override
   State<DeletePage> createState() => _DeletePageState();
 }
 
 class _DeletePageState extends State<DeletePage> {
+  late ColorScheme colorScheme;
+
   double initial = 0.0;
   double distance = 0.0;
 
@@ -26,11 +25,16 @@ class _DeletePageState extends State<DeletePage> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
-    Assets assets = Assets(currentPage: DeletePage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: DeletePage());
     UploadingSnackbar uploadingSnackbar = UploadingSnackbar(context, _scaffoldMessengerKey, "deleting", icon: Icons.delete_rounded);
 
     return ScaffoldMessenger(
@@ -77,11 +81,11 @@ class _DeletePageState extends State<DeletePage> {
                     mainAxisSpacing: 10,
                   ),
                   padding: const EdgeInsets.all(10),
-                  itemCount: widget.localData.storeItems.length,
+                  itemCount: Data.storeItems.length,
                   itemBuilder: (context, index) {
-                    widget.localData.sortStoreItem();
-                    return assets.storeItemBox(widget.localData.storeItems[index], context, () {
-                      showDeleteCheckBox(widget.localData.storeItems[index], uploadingSnackbar);
+                    Data.sortStoreItem();
+                    return assets.storeItemBox(Data.storeItems[index], context, () {
+                      showDeleteCheckBox(Data.storeItems[index], uploadingSnackbar);
                     });
                   },
                 ),
@@ -98,7 +102,7 @@ class _DeletePageState extends State<DeletePage> {
       tag: "delete school store container",
       child: Container(
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
       ),
@@ -118,7 +122,6 @@ class _DeletePageState extends State<DeletePage> {
               "Delete item",
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontSize: 20,
-                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -135,7 +138,7 @@ class _DeletePageState extends State<DeletePage> {
         return Dialog(
           child: Container(
             decoration: BoxDecoration(
-              color: lightColorScheme.background,
+              color: colorScheme.background,
               borderRadius: BorderRadius.circular(15),
             ),
             width: MediaQuery.of(context).size.width * 0.5,
@@ -147,7 +150,7 @@ class _DeletePageState extends State<DeletePage> {
                   padding: EdgeInsets.all(25),
                   child: Text(
                     "Are you sure you want to delete this item?", 
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15), 
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), 
                     textAlign: TextAlign.center
                   ),
                 ),
@@ -245,7 +248,7 @@ class _DeletePageState extends State<DeletePage> {
 
                         var result;
                         try {
-                          result = await widget.localData.apiService.deleteSchoolStoreItem("${itemToDelete.id}");
+                          result = await Data.apiService.deleteSchoolStoreItem("${itemToDelete.id}");
                         } catch (e) {
                           result = {"code": "400"};
                         }
@@ -254,7 +257,7 @@ class _DeletePageState extends State<DeletePage> {
                         uploadingSnackbar.dismiss();
                         if (result["code"] == 200) {
                           setState(() {
-                            widget.localData.storeItems.removeWhere((element) => element.id == itemToDelete.id);
+                            Data.storeItems.removeWhere((element) => element.id == itemToDelete.id);
                           });
                         } else {
                           debugPrint(result.toString());
@@ -265,7 +268,7 @@ class _DeletePageState extends State<DeletePage> {
                   ],
                 ),
                 ListTile(
-                  title: Text("Cancel", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
+                  title: Text("Cancel", textAlign: TextAlign.center),
                   onTap: () {
                     Navigator.pop(context);
                   },

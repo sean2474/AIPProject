@@ -7,9 +7,7 @@ import 'package:front/widgets/assets.dart';
 import 'package:intl/intl.dart';
 
 class FoodMenuPage extends StatefulWidget {
-  final Data localData;
-
-  const FoodMenuPage({Key? key, required this.localData}) : super(key: key);
+  const FoodMenuPage({Key? key}) : super(key: key);
 
   @override
   FoodMenuPageState createState() => FoodMenuPageState();
@@ -27,7 +25,7 @@ class FoodMenuPageState extends State<FoodMenuPage>
 
   // TODO: uncomment after testing
   // String displayDate = DateTime.now().toString().substring(0, 10);
-  late String displayDate = widget.localData.foodMenus.values.toList()[0].date;
+  late String displayDate = Data.foodMenus.values.toList()[0].date;
 
   @override
   void initState() {
@@ -48,14 +46,14 @@ class FoodMenuPageState extends State<FoodMenuPage>
       int currentPage = _pageController.page!.round();
       if (currentPage != _dateToIndex[displayDate]) {
         setState(() {
-          displayDate = widget.localData.foodMenus.values.toList()[currentPage].date;
+          displayDate = Data.foodMenus.values.toList()[currentPage].date;
         });
       }
     });
 
     _dateToIndex = {
-      for (var i = 0; i < widget.localData.foodMenus.length; i++)
-        widget.localData.foodMenus.values.toList()[i].date.substring(0, 10): i,
+      for (var i = 0; i < Data.foodMenus.length; i++)
+        Data.foodMenus.values.toList()[i].date.substring(0, 10): i,
     };
   }
 
@@ -75,7 +73,7 @@ class FoodMenuPageState extends State<FoodMenuPage>
 
   @override
   Widget build(BuildContext context) {
-    Assets assets = Assets(currentPage: FoodMenuPage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: FoodMenuPage());
     return Column(
       children: [
         SizedBox(height: 10),
@@ -97,8 +95,8 @@ class FoodMenuPageState extends State<FoodMenuPage>
                 showDatePicker(
                   context: context, 
                   initialDate: DateTime.parse(displayDate),
-                  firstDate: DateTime.parse(widget.localData.foodMenus.values.toList()[0].date), 
-                  lastDate: DateTime.parse(widget.localData.foodMenus.values.toList().last.date), 
+                  firstDate: DateTime.parse(Data.foodMenus.values.toList()[0].date), 
+                  lastDate: DateTime.parse(Data.foodMenus.values.toList().last.date), 
                 ).then((value) {
                   if (value != null) {
                     setState(() {
@@ -139,10 +137,10 @@ class FoodMenuPageState extends State<FoodMenuPage>
         Expanded(
           child: PageView.builder(
             controller: _pageController,
-            itemCount: widget.localData.foodMenus.length,
+            itemCount: Data.foodMenus.length,
             itemBuilder: (context, index) { 
               return FoodMenuViewPage(
-                foodMenu: widget.localData.foodMenus.values.toList()[index], 
+                foodMenu: Data.foodMenus.values.toList()[index], 
                 mealType: _selectedTabIndex,
               );
             },

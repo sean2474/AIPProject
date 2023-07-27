@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:front/data/data.dart';
 import 'package:front/data/sports.dart';
 import 'package:intl/intl.dart';
 import 'package:front/widgets/assets.dart';
 import 'method.dart';
-import 'package:front/color_schemes.g.dart';
 
 // check https://www.avonoldfarms.com/athletics/teams-schedules/fall-sports/varsityfootball in mobile view
 class SportsInfoPage extends StatefulWidget {
   final List<SportsInfo> sportsData;
   final List<GameInfo> gameData;
-  final Data localData;
 
-  const SportsInfoPage({Key? key, required this.sportsData, required this.gameData, required this.localData}) : super(key: key);
+  const SportsInfoPage({Key? key, required this.sportsData, required this.gameData}) : super(key: key);
 
   @override
   SportsInfoPageState createState() => SportsInfoPageState();
@@ -21,6 +18,8 @@ class SportsInfoPage extends StatefulWidget {
 class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProviderStateMixin {
   int _expandedIndex = -1;
   int _selectedCategoryIndex = 0;
+
+  late ColorScheme colorScheme;
 
   late final AnimationController _animationController;
   late final Animation<double> _animation;
@@ -76,11 +75,12 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
   
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     List<String> informations = ['Matches', 'Coaches', 'Roster'];
     List<String> teamCategories = widget.sportsData.map((e) => getSportsCategoryToString(e.teamCategory)).toList();
 
     Widget getInformationContent(int index) {
-      Color containerColor = lightColorScheme.secondaryContainer;
+      Color containerColor = colorScheme.secondaryContainer;
       switch (index) {
         case 0:
           List<GameInfo> filteredGameData = widget.gameData
@@ -245,7 +245,7 @@ class SportsInfoPageState extends State<SportsInfoPage> with SingleTickerProvide
             preferredSize: Size.fromHeight(40),
             child: Container(
               margin: EdgeInsets.only(bottom: 10, top: 15),
-              child: Assets(localData: widget.localData,).drawAppBarSelector(context: context, titles: teamCategories, selectTab: _selectTab, animation: _animation, selectedIndex: _selectedCategoryIndex)
+              child: Assets().drawAppBarSelector(context: context, titles: teamCategories, selectTab: _selectTab, animation: _animation, selectedIndex: _selectedCategoryIndex)
             ),
           ),
         ),

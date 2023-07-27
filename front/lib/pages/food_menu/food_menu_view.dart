@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/food_menu.dart';
 
 enum MealType { breakfast, lunch, dinner }
@@ -21,6 +20,7 @@ class FoodMenuViewPage extends StatefulWidget {
 class FoodMenuViewPageState extends State<FoodMenuViewPage> {
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     Map<String, List<Food>> menuToShow = {};
     if (widget.mealType == MealType.breakfast.index) {
       menuToShow = widget.foodMenu.breakFast;
@@ -63,7 +63,7 @@ class FoodMenuViewPageState extends State<FoodMenuViewPage> {
                                   : index == menuToShow[foodType]!.length - 1 // last item
                                     ? BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))
                                     : BorderRadius.all(Radius.circular(0)), // other items
-                                color: lightColorScheme.secondaryContainer,
+                                color: colorScheme.secondaryContainer,
                             ),
                             child: ListTile(
                               title: Text(menuToShow[foodType]![index].name),
@@ -84,7 +84,7 @@ class FoodMenuViewPageState extends State<FoodMenuViewPage> {
                         separatorBuilder: (BuildContext context, int index) {
                           return Divider(
                             height: 1,
-                            color: lightColorScheme.outline,
+                            color: colorScheme.outline,
                           );
                         },
                         shrinkWrap: true,

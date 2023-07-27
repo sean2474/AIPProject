@@ -16,6 +16,7 @@ class GamesToDisplayPage extends StatefulWidget {
 }
 
 class GamesToDisplayPageState extends State<GamesToDisplayPage> {
+  late ColorScheme colorScheme;
   int _gamesToDisplay = 3;
 
   @override
@@ -26,6 +27,7 @@ class GamesToDisplayPageState extends State<GamesToDisplayPage> {
   
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Stack(
@@ -34,7 +36,7 @@ class GamesToDisplayPageState extends State<GamesToDisplayPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Assets.buttomSheetModalTopline(),
+              Assets().buttomSheetModalTopline(),
               Text(
                 widget.text,
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold,),
@@ -49,7 +51,7 @@ class GamesToDisplayPageState extends State<GamesToDisplayPage> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    color: lightColorScheme.background,
+                    color: colorScheme.background,
                   ),
                   child: IconButton(
                     onPressed: () {
@@ -65,7 +67,7 @@ class GamesToDisplayPageState extends State<GamesToDisplayPage> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    color: lightColorScheme.background,
+                    color: colorScheme.background,
                   ),
                   child: NumberPicker(
                     value: _gamesToDisplay,
@@ -93,7 +95,7 @@ class GamesToDisplayPageState extends State<GamesToDisplayPage> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
-                    color: lightColorScheme.background,
+                    color: colorScheme.background,
                   ),
                   child: IconButton(
                     onPressed: () {

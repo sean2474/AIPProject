@@ -5,6 +5,8 @@ class Settings {
   String sortLostAndFoundBy;
   bool showReturnedItem;
   bool isDailyScheduleTimelineMode;
+  bool isThemeModeAuto;
+  bool isDarkMode;
   static String baseUrl = '';
   
   Settings({
@@ -14,5 +16,7 @@ class Settings {
     required this.sortLostAndFoundBy, 
     required this.showReturnedItem,
     required this.isDailyScheduleTimelineMode,
+    required this.isThemeModeAuto,
+    required this.isDarkMode,
   });
 }

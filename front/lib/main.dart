@@ -1,16 +1,5 @@
 /// main.dart
 
-/*
- if github commiting not working, try:
- 1. move to ~/Desktop/AIPProject/.git/refs/remotes/origin
- 2. remove all files in remotes
- cd ~/Desktop/AIPProject/.git/refs/remotes/origin || rm -rf *\
-
- I commented out the code that was throwing error for webview
- which is "package:webview_flutter_wkwebview/src/common/web_kit.g.dart:2789:7"
- if there is error, uncomment it, or try flutter clean and flutter pub get
-*/
-
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +13,16 @@ import 'package:front/loading/loading.dart';
 import 'package:front/main_menu/main_menu.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:front/data/food_menu.dart';
+import 'package:provider/provider.dart';
+import 'data/shared_preference/get_preference.dart';
+import 'data/shared_preference/save_preference.dart';
 import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:front/data/sharedPreferenceStorage.dart';
 import 'package:front/data/daily_schedule.dart';
 import 'package:front/data/settings.dart';
 import 'package:front/data/user_.dart';
 import 'color_schemes.g.dart';
+import 'model_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,35 +32,29 @@ void main() async {
 
   runApp(MaterialApp(
     home: LoadingPage(),
+    debugShowCheckedModeBanner: false,
   ));
 
   String baseUrl = 'http://35.169.229.180:8082';
   debugPrint("connecting to $baseUrl...");
 
+  Data.settings = Settings(
+    recentGamesToShow: await Get.recentGamesToShow(),
+    upcomingGamesToShow: await Get.upcomingGamesToShow(), 
+    starredSports: (await Get.starredSports()).join(' '), 
+    sortLostAndFoundBy: await Get.sortLostAndFoundBy() ?? 'date',
+    showReturnedItem: await Get.showReturnedItemsInLostAndFound(),
+    isDailyScheduleTimelineMode: await Get.isDailyScheduleTimelineMode(),
+    isThemeModeAuto: await Get.isThemeModeAuto(),
+    isDarkMode: await Get.isDarkMode(),
+  );
+
+  Data.apiService = ApiService(baseUrl: baseUrl);
   Settings.baseUrl = baseUrl;
-  Data localData = Data(
-    dailySchedules: {}, 
-    foodMenus: {}, 
-    lostAndFounds: [], 
-    storeItems: [], 
-    sportsInfo: [], 
-    gameInfo: [], 
-    settings: Settings(
-      recentGamesToShow: await getRecentGamesToShow(),
-      upcomingGamesToShow: await getUpcomingGamesToShow(), 
-      starredSports: (await getStarredSports()).join(' '), 
-      sortLostAndFoundBy: await getSortLostAndFoundBy() ?? 'date',
-      showReturnedItem: await getShowReturnedItemsInLostAndFound(),
-      isDailyScheduleTimelineMode: await getisDailyScheduleTimelineMode(),
-    ), 
-    apiService: ApiService(
-      baseUrl: baseUrl
-      )
-    );
 
   while (true) {
     try {
-      localData.user = await localData.apiService.login(await getUsername() ?? '', await getUserPassword() ?? '');
+      Data.user = await Data.apiService.login(await Get.username() ?? '', await Get.userPassword() ?? '');
       break;
     // ignore: empty_catches
     } on Exception { }
@@ -76,17 +62,17 @@ void main() async {
   }
 
   // TODO: remove this after testing
-  localData.user = await localData.apiService.login("johnsmith@example.com", "password1");
-  localData.apiService.token = localData.user?.token;
+  Data.user = await Data.apiService.login("johnsmith@example.com", "password1");
+  Data.apiService.token = Data.user?.token;
 
   FirebaseAuth.instance.authStateChanges().listen((user) {
-    if (localData.user != null && user == null) {
+    if (Data.user != null && user == null) {
       debugPrint("signed in with local");
       Data.loggedIn = true;
     } else if (user != null) {
       debugPrint("signed in with google");
       print(user.uid);
-      localData.user = User_(id: 0, token: user.uid, userType: UserType.student, name: '', password: '', email: user.email ?? '');
+      Data.user = User_(id: 0, token: user.uid, userType: UserType.student, name: '', password: '', email: user.email ?? '');
       Data.loggedIn = true;
     } else {
       debugPrint("user signed out");
@@ -96,7 +82,7 @@ void main() async {
   
   /// endpoint connections to backend
   try {
-    localData.gameInfo = GameInfo.transformData(await localData.apiService.getGames());
+    Data.gameInfo = GameInfo.transformData(await Data.apiService.getGames());
   } on NoSuchMethodError {
     debugPrint("failed to load games data");
   } on BadRequestException {
@@ -105,7 +91,7 @@ void main() async {
     debugPrint("page not found on games");
   }
   try {
-    localData.sportsInfo = SportsInfo.transformData(await localData.apiService.getSports());
+    Data.sportsInfo = SportsInfo.transformData(await Data.apiService.getSports());
   } on NoSuchMethodError {
     debugPrint("failed to load sports data");
   } on BadRequestException {
@@ -114,7 +100,7 @@ void main() async {
     debugPrint("page not found on sports");
   }
   try {
-    localData.foodMenus = FoodMenu.transformData(await localData.apiService.getFoodMenu());
+    Data.foodMenus = FoodMenu.transformData(await Data.apiService.getFoodMenu());
   } on NoSuchMethodError {
     debugPrint("failed to load food menu data");
   } on BadRequestException {
@@ -124,7 +110,7 @@ void main() async {
   }
 
   try {
-    localData.lostAndFounds = LostItem.transformData(await localData.apiService.getLostAndFound());
+    Data.lostAndFounds = LostItem.transformData(await Data.apiService.getLostAndFound());
   } on NoSuchMethodError {
     debugPrint("failed to load lost and found data");
   } on BadRequestException {
@@ -133,7 +119,7 @@ void main() async {
     debugPrint("page not found on lost and found");
   }
   try {
-    localData.storeItems = StoreItem.transformData(await localData.apiService.getSchoolStoreItems());
+    Data.storeItems = StoreItem.transformData(await Data.apiService.getSchoolStoreItems());
   } on NoSuchMethodError {
     debugPrint("failed to load store items data");
   } on BadRequestException {
@@ -142,7 +128,7 @@ void main() async {
     debugPrint("page not found on store items");
   }
   try {
-    localData.dailySchedules = DailySchedule.transformData(await localData.apiService.getDailySchedule());
+    Data.dailySchedules = DailySchedule.transformData(await Data.apiService.getDailySchedule());
   } on NoSuchMethodError {
     debugPrint("failed to load daily schedule data");
   } on BadRequestException {
@@ -151,11 +137,11 @@ void main() async {
     debugPrint("page not found on daily schedule");
   }
 
-  localData.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
+  Data.gameInfo.sort((a, b) => a.gameDate.compareTo(b.gameDate));
 
-  localData.settings.recentGamesToShow = await getRecentGamesToShow();
-  localData.settings.upcomingGamesToShow = await getUpcomingGamesToShow();
-  localData.settings.starredSports = (await getStarredSports()).join(' ');
+  Data.settings.recentGamesToShow = await Get.recentGamesToShow();
+  Data.settings.upcomingGamesToShow = await Get.upcomingGamesToShow();
+  Data.settings.starredSports = (await Get.starredSports()).join(' ');
 
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -164,12 +150,13 @@ void main() async {
   };
 
   debugPrint("lanching app");
-  runApp(StudentManagementApp(localData: localData));
+  runApp(
+    StudentManagementApp()
+  );
 }
 
 class StudentManagementApp extends StatefulWidget {
-  final Data localData;
-  const StudentManagementApp({Key? key, required this.localData}) : super(key: key);
+  const StudentManagementApp({Key? key}) : super(key: key);
 
   @override
   StudentManagementAppState createState() => StudentManagementAppState();
@@ -192,19 +179,32 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
-      saveSettings(widget.localData.settings);
-      if (widget.localData.user != null) {
-        saveUser(widget.localData.user!);
+      Save.settings(Data.settings);
+      if (Data.user != null) {
+        Save.user(Data.user!);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-      debugShowCheckedModeBanner: false,
-      home: MainMenuPage(localData: widget.localData),
+    return ChangeNotifierProvider(
+      create: (_) => ModelTheme(),
+      child: Consumer<ModelTheme>(
+        builder: (context, ModelTheme themeNotifier, child) {
+          return MaterialApp(
+            theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+            darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
+            themeMode: themeNotifier.isAuto 
+              ? ThemeMode.system
+              : themeNotifier.isDark 
+                ? ThemeMode.dark 
+                : ThemeMode.light,
+            debugShowCheckedModeBanner: false,
+            home: MainMenuPage(),
+          );
+        }
+      ),
     );
   }
 }

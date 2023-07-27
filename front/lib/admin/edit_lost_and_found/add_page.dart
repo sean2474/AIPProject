@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/lost_item.dart';
 import 'dart:io';
@@ -7,18 +6,19 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPage extends StatefulWidget {
-  final Data localData;
   final VoidCallback showUploadingSnackBar;
   final VoidCallback dismissSnackBar;
   final Function(bool) showUploadingResultSnackBar;
 
-  AddPage({super.key, required this.localData, required this.showUploadingSnackBar, required this.dismissSnackBar, required this.showUploadingResultSnackBar});
+  AddPage({super.key, required this.showUploadingSnackBar, required this.dismissSnackBar, required this.showUploadingResultSnackBar});
 
   @override
   State<AddPage> createState() => _AddPageState();
 }
 
 class _AddPageState extends State<AddPage> {
+  late ColorScheme colorScheme;
+
   final TextEditingController _nameController = TextEditingController(text: " ");
   final TextEditingController _descriptionController = TextEditingController(text: " ");
   final TextEditingController _locationController = TextEditingController(text: " ");
@@ -87,6 +87,7 @@ class _AddPageState extends State<AddPage> {
 
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
@@ -182,7 +183,7 @@ class _AddPageState extends State<AddPage> {
       tag: "add lost and found container",
       child: Container(
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
       ),
@@ -208,14 +209,14 @@ class _AddPageState extends State<AddPage> {
           ? Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: (_isImageError) ? lightColorScheme.error: Colors.grey,
+                color: (_isImageError) ? colorScheme.error: Colors.grey,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(10),
             ),
             width: width,
             height: height,
-            child: Icon(Icons.camera_alt, size: width * 0.9, color: (_isImageError) ? lightColorScheme.error: Colors.grey,),
+            child: Icon(Icons.camera_alt, size: width * 0.9, color: (_isImageError) ? colorScheme.error: Colors.grey,),
           )
           : Container(
               width: width,
@@ -251,7 +252,6 @@ class _AddPageState extends State<AddPage> {
               "Add item",
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontSize: 20,
-                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -277,14 +277,14 @@ class _AddPageState extends State<AddPage> {
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? colorScheme.error : Colors.grey,
             )
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? colorScheme.error : Colors.grey,
             )
           ),
         ),
@@ -331,14 +331,14 @@ class _AddPageState extends State<AddPage> {
                 borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   width: 1,
-                  color: _isTimeError ? lightColorScheme.error : Colors.grey,
+                  color: _isTimeError ? colorScheme.error : Colors.grey,
                 )
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.0),
                 borderSide: BorderSide(
                   width: 1,
-                  color: _isTimeError ? lightColorScheme.error : Colors.grey,
+                  color: _isTimeError ? colorScheme.error : Colors.grey,
                 )
               ),
             ),
@@ -379,14 +379,14 @@ class _AddPageState extends State<AddPage> {
           widget.showUploadingSnackBar();
           var result;
           try {
-            result = await widget.localData.apiService.postLostAndFound(itemData, File(_image!.path));
+            result = await Data.apiService.postLostAndFound(itemData, File(_image!.path));
           } catch (e) {
             result = {"status": "error"};
           }
           widget.showUploadingResultSnackBar(result["status"] == "success");
           widget.dismissSnackBar();
           if (result["status"] == "success") {
-            widget.localData.lostAndFounds.add(LostItem.fromJson({
+            Data.lostAndFounds.add(LostItem.fromJson({
               "id": result["id"],
               "item_name": _nameController.text,
               "description": _descriptionController.text,
@@ -394,7 +394,7 @@ class _AddPageState extends State<AddPage> {
               "location_found": _locationController.text,
               "date_found": _selectedDate!.toString(),
               "status": 2,
-              "submitter_id": widget.localData.user?.id,
+              "submitter_id": Data.user?.id,
             }));
           }
         }

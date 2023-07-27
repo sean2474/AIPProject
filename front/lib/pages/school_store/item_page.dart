@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/school_store.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -10,12 +9,13 @@ class ItemPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Stack(
       children: [
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: lightColorScheme.background,
+            color: colorScheme.background,
           ),
           child: Padding(
             padding: const EdgeInsets.all(10),

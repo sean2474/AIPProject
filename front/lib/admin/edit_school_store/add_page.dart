@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/school_store.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class AddPage extends StatefulWidget {
-  final Data localData;
   final VoidCallback showUploadingSnackBar;
   final VoidCallback dismissSnackBar;
   final Function(bool) showUploadingResultSnackBar;
 
-  AddPage({super.key, required this.localData, required this.showUploadingSnackBar, required this.dismissSnackBar, required this.showUploadingResultSnackBar});
+  AddPage({super.key, required this.showUploadingSnackBar, required this.dismissSnackBar, required this.showUploadingResultSnackBar});
 
   @override
   State<AddPage> createState() => _AddPageState();
 }
 
 class _AddPageState extends State<AddPage> {
+  late ColorScheme colorScheme;
+
   final TextEditingController _nameController = TextEditingController(text: " ");
   final TextEditingController _descriptionController = TextEditingController(text: " ");
   final TextEditingController _priceController = TextEditingController(text: " ");
@@ -93,6 +93,7 @@ class _AddPageState extends State<AddPage> {
 
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
@@ -168,20 +169,19 @@ class _AddPageState extends State<AddPage> {
         decoration: InputDecoration(
           labelText: "Description",
           filled: true,
-          fillColor: Colors.white,
           contentPadding: const EdgeInsets.all(15.0),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: Colors.grey,
+              color: colorScheme.secondary,
             )
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: Colors.grey,
+              color: colorScheme.secondary,
             )
           ),
         ),
@@ -194,7 +194,7 @@ class _AddPageState extends State<AddPage> {
       tag: "add school store container",
       child: Container(
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
       ),
@@ -202,8 +202,8 @@ class _AddPageState extends State<AddPage> {
   }
 
   void pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       _image = image;
@@ -220,21 +220,21 @@ class _AddPageState extends State<AddPage> {
           ? Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: (_isImageError) ? lightColorScheme.error: Colors.grey,
+                color: (_isImageError) ? Colors.red: colorScheme.secondary,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(10),
             ),
             width: width,
             height: height,
-            child: Icon(Icons.camera_alt, size: width * 0.9, color: (_isImageError) ? lightColorScheme.error: Colors.grey,),
+            child: Icon(Icons.camera_alt, size: width * 0.9, color: (_isImageError) ? Colors.red: colorScheme.secondary,),
           )
           : Container(
               width: width,
               height: height,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.grey,
+                  color: colorScheme.secondary,
                   width: 3,
                 ),
                 borderRadius: BorderRadius.circular(10),
@@ -263,7 +263,6 @@ class _AddPageState extends State<AddPage> {
               "Add item",
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontSize: 20,
-                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -284,20 +283,19 @@ class _AddPageState extends State<AddPage> {
         decoration: InputDecoration(
           labelText: labelText,
           filled: true,
-          fillColor: Colors.white,
           contentPadding: const EdgeInsets.all(15.0),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? Colors.red : colorScheme.secondary,
             )
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? Colors.red : colorScheme.secondary,
             )
           ),
         ),
@@ -308,6 +306,11 @@ class _AddPageState extends State<AddPage> {
   ElevatedButton buildSubmitButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
+        side: BorderSide(
+          width: 1,
+          color: colorScheme.primaryContainer,
+        ),
+        backgroundColor: colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
@@ -343,7 +346,7 @@ class _AddPageState extends State<AddPage> {
           widget.showUploadingSnackBar();
           var result;
           try {
-            result = await widget.localData.apiService.postSchoolStoreItem(itemData, File(_image!.path));
+            result = await Data.apiService.postSchoolStoreItem(itemData, File(_image!.path));
           } catch (e) {
             print(e);
             result = {"code": "400"};
@@ -352,7 +355,7 @@ class _AddPageState extends State<AddPage> {
           widget.showUploadingResultSnackBar(result["code"] == "200");
           widget.dismissSnackBar();
           if (result["code"] == "200") {
-            widget.localData.storeItems.add(StoreItem.fromJson({
+            Data.storeItems.add(StoreItem.fromJson({
               "id": result["id"],
               "item_name": _nameController.text,
               "price": _priceController.text.trim(),
@@ -364,7 +367,7 @@ class _AddPageState extends State<AddPage> {
           }
         }
       },
-      child: Text("Submit"),
+      child: Text("Submit", style: TextStyle(color: colorScheme.primaryContainer),),
     );
   }
   
@@ -374,9 +377,8 @@ class _AddPageState extends State<AddPage> {
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
           width: 1,
-          color: Colors.grey,
+          color: colorScheme.secondary,
         ),
-        color: lightColorScheme.background,
       ),
       width: 120,
       height: 55,
@@ -411,7 +413,6 @@ class _AddPageState extends State<AddPage> {
         style: TextStyle(
           fontWeight: FontWeight.normal,
           fontSize: 16,
-          color: Colors.black,
         ),
       ),
     );

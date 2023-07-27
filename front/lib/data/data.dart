@@ -14,27 +14,27 @@ enum Season { fall, winter, spring, na }
 enum UserType { student, teacher, parent, admin }
 
 class Data {
-  User_? user;
+  static User_? user;
   static bool loggedIn = false;
-  Map<String, List<DailySchedule>> dailySchedules;
-  Map<String, FoodMenu> foodMenus;
-  List<LostItem> lostAndFounds;
-  List<StoreItem> storeItems;
-  List<SportsInfo> sportsInfo;
-  List<GameInfo> gameInfo;
+  static late Map<String, List<DailySchedule>> dailySchedules;
+  static late Map<String, FoodMenu> foodMenus;
+  static late List<LostItem> lostAndFounds;
+  static late List<StoreItem> storeItems;
+  static late List<SportsInfo> sportsInfo;
+  static late List<GameInfo> gameInfo;
 
-  ApiService apiService;
+  static late ApiService apiService;
 
-  Settings settings;
+  static late Settings settings;
 
   static List<List<dynamic>> pageList = [];
 
-  void sortStoreItem() {
+  static void sortStoreItem() {
     storeItems.sort((a, b) => a.itemType.toString().compareTo(b.itemType.toString()));
     storeItems.sort((a, b) => a.name.compareTo(b.name));
   }
 
-  void sortLostAndFoundBy(String sortType) {
+  static void sortLostAndFoundBy(String sortType) {
     switch (sortType) {
       case "date":
         lostAndFounds.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
@@ -56,16 +56,4 @@ class Data {
         lostAndFounds.sort((a, b) => a.dateFound.compareTo(b.dateFound));
     }
   }
-  
-  Data({
-    this.user, 
-    required this.dailySchedules, 
-    required this.foodMenus,
-    required this.lostAndFounds,
-    required this.storeItems,
-    required this.sportsInfo,
-    required this.gameInfo,
-    required this.settings,
-    required this.apiService,
-  });
 }

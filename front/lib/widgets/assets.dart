@@ -21,17 +21,15 @@ import 'package:front/data/data.dart';
 import 'package:front/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:front/color_schemes.g.dart';
 
 class Assets {
   final Widget? currentPage;
-  final Data localData;
   final User? user = FirebaseAuth.instance.currentUser;
   final VoidCallback? onUserChanged; 
   final VoidCallback? onPageChange;
 
-  Assets({this.currentPage, required this.localData, this.onUserChanged, this.onPageChange}) {
-    if (localData.user?.userType == UserType.admin) {
+  Assets({this.currentPage, this.onUserChanged, this.onPageChange}) {
+    if (Data.user?.userType == UserType.admin) {
       Data.pageList = [
         ["HOME", Icons.home],
         ["DAILY SCHEDULE", Icons.calendar_today], 
@@ -57,6 +55,7 @@ class Assets {
   }
   
   Widget buildDrawer(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return StreamBuilder<User?> (
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
@@ -70,12 +69,12 @@ class Assets {
                     if (!Data.loggedIn) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage(localData: localData)),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     } else {
                       FirebaseAuth.instance.signOut();
                       if (onUserChanged != null) onUserChanged!();
-                      localData.apiService.logout(localData);
+                      Data.apiService.logout();
                       Data.loggedIn = false;
                       Navigator.pop(context);
                     }
@@ -103,13 +102,13 @@ class Assets {
                         ) : Container(),
                         Stack(
                           children: [
-                            (currentPage != null && currentPage.runtimeType == _getPageType(item.value[0])) 
+                            (currentPage != null && currentPage.runtimeType == _getPageType(item.value[0]).runtimeType) 
                                 ? Positioned(
                                   height: 56,
                                   width: 288,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: lightColorScheme.background.withOpacity(0.5),
+                                      color: colorScheme.background.withOpacity(0.5),
                                       borderRadius: BorderRadius.all(Radius.circular(10)),
                                     )
                                   ),
@@ -147,28 +146,28 @@ class Assets {
     );
   }
 
-  Type _getPageType(String title) {
+  StatefulWidget? _getPageType(String title) {
     switch (title) {
       case 'HOME':
-        return HomePage;
+        return HomePage();
       case 'DAILY SCHEDULE':
-        return DailySchedulePage;
+        return DailySchedulePage();
       case 'LOST AND FOUND':
-        return LostAndFoundPage;
+        return LostAndFoundPage();
       case 'FOOD MENU':
-        return FoodMenuPage;
+        return FoodMenuPage();
       case 'HAWKS NEST':
-        return SchoolStorePage;
+        return SchoolStorePage();
       case 'SPORTS':
-        return SportsPage;
+        return SportsPage();
       case 'GAMES':
-        return GamePage;
+        return GamePage();
       case 'EDIT LOST AND FOUND':
-        return EditLostAndFoundPage;
+        return EditLostAndFoundPage();
       case 'EDIT SCHOOL STORE':
-        return EditSchoolStorePage;
+        return EditSchoolStorePage();
       default:
-        return Null;
+        return null;
     }
   }
 
@@ -222,6 +221,7 @@ class Assets {
   /// [titles] is a list of strings that are the titles of each tab.
   /// [selectTab] should include the logic that changes the [selectedIndex] state and the page.
   Widget drawAppBarSelector({required BuildContext context, required List<String> titles, required Function(int) selectTab, required Animation<double> animation, required int selectedIndex}) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -250,7 +250,7 @@ class Assets {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: lightColorScheme.secondary,
+                      color: colorScheme.secondary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -333,27 +333,7 @@ class Assets {
   }
 
   void _pushPage(String title, BuildContext context) {
-    if (title == 'HOME') {
-      MainMenuPageState.pageIndex = 0;
-    } else if (title == 'DAILY SCHEDULE') {
-      MainMenuPageState.pageIndex = 1;
-    } else if (title == 'FOOD MENU') {
-      MainMenuPageState.pageIndex = 2;
-    } else if (title == 'GAMES') {
-      MainMenuPageState.pageIndex = 3;
-    } else if (title == 'SPORTS') {
-      MainMenuPageState.pageIndex = 4;
-    } else if (title == 'LOST AND FOUND') {
-      MainMenuPageState.pageIndex = 5;
-    } else if (title == 'HAWKS NEST') {
-      MainMenuPageState.pageIndex = 6;
-    } else if (title == 'EDIT LOST AND FOUND') {
-      MainMenuPageState.pageIndex = 7;
-    } else if (title == 'EDIT SCHOOL STORE') {
-      MainMenuPageState.pageIndex = 8;
-    } else {
-      throw Exception('Invalid page type');
-    }
+    MainMenuPageState.pageToDisplay = _getPageType(title)!;
     if (onPageChange != null) {
       onPageChange!();
     } else {
@@ -408,14 +388,14 @@ class Assets {
   }
 
   Widget lostItemBox(LostItem data, BuildContext context, VoidCallback onTap) {
-
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: lightColorScheme.secondaryContainer,
+          color: colorScheme.secondaryContainer,
           boxShadow: [
             BoxShadow(
               color: Colors.white,
@@ -594,7 +574,7 @@ class Assets {
     );
   }
 
-  static Widget buttomSheetModalTopline() {
+  Widget buttomSheetModalTopline() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

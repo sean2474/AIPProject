@@ -7,8 +7,7 @@ import 'add_page.dart';
 import 'delete_page.dart';
 
 class EditLostAndFoundPage extends StatefulWidget {
-  final Data localData;
-  const EditLostAndFoundPage({Key? key, required this.localData}) : super(key: key);
+  const EditLostAndFoundPage({Key? key}) : super(key: key);
 
   @override
   EditLostAndFoundPageState createState() => EditLostAndFoundPageState();
@@ -22,7 +21,7 @@ class EditLostAndFoundPageState extends State<EditLostAndFoundPage>
   @override
   Widget build(BuildContext context) {
     UploadingSnackbar uploadingSnackbar = UploadingSnackbar(context, _scaffoldMessengerKey, "uploading");
-    Assets assets = Assets(currentPage: EditLostAndFoundPage(localData: widget.localData), localData: widget.localData,);
+    Assets assets = Assets(currentPage: EditLostAndFoundPage());
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
       child: Column(
@@ -32,7 +31,6 @@ class EditLostAndFoundPageState extends State<EditLostAndFoundPage>
           SizedBox(height: 20),
           buildEditCard("Add item", const Icon(Icons.add), "add lost and found", () {
             assets.pushDialogPage(context, AddPage(
-                localData: widget.localData, 
                 showUploadingSnackBar: uploadingSnackbar.showUploading, 
                 dismissSnackBar: uploadingSnackbar.dismiss,
                 showUploadingResultSnackBar: uploadingSnackbar.showUploadingResult,
@@ -42,12 +40,10 @@ class EditLostAndFoundPageState extends State<EditLostAndFoundPage>
           }),
           buildEditCard("Edit item", const Icon(Icons.edit), "edit lost and found", () {
             assets.pushDialogPage(context, EditPage(
-              localData: widget.localData
             ), haveDialog: false);
           }),
           buildEditCard("Delete item", const Icon(Icons.delete), "delete lost and found", () {
             assets.pushDialogPage(context, DeletePage(
-              localData: widget.localData,
             ), haveDialog: false);
           }),
         ],
@@ -84,7 +80,6 @@ class EditLostAndFoundPageState extends State<EditLostAndFoundPage>
                       title,
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         fontSize: 20,
-                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

@@ -6,8 +6,7 @@ import 'package:intl/intl.dart';
 import 'daily_schedule_view.dart';
 
 class DailySchedulePage extends StatefulWidget {
-  final Data localData;
-  const DailySchedulePage({Key? key, required this.localData}): super(key: key);
+  const DailySchedulePage({Key? key}): super(key: key);
   @override
   DailySchedulePageState createState() => DailySchedulePageState();
 }
@@ -23,8 +22,8 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
   @override
   void initState() {
     super.initState();
-    if (widget.localData.dailySchedules.isNotEmpty) {
-      displayDate = widget.localData.dailySchedules.keys.toList().first;
+    if (Data.dailySchedules.isNotEmpty) {
+      displayDate = Data.dailySchedules.keys.toList().first;
     } else {
       displayDate = null;
     }
@@ -33,14 +32,14 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
       int currentPage = _pageController.page!.round();
       if (currentPage != _dateToIndex[displayDate]) {
         setState(() {
-          displayDate = widget.localData.dailySchedules.keys.toList()[currentPage];
+          displayDate = Data.dailySchedules.keys.toList()[currentPage];
         });
       }
     });
 
     _dateToIndex = {
-      for (var i = 0; i < widget.localData.dailySchedules.length; i++)
-        widget.localData.dailySchedules.keys.toList()[i]: i,
+      for (var i = 0; i < Data.dailySchedules.length; i++)
+        Data.dailySchedules.keys.toList()[i]: i,
     };
   }
 
@@ -52,9 +51,8 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
   
   @override
   Widget build(BuildContext context) {  
-    Data localData = widget.localData;
     Size screen = MediaQuery.of(context).size;
-    Assets assets = Assets(currentPage: DailySchedulePage(localData: localData), localData: localData);
+    Assets assets = Assets(currentPage: DailySchedulePage(),);
     if (displayDate == null) {
       return Container(
         margin: EdgeInsets.only(top: 10, left: 20, right: 20),
@@ -96,8 +94,8 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
                 showDatePicker(
                   context: context, 
                   initialDate: DateTime.parse(displayDate!),
-                  firstDate: DateTime.parse(widget.localData.foodMenus.values.toList()[0].date), 
-                  lastDate: DateTime.parse(widget.localData.foodMenus.values.toList().last.date), 
+                  firstDate: DateTime.parse(Data.foodMenus.values.toList()[0].date), 
+                  lastDate: DateTime.parse(Data.foodMenus.values.toList().last.date), 
                 ).then((value) {
                   if (value != null) {
                     setState(() {
@@ -134,11 +132,10 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
         Expanded(
           child: PageView.builder(
             controller: _pageController,
-            itemCount: widget.localData.dailySchedules.length,
+            itemCount: Data.dailySchedules.length,
             itemBuilder:(context, index) {
               return DailyScheduleViewPage(
-                dailySchedules: widget.localData.dailySchedules.values.toList()[index],
-                isTimelineMode: true //  widget.localData.settings.isDailyScheduleTimelineMode,
+                dailySchedules: Data.dailySchedules.values.toList()[index],
               );
             },
           ),

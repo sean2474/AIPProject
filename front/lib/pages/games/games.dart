@@ -9,17 +9,16 @@ import 'package:front/widgets/assets.dart';
 import 'package:front/data/sports.dart';
 import 'game_info.dart';
 import 'package:front/pages/sports/method.dart';
-import 'package:front/color_schemes.g.dart';
 
 class GamePage extends StatefulWidget {
-  final Data localData;
-  const GamePage({Key? key, required this.localData}) : super(key: key);
+  const GamePage({Key? key}) : super(key: key);
   @override
   GamePageState createState() => GamePageState();
 }
 
 class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
   int _selectedTabIndex = 0;
+  late ColorScheme colorScheme;
   late final AnimationController _animationController;
   late final Animation<double> _animation;
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
@@ -104,7 +103,7 @@ class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin 
     DateTime currentTime = DateTime.now();
     List<GameInfo> recentGames = [];
 
-    List<String> starredSportsSet = widget.localData.settings.starredSports.split(" ").toList();
+    List<String> starredSportsSet = Data.settings.starredSports.split(" ").toList();
 
     // Filter the game data based on the getStarredGames flag
     List<GameInfo> filteredGameData = getStarredGames
@@ -141,7 +140,7 @@ class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin 
     DateTime currentTime = DateTime.now();
     List<GameInfo> upcomingGames = [];
 
-    List<String> starredSportsSet = widget.localData.settings.starredSports.split(" ").toList();
+    List<String> starredSportsSet = Data.settings.starredSports.split(" ").toList();
 
     // Filter the game data based on the getStarredGames flag
     List<GameInfo> filteredGameData = getStarredGames
@@ -183,7 +182,7 @@ class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin 
         itemBuilder: (context, index) {
           PageController pageController = PageController(initialPage: index);
           String title = gamesList[index].sportsName == 'N/A' ? 'N/A' : '${gamesList[index].sportsName.trim()} - ${getSportsCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}';
-          Color color = gamesList[index].sportsName == 'N/A' ? Colors.grey : gamesList[index].matchResult == '' ? lightColorScheme.primaryContainer : lightColorScheme.secondaryContainer;
+          Color color = gamesList[index].sportsName == 'N/A' ? Colors.grey : gamesList[index].matchResult == '' ? colorScheme.primaryContainer : colorScheme.secondaryContainer;
           return Container(
             margin: EdgeInsets.only(bottom: 3),
             decoration: BoxDecoration(
@@ -240,13 +239,13 @@ class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
-    Data localData = widget.localData;
+    colorScheme = Theme.of(context).colorScheme;
     Size screen = MediaQuery.of(context).size;
-    Assets assets = Assets(currentPage: GamePage(localData: localData), localData: localData);
-    int recentGametoDisplay = localData.settings.recentGamesToShow;
-    int upcomingGametoDisplay = localData.settings.upcomingGamesToShow;
-    List<SportsInfo> sportsInfo = localData.sportsInfo;
-    List<GameInfo> gameInfo = localData.gameInfo;
+    Assets assets = Assets(currentPage: GamePage());
+    int recentGametoDisplay = Data.settings.recentGamesToShow;
+    int upcomingGametoDisplay = Data.settings.upcomingGamesToShow;
+    List<SportsInfo> sportsInfo = Data.sportsInfo;
+    List<GameInfo> gameInfo = Data.gameInfo;
     Map<String, bool> sportsListMap = {};
     
     for(SportsInfo sports in sportsInfo) {
@@ -286,7 +285,7 @@ class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin 
       onRefresh: () => Future.delayed(const Duration(milliseconds: 0), () async {
         String errorMessage = '';
         try {
-          widget.localData.gameInfo = GameInfo.transformData(await widget.localData.apiService.getGames());
+          Data.gameInfo = GameInfo.transformData(await Data.apiService.getGames());
         } catch (e) {
           errorMessage = 'Failed to load game data';
         }

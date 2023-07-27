@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:front/data/daily_schedule.dart';
+import 'package:front/data/data.dart';
 
 class DailyScheduleViewPage extends StatefulWidget {
   final List<DailySchedule> dailySchedules;
-  final bool isTimelineMode;
 
   const DailyScheduleViewPage({
     Key? key, 
     required this.dailySchedules,
-    required this.isTimelineMode,
   }) : super(key: key);
 
   @override
@@ -25,7 +24,10 @@ class DailyScheduleViewPageState extends State<DailyScheduleViewPage> {
   }
   @override
   Widget build(BuildContext context) {
-    if (widget.isTimelineMode) {
+    Color? textColor = Theme.of(context).brightness == Brightness.light 
+      ? Colors.grey.shade800
+      : null;
+    if (Data.settings.isDailyScheduleTimelineMode) {
       return Container(
         margin: EdgeInsets.only(top: 10),
         child: ListView.builder(
@@ -62,20 +64,19 @@ class DailyScheduleViewPageState extends State<DailyScheduleViewPage> {
                     ),
                   ),
                   child: ListTile(
-                    title: Text(schedule.title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.grey.shade800)),
-                    subtitle: Text(schedule.location, style: TextStyle(fontSize: 12, color: Colors.grey.shade800)),
+                    title: Text(schedule.title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: textColor)),
+                    subtitle: Text(schedule.location, style: TextStyle(fontSize: 12, color: textColor)),
                     trailing: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(schedule.startTime, style: TextStyle(fontSize: 14, color: Colors.grey.shade800)),
-                        Text(schedule.endTime, style: TextStyle(fontSize: 14, color: Colors.grey.shade800)),
+                        Text(schedule.startTime, style: TextStyle(fontSize: 14, color: textColor)),
+                        Text(schedule.endTime, style: TextStyle(fontSize: 14, color: textColor)),
                       ]
                     ),
                   ),
                 )
               );
             });
-
             return Column(children: children);
           },
         ),
@@ -126,7 +127,17 @@ class _TimeLineItem extends StatelessWidget {
                         width: 2,
                       ),
                     ),
-                    child: Text(schedule.title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey.shade800)),
+                    child: Text(
+                      schedule.title, 
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        fontSize: 14, 
+                        fontWeight: FontWeight.bold, 
+                        color: Theme.of(context).brightness == Brightness.light 
+                          ? Colors.grey.shade800
+                          : null,
+                      )
+                    ),
                   ),
                 );
               }).toList(),

@@ -8,7 +8,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class EditItemPage extends StatefulWidget {
-  final Data localData;
   final StoreItem itemData;
   final int itemIndex;
   final VoidCallback onEdit;
@@ -18,7 +17,6 @@ class EditItemPage extends StatefulWidget {
   
   EditItemPage({
     super.key,
-    required this.localData, 
     required this.itemData, 
     required this.itemIndex, 
     required this.onEdit, 
@@ -32,6 +30,8 @@ class EditItemPage extends StatefulWidget {
 }
 
 class _EditItemPageState extends State<EditItemPage> {
+  late ColorScheme colorScheme;
+
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _priceController;
@@ -112,6 +112,7 @@ class _EditItemPageState extends State<EditItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
 
@@ -120,7 +121,7 @@ class _EditItemPageState extends State<EditItemPage> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
@@ -202,7 +203,7 @@ class _EditItemPageState extends State<EditItemPage> {
       tag: "add school store container",
       child: Container(
         decoration: BoxDecoration(
-          color: lightColorScheme.background,
+          color: colorScheme.background,
           borderRadius: BorderRadius.circular(15),
         ),
       ),
@@ -272,7 +273,6 @@ class _EditItemPageState extends State<EditItemPage> {
         "Edit Item",
         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
           fontSize: 20,
-          color: Colors.black,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -296,14 +296,14 @@ class _EditItemPageState extends State<EditItemPage> {
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? colorScheme.error : Colors.grey,
             )
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(
               width: 1,
-              color: isError ? lightColorScheme.error : Colors.grey,
+              color: isError ? colorScheme.error : Colors.grey,
             )
           ),
         ),
@@ -349,7 +349,7 @@ class _EditItemPageState extends State<EditItemPage> {
           widget.showUploadingSnackBar();
           var result;
           try {
-            result = await widget.localData.apiService.putSchoolStoreItem(widget.itemData.id, itemData, imageFile);
+            result = await Data.apiService.putSchoolStoreItem(widget.itemData.id, itemData, imageFile);
           } catch (e) {
             print(e);
             result = {"status": "fail"};
@@ -358,7 +358,7 @@ class _EditItemPageState extends State<EditItemPage> {
           widget.showUploadingResultSnackBar(result["status"] == "success");
           widget.dismissSnackBar();
           if (result["status"] == "success") {
-            widget.localData.storeItems[widget.itemIndex] = StoreItem.fromJson({
+            Data.storeItems[widget.itemIndex] = StoreItem.fromJson({
               "ID": result["id"],
               "Product_Name": _nameController.text,
               "Price": double.parse(_priceController.text.trim()),
@@ -382,7 +382,7 @@ class _EditItemPageState extends State<EditItemPage> {
           width: 1,
           color: Colors.grey,
         ),
-        color: lightColorScheme.background,
+        color: colorScheme.background,
       ),
       width: 120,
       height: 55,
@@ -420,7 +420,6 @@ class _EditItemPageState extends State<EditItemPage> {
         style: TextStyle(
           fontWeight: FontWeight.normal,
           fontSize: 16,
-          color: Colors.black,
         ),
       ),
     );

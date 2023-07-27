@@ -44,7 +44,7 @@ class ApiService {
     return responseBody.runtimeType == String;
   }
 
-  void logout(Data? data) {
+  void logout() {
     Data.pageList = [
         ["DASHBOARD", Icons.dashboard], 
         ["DAILY SCHEDULE", Icons.schedule], 
@@ -53,9 +53,7 @@ class ApiService {
         ["HAWKS NEST", Icons.store], 
         ["SPORTS", Icons.sports]
     ];
-    if (data != null) {
-      data.user = null;
-    }
+    Data.user = null;
   }
 
   // daily schedule
