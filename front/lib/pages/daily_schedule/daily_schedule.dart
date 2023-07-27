@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
-import 'package:front/widgets/assets.dart';
 import 'package:intl/intl.dart';
 
 import 'daily_schedule_view.dart';
@@ -51,8 +50,6 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
   
   @override
   Widget build(BuildContext context) {  
-    Size screen = MediaQuery.of(context).size;
-    Assets assets = Assets(currentPage: DailySchedulePage(),);
     if (displayDate == null) {
       return Container(
         margin: EdgeInsets.only(top: 10, left: 20, right: 20),

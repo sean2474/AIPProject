@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:front/widgets/uploading_snackbar.dart';
-import 'package:front/data/data.dart';
 import 'package:front/widgets/assets.dart';
 import 'edit_page.dart';
 import 'add_page.dart';

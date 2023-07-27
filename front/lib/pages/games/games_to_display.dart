@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:front/color_schemes.g.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:numberpicker/numberpicker.dart';
 
