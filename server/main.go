@@ -22,6 +22,7 @@ func main() {
 	http.HandleFunc("/auth/login", controllers.LoginHandler)
 	http.HandleFunc("/auth/testToken", controllers.TestToken)
 	http.HandleFunc("/data/food-menu/", controllers.FoodMenuByHandler)
+	http.HandleFunc("/data/daily-schedule/image", controllers.ScheduleImageHandler)
 	http.HandleFunc("/data/daily-schedule/", controllers.ScheduleHandler)
 	http.HandleFunc("/data/lost-and-found/", controllers.LostAndFoundHandler)
 	http.HandleFunc("/data/sports/", controllers.SportsHandler)
