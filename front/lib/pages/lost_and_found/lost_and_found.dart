@@ -101,8 +101,10 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                         showReturnedItem: Data.settings.showReturnedItem,
                         onSwitchChange: onSwitchChange
                       ),
-                      Divider(
-                        color: Colors.grey[200],
+                      Divider(                
+                        color: Theme.of(context).brightness == Brightness.light 
+                          ? Colors.grey.shade300 
+                          : const Color.fromARGB(255, 41, 39, 39),
                         height: 1,
                       ),
                       ListTile(
@@ -169,16 +171,20 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                         title: const Text('Sort by Status'),
                         onTap: onSortChange("status"),
                       ),
-                      Divider(
-                        color: Colors.grey[200],
+                      Divider(                
+                        color: Theme.of(context).brightness == Brightness.light 
+                          ? Colors.grey.shade300 
+                          : const Color.fromARGB(255, 41, 39, 39),
                         height: 1,
                       ),
                       ListTile(
                         title: const Text('Sort by Date'),
                         onTap: onSortChange("date"),
                       ),
-                      Divider(
-                        color: Colors.grey[200],
+                      Divider(                
+                        color: Theme.of(context).brightness == Brightness.light 
+                          ? Colors.grey.shade300 
+                          : const Color.fromARGB(255, 41, 39, 39),
                         height: 1,
                       ),
                       ListTile(

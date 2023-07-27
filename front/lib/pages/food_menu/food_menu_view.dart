@@ -82,9 +82,11 @@ class FoodMenuViewPageState extends State<FoodMenuViewPage> {
                           );
                         }, 
                         separatorBuilder: (BuildContext context, int index) {
-                          return Divider(
+                          return Divider(                
+                            color: Theme.of(context).brightness == Brightness.light 
+                              ? Colors.grey.shade300 
+                              : const Color.fromARGB(255, 41, 39, 39),
                             height: 1,
-                            color: colorScheme.outline,
                           );
                         },
                         shrinkWrap: true,

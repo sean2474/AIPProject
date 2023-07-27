@@ -24,9 +24,9 @@ class UploadingSnackbar {
             Text(
               message, 
               textAlign: TextAlign.center, 
-              style: TextStyle(
-                fontSize: 15, 
-                color: Colors.white,
+              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: lightColorScheme.onError,
               ),
             ),
             Icon(icon, color: Colors.white)
@@ -49,13 +49,13 @@ class UploadingSnackbar {
           content: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
+              children: [
                 Text(
-                  "success", 
+                  "Success", 
                   textAlign: TextAlign.center, 
-                  style: TextStyle(
-                    fontSize: 15, 
-                    color: Colors.white,
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: lightColorScheme.onError,
                   ),
                 ),
                 Icon(Icons.check_circle_outline, color: Colors.white),
@@ -77,10 +77,10 @@ class UploadingSnackbar {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                  "failed",  // changed to "failed"
+                  "Failed",  // changed to "failed"
                   textAlign: TextAlign.center, 
-                  style: TextStyle(
-                    fontSize: 15, 
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: lightColorScheme.onError,
                   ),
                 ),

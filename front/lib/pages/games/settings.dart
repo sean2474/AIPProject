@@ -99,8 +99,10 @@ class SettingPageState extends State<SettingPage> {
                     );
                   },
                 ),
-                Divider(
-                  color: Colors.grey[200],
+                Divider(                
+                  color: Theme.of(context).brightness == Brightness.light 
+                    ? Colors.grey.shade300 
+                    : const Color.fromARGB(255, 41, 39, 39),
                   height: 1,
                 ),
                 ListTile(

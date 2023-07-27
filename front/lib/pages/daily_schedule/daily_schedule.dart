@@ -73,58 +73,73 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
     return Column(
       children: [
         SizedBox(height: 10,),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(onPressed: () {
-              DateTime currentDate = DateTime.parse(displayDate!);
-              String previousDate = currentDate.subtract(Duration(days: 1)).toString().substring(0, 10);
-              if (_dateToIndex.containsKey(previousDate)) {
-                _pageController.previousPage(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              }
-            }, icon: Icon(Icons.arrow_back_ios_new_rounded)),
-            InkWell(
-              onTap: () {
-                showDatePicker(
-                  context: context, 
-                  initialDate: DateTime.parse(displayDate!),
-                  firstDate: DateTime.parse(Data.foodMenus.values.toList()[0].date), 
-                  lastDate: DateTime.parse(Data.foodMenus.values.toList().last.date), 
-                ).then((value) {
-                  if (value != null) {
-                    setState(() {
-                      displayDate = value.toString().substring(0, 10);
-                    });
-                    _pageController.animateToPage(
-                      _dateToIndex[displayDate]!,
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
-                });
-              },
-              child: Text(
-                DateFormat('yyyy-MM-dd').format(DateTime.parse(displayDate!)).toString(),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+        Container(
+          padding: EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).brightness == Brightness.light 
+                  ? Colors.grey.shade300 
+                  : const Color.fromARGB(255, 41, 39, 39),
+                width: 1,
               ),
             ),
-            IconButton(onPressed: () {
-              DateTime currentDate = DateTime.parse(displayDate!);
-              String nextDate = currentDate.add(Duration(days: 1)).toString().substring(0, 10);
-              if (_dateToIndex.containsKey(nextDate)) {
-                _pageController.nextPage(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              }
-            }, icon: Icon(Icons.arrow_forward_ios_rounded)),
-          ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(onPressed: () {
+                DateTime currentDate = DateTime.parse(displayDate!);
+                String previousDate = currentDate.subtract(Duration(days: 1)).toString().substring(0, 10);
+                if (_dateToIndex.containsKey(previousDate)) {
+                  _pageController.previousPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              }, icon: Icon(Icons.arrow_back_ios_new_rounded)),
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  showDatePicker(
+                    context: context, 
+                    initialDate: DateTime.parse(displayDate!),
+                    firstDate: DateTime.parse(Data.foodMenus.values.toList()[0].date), 
+                    lastDate: DateTime.parse(Data.foodMenus.values.toList().last.date), 
+                  ).then((value) {
+                    if (value != null) {
+                      setState(() {
+                        displayDate = value.toString().substring(0, 10);
+                      });
+                      _pageController.animateToPage(
+                        _dateToIndex[displayDate]!,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  });
+                },
+                child: Text(
+                  DateFormat('yyyy-MM-dd').format(DateTime.parse(displayDate!)).toString(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              IconButton(onPressed: () {
+                DateTime currentDate = DateTime.parse(displayDate!);
+                String nextDate = currentDate.add(Duration(days: 1)).toString().substring(0, 10);
+                if (_dateToIndex.containsKey(nextDate)) {
+                  _pageController.nextPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              }, icon: Icon(Icons.arrow_forward_ios_rounded)),
+            ],
+          ),
         ),
         Expanded(
           child: PageView.builder(
@@ -132,6 +147,7 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
             itemCount: Data.dailySchedules.length,
             itemBuilder:(context, index) {
               return DailyScheduleViewPage(
+                date: DateFormat('yyyy-MM-dd').format(DateTime.parse(displayDate!)).toString(),
                 dailySchedules: Data.dailySchedules.values.toList()[index],
               );
             },

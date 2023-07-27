@@ -29,6 +29,7 @@ class DailySchedule {
       for (dynamic value in values) {
         dailySchedule.add(DailySchedule.fromJson(value));
       }
+      dailySchedule.sort((a, b) => a.startTime.compareTo(b.startTime));
       dailySchedules[key] = dailySchedule;
     });
     return dailySchedules;
@@ -41,7 +42,7 @@ class DailySchedule {
       title: json["title"],
       // check after actual endpoint connect
       description: json["description"],
-      isRequired: false, // json["isClass"],
+      isRequired: json["isRequired"],
       color: Color(int.parse("0xFF${json["color"].substring(1, 7)}")), // , 
       resource: HashSet<int>()..addAll(json["resource"]),
       location: json["location"],
@@ -50,6 +51,6 @@ class DailySchedule {
     
   @override
   String toString() {
-    return title;
+    return "$title $startTime";
   }
 }

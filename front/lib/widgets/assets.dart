@@ -66,6 +66,7 @@ class Assets {
               children: [
                 ListTile(
                   onTap: () {
+                    Navigator.pop(context);
                     if (!Data.loggedIn) {
                       Navigator.push(
                         context,
@@ -76,7 +77,6 @@ class Assets {
                       if (onUserChanged != null) onUserChanged!();
                       Data.apiService.logout();
                       Data.loggedIn = false;
-                      Navigator.pop(context);
                     }
                   },
                   leading: CircleAvatar(
@@ -96,7 +96,10 @@ class Assets {
                       children: [
                         (item.key != 0) ? Padding(
                           padding: const EdgeInsets.only(left: 3),
-                          child: Divider(
+                          child: Divider(                
+                            color: Theme.of(context).brightness == Brightness.light 
+                              ? Colors.grey.shade300 
+                              : const Color.fromARGB(255, 41, 39, 39),
                             height: 1,
                           ),
                         ) : Container(),
