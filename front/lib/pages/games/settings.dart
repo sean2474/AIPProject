@@ -67,10 +67,7 @@ class SettingPageState extends State<SettingPage> {
                     );
                   },
                 ),
-                Divider(
-                  color: Colors.grey[200],
-                  height: 1,
-                ),
+                Assets().getDivider(context),
                 ListTile(
                   title: const Text('Recent Games To Display'),
                   trailing: const Icon(Icons.display_settings_rounded, color: Colors.grey),
@@ -99,12 +96,7 @@ class SettingPageState extends State<SettingPage> {
                     );
                   },
                 ),
-                Divider(                
-                  color: Theme.of(context).brightness == Brightness.light 
-                    ? Colors.grey.shade300 
-                    : const Color.fromARGB(255, 41, 39, 39),
-                  height: 1,
-                ),
+                Assets().getDivider(context),
                 ListTile(
                   title: const Text('Favorite Sports'),
                   trailing: const Icon(Icons.star_border_rounded, color: Colors.yellow),

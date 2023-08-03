@@ -11,15 +11,15 @@ class LoadingPage extends StatelessWidget {
       body: Center(
         child: Stack(
           children: [
-            Center(child: Image.asset("assets/school_logo.png", height: 200)),
             Center(
               child: SpinKitWaveSpinner(
                 color: Color.fromARGB(255, 140, 33, 49),
-                trackColor: Color.fromARGB(255, 255, 165, 179),
+                trackColor: Color.fromARGB(255, 215, 215, 215),
                 waveColor: Color.fromARGB(255, 140, 33, 49),
                 size: 300,
               ),
             ),
+            Center(child: Image.asset("assets/school_logo.png", height: 200)),
           ],
         ),
       ),

@@ -55,12 +55,7 @@ class SettingModalState extends State<SettingModal> {
                         },
                         text: "Manual Theme Mode",
                       ),
-                      Divider(                
-                        color: Theme.of(context).brightness == Brightness.light 
-                          ? Colors.grey.shade300 
-                          : const Color.fromARGB(255, 41, 39, 39),
-                        height: 1,
-                      ),
+                      Assets().getDivider(context),
                       SwitchWidget(
                         value: isDarkMode,
                         onSwitchChange: (bool value) {

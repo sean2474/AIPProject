@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/data/food_menu.dart';
+import 'package:front/widgets/assets.dart';
 
 enum MealType { breakfast, lunch, dinner }
 
@@ -82,12 +83,7 @@ class FoodMenuViewPageState extends State<FoodMenuViewPage> {
                           );
                         }, 
                         separatorBuilder: (BuildContext context, int index) {
-                          return Divider(                
-                            color: Theme.of(context).brightness == Brightness.light 
-                              ? Colors.grey.shade300 
-                              : const Color.fromARGB(255, 41, 39, 39),
-                            height: 1,
-                          );
+                          return Assets().getDivider(context);
                         },
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),

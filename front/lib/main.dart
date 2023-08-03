@@ -1,28 +1,34 @@
-/// main.dart
-
 import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:front/pages/daily_schedule/daily_schedule_info.dart';
+import 'package:front/pages/games/game_info.dart';
+import 'package:front/pages/sports/sports_info.dart';
+import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
+
 import 'package:front/api_service/api_service.dart';
 import 'package:front/api_service/exceptions.dart';
+import 'package:front/color_schemes.g.dart';
+import 'package:front/data/daily_schedule.dart';
 import 'package:front/data/data.dart';
+import 'package:front/data/food_menu.dart';
 import 'package:front/data/lost_item.dart';
 import 'package:front/data/school_store.dart';
+import 'package:front/data/settings.dart';
+import 'package:front/data/shared_preference/get_preference.dart';
+import 'package:front/data/shared_preference/save_preference.dart';
 import 'package:front/data/sports.dart';
+import 'package:front/data/user_.dart';
+import 'package:front/firebase_options.dart';
 import 'package:front/loading/loading.dart';
 import 'package:front/main_menu/main_menu.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:front/data/food_menu.dart';
-import 'package:provider/provider.dart';
-import 'data/shared_preference/get_preference.dart';
-import 'data/shared_preference/save_preference.dart';
-import 'firebase_options.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:front/data/daily_schedule.dart';
-import 'package:front/data/settings.dart';
-import 'package:front/data/user_.dart';
-import 'color_schemes.g.dart';
-import 'model_theme.dart';
+import 'package:front/model_theme.dart';
+import 'package:front/notification_control/notification_controller.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +40,10 @@ void main() async {
     home: LoadingPage(),
     debugShowCheckedModeBanner: false,
   ));
+
+  LocalNotification.init();
+  LocalNotification.requestNotificationPermission();
+  tz.initializeTimeZones();
 
   String baseUrl = 'http://35.169.229.180:8082';
   debugPrint("connecting to $baseUrl...");
@@ -166,6 +176,8 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
   @override
   void initState() {
     super.initState();
+    // test notification
+    LocalNotification.showNotificationTest();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -193,6 +205,29 @@ class StudentManagementAppState extends State<StudentManagementApp> with Widgets
       child: Consumer<ModelTheme>(
         builder: (context, ModelTheme themeNotifier, child) {
           return MaterialApp(
+            initialRoute: "/",
+            onGenerateRoute: (settings) {
+              if (settings.name == "/daily-schedule/info") {
+                final Map<String, dynamic> args = settings.arguments as Map<String, dynamic>;
+                return MaterialPageRoute(
+                  builder: (context) => DailyScheduleInfoPage(
+                    dailySchedule: args['dailySchedule'] as DailySchedule,
+                    date: args['date'] as String,
+                  ),
+                );
+              } else if (settings.name == "/game/info") {
+                final Map<String, dynamic> args = settings.arguments as Map<String, dynamic>;
+                return MaterialPageRoute(
+                  builder: (context) => GameInfoPage(
+                    gameData: args['gameData'] as GameInfo,
+                  ),
+                );
+              } else {
+                return MaterialPageRoute(
+                  builder: (context) => MainMenuPage(),
+                );
+              }
+            },
             theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
             darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
             themeMode: themeNotifier.isAuto 

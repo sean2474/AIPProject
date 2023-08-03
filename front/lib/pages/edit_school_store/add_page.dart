@@ -348,7 +348,6 @@ class _AddPageState extends State<AddPage> {
           try {
             result = await Data.apiService.postSchoolStoreItem(itemData, File(_image!.path));
           } catch (e) {
-            print(e);
             result = {"code": "400"};
           }
           print(result);

@@ -91,6 +91,8 @@ class FoodMenuPageState extends State<FoodMenuPage>
               }
             }, icon: Icon(Icons.arrow_back_ios_new_rounded)),
             InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
               onTap: () {
                 showDatePicker(
                   context: context, 

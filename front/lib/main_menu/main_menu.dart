@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:front/admin/edit_lost_and_found/lost_and_found_edit.dart';
-import 'package:front/admin/edit_school_store/school_store_edit.dart';
+import 'package:front/pages/edit_lost_and_found/lost_and_found_edit.dart';
+import 'package:front/pages/edit_school_store/school_store_edit.dart';
 import 'package:front/data/data.dart';
 import 'package:front/data/sports.dart';
 import 'package:front/pages/daily_schedule/daily_schedule.dart';
@@ -142,6 +142,7 @@ class MainMenuPageState extends State<MainMenuPage> {
           children: [
             NoSplashCustomBarItem(
               icon: Icons.home_outlined,
+              label: "Home",
               activeIcon: Icons.home,
               isActive: pageToDisplay.runtimeType == HomePage,
               onTap: () => setState(() { pageToDisplay = HomePage(); }),
@@ -149,18 +150,21 @@ class MainMenuPageState extends State<MainMenuPage> {
             ),
             NoSplashCustomBarItem(
               icon: Icons.calendar_today_outlined,
+              label: "Schedule",
               activeIcon: Icons.calendar_today,
               isActive: pageToDisplay.runtimeType == DailySchedulePage,
               onTap: () => setState(() { pageToDisplay = DailySchedulePage(); }),
             ),
             NoSplashCustomBarItem(
               icon: Icons.fastfood_outlined,
+              label: "Food",
               activeIcon: Icons.fastfood,
               isActive: pageToDisplay.runtimeType == FoodMenuPage,
               onTap: () => setState(() { pageToDisplay = FoodMenuPage(); }),
             ),
             NoSplashCustomBarItem(
               icon: Icons.directions_run_outlined,
+              label: "Game",
               activeIcon: Icons.directions_run,
               isActive: pageToDisplay.runtimeType == GamePage,
               onTap: () => setState(() { pageToDisplay = GamePage(); }),
@@ -232,6 +236,7 @@ class NoSplashCustomBarItem extends StatelessWidget {
   final IconData icon;
   final IconData activeIcon;
   final bool isActive;
+  final String label;
   final VoidCallback onTap;
   final double? size;
 
@@ -239,6 +244,7 @@ class NoSplashCustomBarItem extends StatelessWidget {
     Key? key,
     required this.icon,
     required this.activeIcon,
+    required this.label,
     this.isActive = false,
     required this.onTap,
     this.size,
@@ -252,12 +258,23 @@ class NoSplashCustomBarItem extends StatelessWidget {
         onTap: onTap,
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
-        child: Padding(
-          padding: EdgeInsets.only(left: 35, right: 35, bottom: 30, top: 10),
-          child: Icon(
-            isActive ? activeIcon : icon, 
-            color: isActive ? colorScheme.primary : colorScheme.secondary,
-            size: size ?? 28,
+        child: Container(
+          padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                isActive ? activeIcon : icon, 
+                color: isActive ? colorScheme.primary : colorScheme.secondary,
+                size: size ?? 28,
+              ),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                  color: isActive ? colorScheme.primary : colorScheme.secondary,
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -1,8 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:front/data/data.dart';
-import 'package:front/data/school_store.dart';
+import 'package:front/data/lost_item.dart';
+import 'package:front/pages/lost_and_found/lost_item_page.dart';
 import 'package:front/widgets/assets.dart';
 import 'package:front/widgets/uploading_snackbar.dart';
 
@@ -15,7 +15,7 @@ class DeletePage extends StatefulWidget {
 
 class _DeletePageState extends State<DeletePage> {
   late ColorScheme colorScheme;
-
+  
   double initial = 0.0;
   double distance = 0.0;
 
@@ -81,11 +81,11 @@ class _DeletePageState extends State<DeletePage> {
                     mainAxisSpacing: 10,
                   ),
                   padding: const EdgeInsets.all(10),
-                  itemCount: Data.storeItems.length,
+                  itemCount: Data.lostAndFounds.length,
                   itemBuilder: (context, index) {
-                    Data.sortStoreItem();
-                    return assets.storeItemBox(Data.storeItems[index], context, () {
-                      showDeleteCheckBox(Data.storeItems[index], uploadingSnackbar);
+                    Data.sortLostAndFoundBy("status");
+                    return assets.lostItemBox(Data.lostAndFounds[index], context, () {
+                      showDeleteCheckBox(Data.lostAndFounds[index], uploadingSnackbar);
                     });
                   },
                 ),
@@ -99,7 +99,7 @@ class _DeletePageState extends State<DeletePage> {
 
   Hero buildCardHero() {
     return Hero(
-      tag: "delete school store container",
+      tag: "delete lost and found container",
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.background,
@@ -114,7 +114,7 @@ class _DeletePageState extends State<DeletePage> {
       alignment: Alignment.topCenter,
       margin: EdgeInsets.only(top: 10, bottom: 10),
       child: Hero(
-        tag: "delete school store title",
+        tag: "delete lost and found title",
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -131,7 +131,7 @@ class _DeletePageState extends State<DeletePage> {
     );
   }
   
-  void showDeleteCheckBox(StoreItem itemToDelete, UploadingSnackbar uploadingSnackbar) {
+  void showDeleteCheckBox(LostItem itemToDelete, UploadingSnackbar uploadingSnackbar) {
     showDialog(
       context: context, 
       builder: (BuildContext context) {
@@ -154,7 +154,7 @@ class _DeletePageState extends State<DeletePage> {
                     textAlign: TextAlign.center
                   ),
                 ),
-                SizedBox(
+                Container(
                   width: MediaQuery.of(context).size.width * 0.4,
                   height: MediaQuery.of(context).size.height * 0.22,
                   child: Card(
@@ -175,7 +175,7 @@ class _DeletePageState extends State<DeletePage> {
                                   errorWidget: (context, url, error) => const Icon(Icons.error),
                                 ),
                               ),
-                              if (itemToDelete.stock == 0)
+                              if (itemToDelete.status == FoundStatus.returned)
                                 Container(
                                   height: 100,
                                   width: double.infinity,
@@ -185,7 +185,7 @@ class _DeletePageState extends State<DeletePage> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      'Sold Out',
+                                      'Returned',
                                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                         fontSize: 24,
                                         color: Colors.white,
@@ -196,37 +196,26 @@ class _DeletePageState extends State<DeletePage> {
                                 ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Flexible(
-                            child: SingleChildScrollView(
-                              child: Text(
-                                itemToDelete.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                          const SizedBox(height: 10),
+                          Text(
+                            itemToDelete.name,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                '\$${itemToDelete.price}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green[700],
-                                ),
-                              ),
-                              Text(
-                                'Stock: ${itemToDelete.stock}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
+                              Expanded(
+                                child: Text(
+                                  "status: ${statusToString(itemToDelete.status)}",
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -239,7 +228,7 @@ class _DeletePageState extends State<DeletePage> {
                 Spacer(),
                 Column(
                   children: [
-                    Divider(color: Colors.grey[200], height: 1,),
+                    Assets().getDivider(context),
                     ListTile(
                       title: Text("Delete", style: TextStyle(color: Colors.red), textAlign: TextAlign.center),
                       onTap: () async {
@@ -248,23 +237,22 @@ class _DeletePageState extends State<DeletePage> {
 
                         var result;
                         try {
-                          result = await Data.apiService.deleteSchoolStoreItem("${itemToDelete.id}");
+                          result = await Data.apiService.deleteLostAndFound("${itemToDelete.id}");
                         } catch (e) {
-                          result = {"code": "400"};
+                          result = {"status": "fail"};
                         }
-                        print(result);
-                        uploadingSnackbar.showUploadingResult(result["code"] == 200);
+                        uploadingSnackbar.showUploadingResult(result["status"] == "Item deleted successfully");
                         uploadingSnackbar.dismiss();
-                        if (result["code"] == 200) {
+                        if (result["status"] == "Item deleted successfully") {
                           setState(() {
-                            Data.storeItems.removeWhere((element) => element.id == itemToDelete.id);
+                            Data.lostAndFounds.removeWhere((element) => element.id == itemToDelete.id);
                           });
                         } else {
                           debugPrint(result.toString());
                         }
                       },
                     ),
-                    Divider(color: Colors.grey[200], height: 1,),
+                    Assets().getDivider(context),
                   ],
                 ),
                 ListTile(

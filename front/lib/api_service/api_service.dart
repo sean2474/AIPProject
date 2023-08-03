@@ -66,6 +66,7 @@ class ApiService {
     dynamic data = {
       "2023-04-19": [
         {
+          "id": 31,
           "start": "2023-06-23T06:30",
           "end": "2023-06-23T07:10",
           "title": "Yoga",
@@ -76,6 +77,7 @@ class ApiService {
           "location": "Tiernan Room"
         },
         {
+          "id": 32,
           "start": "2023-06-23T07:30",
           "end": "2023-06-23T08:30",
           "title": "Breakfast",
@@ -86,6 +88,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 33,
           "start": "2023-06-23T08:45",
           "end": "2023-06-23T09:10",
           "title": "All School COMPASS for Freshman and Sophomore",
@@ -96,6 +99,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 34,
           "start": "2023-06-23T08:45",
           "end": "2023-06-23T09:10",
           "title": "All School COMPASS for Junior and Senior",
@@ -106,6 +110,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 35,
           "start": "2023-06-23T09:10",
           "end": "2023-06-23T10:10",
           "title": "Block C",
@@ -116,6 +121,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 36,
           "start": "2023-06-23T10:20",
           "end": "2023-06-23T11:15",
           "title": "Block D",
@@ -126,6 +132,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 37,
           "start": "2023-06-23T11:25",
           "end": "2023-06-23T12:20",
           "title": "Block E",
@@ -136,6 +143,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 38,
           "start": "2023-06-23T11:45",
           "end": "2023-06-23T13:00",
           "title": "Buffet Lunch",
@@ -146,6 +154,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 39,
           "start": "2023-06-23T12:30",
           "end": "2023-06-23T17:30",
           "title": "Afternoon Activities",
@@ -156,6 +165,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 40,
           "start": "2023-06-23T14:30",
           "end": "2023-06-23T15:30",
           "title": "Snack in Refactory",
@@ -166,6 +176,7 @@ class ApiService {
           "location": "Refactory"
         },
         {
+          "id": 41,
           "start": "2023-06-23T14:15",
           "end": "2023-06-23T14:45",
           "title": "JV GOLF vs Salisbury",
@@ -176,6 +187,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 42,
           "start": "2023-06-23T15:00",
           "end": "2023-06-23T16:30",
           "title": "VARS Baseball vs Kingswood",
@@ -186,6 +198,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 43,
           "start": "2023-06-23T15:00",
           "end": "2023-06-23T16:30",
           "title": "VARS Lacrosse vs Berkshine",
@@ -196,6 +209,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 44,
           "start": "2023-06-23T17:00",
           "end": "2023-06-23T18:30",
           "title": "Buffet Dinner",
@@ -206,6 +220,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 45,
           "start": "2023-06-23T18:00",
           "end": "2023-06-23T19:30",
           "title": "Special Olympics Soccer",
@@ -216,6 +231,7 @@ class ApiService {
           "location": "JV Soccer field"
         },
         {
+          "id": 46,
           "start": "2023-06-23T18:00",
           "end": "2023-06-23T18:45",
           "title": "Investment Club",
@@ -226,6 +242,7 @@ class ApiService {
           "location": "LC"
         },
         {
+          "id": 47,
           "start": "2023-06-23T18:45",
           "end": "2023-06-23T19:45",
           "title": "Network Club",
@@ -236,6 +253,7 @@ class ApiService {
           "location": "Office"
         },
         {
+          "id": 48,
           "start": "2023-06-23T18:45",
           "end": "2023-06-23T19:45",
           "title": "Applied Math Club",
@@ -246,6 +264,7 @@ class ApiService {
           "location": "Ele 31"
         },
         {
+          "id": 49,
           "start": "2023-06-23T18:45",
           "end": "2023-06-23T19:45",
           "title": "Community time",
@@ -256,6 +275,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 50,
           "start": "2023-06-23T19:45",
           "end": "2023-06-23T21:30",
           "title": "Study Hall",
@@ -266,6 +286,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 51,
           "start": "2023-06-23T21:30",
           "end": "2023-06-23T22:30",
           "title": "McDonald's",
@@ -276,6 +297,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 52,
           "start": "2023-06-23T22:30",
           "end": "2023-06-23T22:45",
           "title": "Dorm Check",
@@ -288,6 +310,7 @@ class ApiService {
       ],
       "2023-04-20": [
         {
+          "id": 53,
           "start": "2023-06-23T06:30",
           "end": "2023-06-23T07:10",
           "title": "Yoga",
@@ -298,6 +321,7 @@ class ApiService {
           "location": "Tiernan Room"
         },
         {
+          "id": 54,
           "start": "2023-06-23T07:30",
           "end": "2023-06-23T08:30",
           "title": "Breakfast",
@@ -308,6 +332,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 55,
           "start": "2023-06-23T08:45",
           "end": "2023-06-23T09:10",
           "title": "All School COMPASS for Freshman and Sophomore",
@@ -318,6 +343,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 56,
           "start": "2023-06-23T08:45",
           "end": "2023-06-23T09:10",
           "title": "All School COMPASS for Junior and Senior",
@@ -328,6 +354,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 57,
           "start": "2023-06-23T09:10",
           "end": "2023-06-23T10:10",
           "title": "Block C",
@@ -338,6 +365,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 59,
           "start": "2023-06-23T10:20",
           "end": "2023-06-23T11:15",
           "title": "Block D",
@@ -348,6 +376,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 60,
           "start": "2023-06-23T11:25",
           "end": "2023-06-23T12:20",
           "title": "Block E",
@@ -358,6 +387,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 61,
           "start": "2023-06-23T11:45",
           "end": "2023-06-23T13:00",
           "title": "Buffet Lunch",
@@ -368,6 +398,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 72,
           "start": "2023-06-23T12:30",
           "end": "2023-06-23T17:30",
           "title": "Afternoon Activities",
@@ -378,6 +409,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 783,
           "start": "2023-06-23T14:30",
           "end": "2023-06-23T15:30",
           "title": "Snack in Refactory",
@@ -388,6 +420,7 @@ class ApiService {
           "location": "Refactory"
         },
         {
+          "id": 722,
           "start": "2023-06-23T14:15",
           "end": "2023-06-23T14:45",
           "title": "JV GOLF vs Salisbury",
@@ -398,6 +431,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 733,
           "start": "2023-06-23T15:00",
           "end": "2023-06-23T16:30",
           "title": "VARS Baseball vs Kingswood",
@@ -408,6 +442,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 75,
           "start": "2023-06-23T15:00",
           "end": "2023-06-23T16:30",
           "title": "VARS Lacrosse vs Berkshine",
@@ -418,6 +453,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 78,
           "start": "2023-06-23T17:00",
           "end": "2023-06-23T18:30",
           "title": "Buffet Dinner",
@@ -428,6 +464,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 80,
           "start": "2023-06-23T18:00",
           "end": "2023-06-23T19:30",
           "title": "Special Olympics Soccer",
@@ -438,6 +475,7 @@ class ApiService {
           "location": "JV Soccer field"
         },
         {
+          "id": 79,
           "start": "2023-06-23T18:00",
           "end": "2023-06-23T18:45",
           "title": "Investment Club",
@@ -448,6 +486,7 @@ class ApiService {
           "location": "LC"
         },
         {
+          "id": 81,
           "start": "2023-06-23T18:45",
           "end": "2023-06-23T19:45",
           "title": "Network Club",
@@ -458,6 +497,7 @@ class ApiService {
           "location": "Office"
         },
         {
+          "id": 82,
           "start": "2023-06-23T18:45",
           "end": "2023-06-23T19:45",
           "title": "Applied Math Club",
@@ -468,6 +508,7 @@ class ApiService {
           "location": "Ele 31"
         },
         {
+          "id": 83,
           "start": "2023-06-23T18:45",
           "end": "2023-06-23T19:45",
           "title": "Community time",
@@ -478,6 +519,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 84,
           "start": "2023-06-23T19:45",
           "end": "2023-06-23T21:30",
           "title": "Study Hall",
@@ -488,6 +530,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 85,
           "start": "2023-06-23T21:30",
           "end": "2023-06-23T22:30",
           "title": "McDonald's",
@@ -498,6 +541,7 @@ class ApiService {
           "location": ""
         },
         {
+          "id": 86,
           "start": "2023-06-23T22:30",
           "end": "2023-06-23T22:45",
           "title": "Dorm Check",

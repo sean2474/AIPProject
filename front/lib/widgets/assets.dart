@@ -15,8 +15,8 @@ import 'package:front/pages/daily_schedule/daily_schedule.dart';
 import 'package:front/pages/food_menu/food_menu.dart';
 import 'package:front/pages/lost_and_found/lost_and_found.dart';
 import 'package:front/pages/sports/sports.dart';
-import 'package:front/admin/edit_lost_and_found/lost_and_found_edit.dart';
-import 'package:front/admin/edit_school_store/school_store_edit.dart';
+import 'package:front/pages/edit_lost_and_found/lost_and_found_edit.dart';
+import 'package:front/pages/edit_school_store/school_store_edit.dart';
 import 'package:front/data/data.dart';
 import 'package:front/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -96,12 +96,7 @@ class Assets {
                       children: [
                         (item.key != 0) ? Padding(
                           padding: const EdgeInsets.only(left: 3),
-                          child: Divider(                
-                            color: Theme.of(context).brightness == Brightness.light 
-                              ? Colors.grey.shade300 
-                              : const Color.fromARGB(255, 41, 39, 39),
-                            height: 1,
-                          ),
+                          child: Assets().getDivider(context),
                         ) : Container(),
                         Stack(
                           children: [
@@ -395,24 +390,9 @@ class Assets {
     return InkWell(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: colorScheme.secondaryContainer,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white,
-              offset: Offset(-4, -4),
-              blurRadius: 10,
-              spreadRadius: 1,
-            ),
-            BoxShadow(
-              color: Colors.grey[400]!,
-              offset: Offset(4, 4),
-              blurRadius: 10,
-              spreadRadius: 1,
-            ),
-          ]
         ),
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -489,10 +469,10 @@ class Assets {
   Widget storeItemBox(StoreItem storeItem, BuildContext context, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
+          color: Theme.of(context).colorScheme.secondaryContainer,
         ),
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -619,6 +599,15 @@ class Assets {
           activeIcon: Icon(Icons.directions_run_rounded)
         ),
       ]
+    );
+  }
+
+  Widget getDivider(context) {
+    return Divider(
+      color: Theme.of(context).brightness == Brightness.light 
+        ? Colors.grey.shade300 
+        : const Color.fromARGB(255, 41, 39, 39),
+      height: 1,
     );
   }
 }

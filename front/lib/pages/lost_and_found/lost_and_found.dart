@@ -101,12 +101,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                         showReturnedItem: Data.settings.showReturnedItem,
                         onSwitchChange: onSwitchChange
                       ),
-                      Divider(                
-                        color: Theme.of(context).brightness == Brightness.light 
-                          ? Colors.grey.shade300 
-                          : const Color.fromARGB(255, 41, 39, 39),
-                        height: 1,
-                      ),
+                      Assets().getDivider(context),
                       ListTile(
                         title: const Text('Sort Options'),
                         onTap: () {
@@ -171,22 +166,12 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                         title: const Text('Sort by Status'),
                         onTap: onSortChange("status"),
                       ),
-                      Divider(                
-                        color: Theme.of(context).brightness == Brightness.light 
-                          ? Colors.grey.shade300 
-                          : const Color.fromARGB(255, 41, 39, 39),
-                        height: 1,
-                      ),
+                      Assets().getDivider(context),
                       ListTile(
                         title: const Text('Sort by Date'),
                         onTap: onSortChange("date"),
                       ),
-                      Divider(                
-                        color: Theme.of(context).brightness == Brightness.light 
-                          ? Colors.grey.shade300 
-                          : const Color.fromARGB(255, 41, 39, 39),
-                        height: 1,
-                      ),
+                      Assets().getDivider(context),
                       ListTile(
                         title: const Text('Sort by Name'),
                         onTap: onSortChange('name'),
@@ -205,6 +190,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
   @override
   Widget build(BuildContext context) {
     Assets assets = Assets(currentPage: LostAndFoundPage());
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
@@ -227,7 +213,9 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
                         },
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: Theme.of(context).brightness == Brightness.light 
+                            ? Colors.white 
+                            : colorScheme.onSecondary,
                           hintText: 'Search items',
                           contentPadding: const EdgeInsets.all(8.0),
                           focusedBorder: OutlineInputBorder(

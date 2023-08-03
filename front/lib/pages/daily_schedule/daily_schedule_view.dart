@@ -66,6 +66,7 @@ class BlockScheduleBuilder extends StatelessWidget {
                   ),
                 ),
                 child: ListTile(
+                  splashColor: Colors.transparent,                  
                   title: Text(schedule.title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: textColor)),
                   subtitle: Text(schedule.location, style: TextStyle(fontSize: 12, color: textColor)),
                   trailing: Column(
@@ -185,7 +186,6 @@ class TimelineScheduleBuilder extends StatelessWidget {
                           double height = (endTime - startTime) * oneHourHeight;
                           return Container(
                             margin: EdgeInsets.only(top: startTime * oneHourHeight, left: blockHorizontalMargin, right: blockHorizontalMargin),
-                            padding: EdgeInsets.only(left: 6, top: (height > 50 ? 5 : 0)),
                             height: height,
                             width: blockFullWidth/schedules.length - blockHorizontalMargin * 2,
                             decoration: BoxDecoration(
@@ -197,7 +197,7 @@ class TimelineScheduleBuilder extends StatelessWidget {
                               ),
                             ),
                             child: InkWell(
-                              splashColor: schedule.color.withAlpha(100),
+                              splashColor: Colors.transparent,
                               highlightColor: schedule.color.withAlpha(100),
                               onTap: () {
                                 Navigator.push(
@@ -207,12 +207,15 @@ class TimelineScheduleBuilder extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: Text(
-                                schedule.title,
-                                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                  overflow: TextOverflow.ellipsis,
-                                  fontSize: height > 50 ? 17 : height/2.5,
-                                  fontWeight: FontWeight.w600
+                              child: Container(
+                                padding: EdgeInsets.only(left: 6, top: (height > 50 ? 5 : 0)),
+                                child: Text(
+                                  schedule.title,
+                                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: height > 50 ? 17 : height/2.5,
+                                    fontWeight: FontWeight.w600
+                                  ),
                                 ),
                               ),
                             ),

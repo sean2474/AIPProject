@@ -88,16 +88,20 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(onPressed: () {
-                DateTime currentDate = DateTime.parse(displayDate!);
-                String previousDate = currentDate.subtract(Duration(days: 1)).toString().substring(0, 10);
-                if (_dateToIndex.containsKey(previousDate)) {
-                  _pageController.previousPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                }
-              }, icon: Icon(Icons.arrow_back_ios_new_rounded)),
+              IconButton(
+                highlightColor: Colors.transparent,
+                onPressed: () {
+                  DateTime currentDate = DateTime.parse(displayDate!);
+                  String previousDate = currentDate.subtract(Duration(days: 1)).toString().substring(0, 10);
+                  if (_dateToIndex.containsKey(previousDate)) {
+                    _pageController.previousPage(
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                }, 
+                icon: Icon(Icons.arrow_back_ios_new_rounded)
+              ),
               InkWell(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
@@ -105,8 +109,8 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
                   showDatePicker(
                     context: context, 
                     initialDate: DateTime.parse(displayDate!),
-                    firstDate: DateTime.parse(Data.foodMenus.values.toList()[0].date), 
-                    lastDate: DateTime.parse(Data.foodMenus.values.toList().last.date), 
+                    firstDate: DateTime.parse(Data.dailySchedules.keys.toList().first), 
+                    lastDate: DateTime.parse(Data.dailySchedules.keys.toList().last), 
                   ).then((value) {
                     if (value != null) {
                       setState(() {
@@ -128,16 +132,20 @@ class DailySchedulePageState extends State<DailySchedulePage> with TickerProvide
                   ),
                 ),
               ),
-              IconButton(onPressed: () {
-                DateTime currentDate = DateTime.parse(displayDate!);
-                String nextDate = currentDate.add(Duration(days: 1)).toString().substring(0, 10);
-                if (_dateToIndex.containsKey(nextDate)) {
-                  _pageController.nextPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                }
-              }, icon: Icon(Icons.arrow_forward_ios_rounded)),
+              IconButton(
+                highlightColor: Colors.transparent,
+                onPressed: () {
+                  DateTime currentDate = DateTime.parse(displayDate!);
+                  String nextDate = currentDate.add(Duration(days: 1)).toString().substring(0, 10);
+                  if (_dateToIndex.containsKey(nextDate)) {
+                    _pageController.nextPage(
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                }, 
+                icon: Icon(Icons.arrow_forward_ios_rounded)
+              ),
             ],
           ),
         ),

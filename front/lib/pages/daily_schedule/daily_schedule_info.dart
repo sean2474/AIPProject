@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:front/data/daily_schedule.dart';
+import 'package:front/pages/daily_schedule/set_alerm.dart';
+import 'package:front/widgets/assets.dart';
+
+import 'constants.dart';
 
 class DailyScheduleInfoPage extends StatefulWidget {
   final DailySchedule dailySchedule;
@@ -20,6 +24,16 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          alignment: Alignment.centerLeft,
+          icon: Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.pop(context),
+          style: ButtonStyle(
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
+          ),
+        ),
         title: Text(
           "Event Details",
           style: Theme.of(context).textTheme.headlineLarge!.copyWith(
@@ -37,44 +51,53 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.dailySchedule.title,
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).brightness == Brightness.light 
-                  ? Colors.grey.shade800
-                  : null,
+            Container(
+              margin: EdgeInsets.only(left: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.dailySchedule.title,
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).brightness == Brightness.light 
+                        ? Colors.grey.shade800
+                        : null,
+                    ),
+                  ),
+                  widget.dailySchedule.location != "" 
+                  ? Text(
+                    "(in ${widget.dailySchedule.location})",
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontSize: 16,
+                      color: Theme.of(context).brightness == Brightness.light 
+                        ? Colors.grey.shade800
+                        : null,
+                    ),
+                  )
+                  : SizedBox(),
+                  SizedBox(height: 20),
+                  Text(
+                    "${widget.date} ${weekday[DateTime.parse(widget.date).weekday]}",
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).brightness == Brightness.light 
+                        ? Colors.grey.shade800
+                        : null,
+                    ),
+                  ),
+                  Text(
+                    "${widget.dailySchedule.startTime} ~ ${widget.dailySchedule.endTime}",
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).brightness == Brightness.light 
+                        ? Colors.grey.shade800
+                        : null,
+                    ),
+                  ),
+                ],
               ),
             ),
-            widget.dailySchedule.location != "" 
-            ? Text(
-              "(in ${widget.dailySchedule.location})",
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                fontSize: 16,
-                color: Theme.of(context).brightness == Brightness.light 
-                  ? Colors.grey.shade800
-                  : null,
-              ),
-            )
-            : SizedBox(),
-            SizedBox(height: 20),
-            Text(
-              "${widget.date} ${_getWeekday(widget.date)}",
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                color: Theme.of(context).brightness == Brightness.light 
-                  ? Colors.grey.shade800
-                  : null,
-              ),
-            ),
-            Text(
-              "${widget.dailySchedule.startTime} ~ ${widget.dailySchedule.endTime}",
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                color: Theme.of(context).brightness == Brightness.light 
-                  ? Colors.grey.shade800
-                  : null,
-              ),
-            ),
-            SizedBox(height: 25),
+            SizedBox(height: 24),
             Container(
               width: double.infinity,
               height: 200,
@@ -86,15 +109,21 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
               child: Text(
                 widget.dailySchedule.description,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontSize: 18,
                   color: Theme.of(context).brightness == Brightness.light 
                     ? Colors.grey.shade800
                     : null,
                 ),
               ),
             ),
+            SizedBox(height: 16),
+            Assets().getDivider(context),
+            buildAlermButton(context, "Alert", widget.dailySchedule.notificationTime, false),
+            Assets().getDivider(context),
+            buildAlermButton(context, "Second Alert", widget.dailySchedule.secondNotificationTime, true),
+            Assets().getDivider(context),
             Spacer(),
-            SizedBox(
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               width: double.infinity,
               height: 50,
               child: TextButton(
@@ -111,34 +140,15 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
                     fontSize: 18,
                     color: widget.dailySchedule.isRequired 
                       ? Theme.of(context).colorScheme.outline 
-                      : Theme.of(context).colorScheme.primary,
+                      : Colors.red,
                   ),
                 )
               )
-            )
+            ),
           ],
         ),
       )
     );
-  }
-
-  String _getWeekday(String date) {
-    switch (DateTime.parse(date).weekday) {
-      case 1:
-        return "Monday";
-      case 2:
-        return "Tuesday";
-      case 3:
-        return "Wednsday";
-      case 4:
-        return "Thursday";
-      case 5:
-        return "Friday";
-      case 6:
-        return "Saturday";
-      default:
-        return "Sunday";
-    }
   }
 
   void showDeleteCheckBox() {
@@ -153,7 +163,7 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
               borderRadius: BorderRadius.circular(15),
             ),
             width: 300,
-            height: 250,
+            height: 240,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -162,30 +172,21 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
                   padding: EdgeInsets.all(30),
                   child: Text(
                     "Are you sure you want to delete this event?", 
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), 
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), 
                     textAlign: TextAlign.center
                   ),
                 ),
                 Spacer(),
                 Column(
                   children: [
-                    Divider(                
-                      color: Theme.of(context).brightness == Brightness.light 
-                        ? Colors.grey.shade300 
-                        : const Color.fromARGB(255, 41, 39, 39),
-                      height: 1,
-                    ),
+                    Assets().getDivider(context),
                     ListTile(
                       title: Text("Delete", style: TextStyle(color: Colors.red), textAlign: TextAlign.center),
                       onTap: () {
+                        Navigator.pop(context);
                       }
                     ),
-                    Divider(                
-                      color: Theme.of(context).brightness == Brightness.light 
-                        ? Colors.grey.shade300 
-                        : const Color.fromARGB(255, 41, 39, 39),
-                      height: 1,
-                    ),
+                    Assets().getDivider(context),
                   ],
                 ),
                 ListTile(
@@ -199,6 +200,71 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget buildAlermButton(context, String text, int alermState, bool isSecondAlerm) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      height: 50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: InkWell(
+        splashColor: Colors.transparent,
+        highlightColor: colorScheme.secondaryContainer.withOpacity(0.1),
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder:(context) {
+              return FractionallySizedBox(
+                heightFactor: 0.82,
+                child: SetAlermPage(
+                  text: text,
+                  dailySchedule: widget.dailySchedule,
+                  isSecondNotification: isSecondAlerm,
+                  alermState: alermState,
+                ),
+              );
+            },
+          ).then((_) { 
+            setState((){
+              
+            });
+          });
+        },
+        child: Row(
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: 10),
+              child: Text(
+                text,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                ),
+              ),
+            ),
+            Spacer(),
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              child: Text(
+                alermTexts[alermState],
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  color: colorScheme.outline,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              child: Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 20,
+                color: colorScheme.outline,
+              ),
+            ),
+          ],
+        )
+      )
     );
   }
 }

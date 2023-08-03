@@ -169,7 +169,6 @@ class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin 
       game.matchResult = '';
     }
 
-    // Return upcoming games
     return upcomingGames.reversed.take(upcomingGamesCount).toList();
   }
 
@@ -182,20 +181,16 @@ class GamePageState extends State<GamePage> with SingleTickerProviderStateMixin 
         itemBuilder: (context, index) {
           PageController pageController = PageController(initialPage: index);
           String title = gamesList[index].sportsName == 'N/A' ? 'N/A' : '${gamesList[index].sportsName.trim()} - ${getSportsCategoryToString(gamesList[index].teamCategory)} vs. ${gamesList[index].opponent}';
-          Color color = gamesList[index].sportsName == 'N/A' ? Colors.grey : gamesList[index].matchResult == '' ? colorScheme.primaryContainer : colorScheme.secondaryContainer;
+          Color color = gamesList[index].sportsName == 'N/A' ? colorScheme.background : gamesList[index].matchResult == '' ? colorScheme.primaryContainer : colorScheme.secondaryContainer;
           return Container(
             margin: EdgeInsets.only(bottom: 3),
             decoration: BoxDecoration(
+              border: Border.all(
+                color: colorScheme.secondary,
+                width: 1,
+              ),
               borderRadius: BorderRadius.all(Radius.circular(15)),
               color: color,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 0,
-                  blurRadius: 3,
-                  offset: Offset(0, 4),
-                ),
-              ]
             ),
             child: ListTile(
               leading: getSportsIcon(gamesList[index].sportsName, 20,),
