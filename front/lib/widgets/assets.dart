@@ -178,6 +178,8 @@ class Assets {
     return Builder(
       builder: (BuildContext innerContext) {
         return IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           onPressed: () {
             Scaffold.of(innerContext).openDrawer();
           },
@@ -399,41 +401,38 @@ class Assets {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Hero(
-                tag: '${data.imageUrl}_${data.id}',
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl: data.imageUrl,
-                        height: 130,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                      ),
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      imageUrl: data.imageUrl,
+                      height: 130,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
-                    if (data.status == FoundStatus.returned)
-                      Container(
-                        height: 130,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Returned',
-                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  ),
+                  if (data.status == FoundStatus.returned)
+                    Container(
+                      height: 130,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Returned',
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
               const SizedBox(height: 8),
               Text(
@@ -479,41 +478,38 @@ class Assets {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Hero(
-                tag: '${storeItem.imageUrl}_${storeItem.id}',
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl: storeItem.imageUrl,
-                        height: 130,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                      ),
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      imageUrl: storeItem.imageUrl,
+                      height: 130,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
-                    if (storeItem.stock == 0)
-                      Container(
-                        height: 130,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Sold Out',
-                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  ),
+                  if (storeItem.stock == 0)
+                    Container(
+                      height: 130,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Sold Out',
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
               const SizedBox(height: 8),
               Flexible(

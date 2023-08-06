@@ -14,7 +14,7 @@ class LoadingPage extends StatelessWidget {
             Center(
               child: SpinKitWaveSpinner(
                 color: Color.fromARGB(255, 140, 33, 49),
-                trackColor: Color.fromARGB(255, 215, 215, 215),
+                trackColor: Color.fromARGB(255, 140, 33, 49),
                 waveColor: Color.fromARGB(255, 140, 33, 49),
                 size: 300,
               ),

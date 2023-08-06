@@ -261,7 +261,7 @@ class LostAndFoundPageState extends State<LostAndFoundPage>
             itemCount: selectedItem(Data.lostAndFounds, _searchText).length,
             itemBuilder: (context, index) {
               LostItem item = selectedItem(Data.lostAndFounds, _searchText)[index];
-              return assets.lostItemBox(item, context, () => assets.pushDialogPage(context, ItemPage(itemData: item)));
+              return assets.lostItemBox(item, context, () => Navigator.push(context, MaterialPageRoute(builder: (context) => ItemPage(itemData: item))));
             },
           ),
         ),

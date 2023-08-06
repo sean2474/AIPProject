@@ -24,54 +24,68 @@ class ItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
+    Color? textColor = Theme.of(context).brightness == Brightness.light ? Colors.grey.shade800 : null;
     DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: colorScheme.secondaryContainer,
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          alignment: Alignment.centerLeft,
+          icon: Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.pop(context),
+          style: ButtonStyle(
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
           ),
-          child: Padding(
+        ),
+        title: Text(
+          "Item Details",
+          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 23,
+            color: textColor,
+          ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Hero(
-                  tag: '${itemData.imageUrl}_${itemData.id}',
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: CachedNetworkImage(
-                          imageUrl: itemData.imageUrl,
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                        ),
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: itemData.imageUrl,
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       ),
-                      if (itemData.status == FoundStatus.returned)
-                        Container(
-                          height: 150,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.black.withOpacity(0.5),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Returned',
-                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                fontSize: 24,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                    ),
+                    if (itemData.status == FoundStatus.returned)
+                      Container(
+                        height: 150,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Returned',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -129,8 +143,8 @@ class ItemPage extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

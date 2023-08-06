@@ -103,17 +103,27 @@ class DailyScheduleInfoPageState extends State<DailyScheduleInfoPage> {
               height: 200,
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondaryContainer,
+                color: Theme.of(context).colorScheme.onSecondary,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                widget.dailySchedule.description,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).brightness == Brightness.light 
-                    ? Colors.grey.shade800
-                    : null,
+              child: 
+              widget.dailySchedule.description.trim() != ""
+                ? Text(
+                  widget.dailySchedule.description,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).brightness == Brightness.light 
+                      ? Colors.grey.shade800
+                      : null,
+                  ),
+                ) 
+                : Text(
+                  "No Description",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).brightness == Brightness.light 
+                      ? Colors.grey
+                      : null,
+                  ),
                 ),
-              ),
             ),
             SizedBox(height: 16),
             Assets().getDivider(context),

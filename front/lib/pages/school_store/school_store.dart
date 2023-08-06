@@ -120,7 +120,7 @@ class SchoolStorePageState extends State<SchoolStorePage>
                 padding: const EdgeInsets.all(10),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  return assets.storeItemBox(items[index], context, () => assets.pushDialogPage(context, ItemPage(itemData: items[index])));
+                  return assets.storeItemBox(items[index], context, () => Navigator.push(context, MaterialPageRoute(builder: (context) => ItemPage(itemData: items[index],))));
                 },
               ),
             ),
